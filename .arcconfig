@@ -1,0 +1,6 @@
+{
+  "phabricator.uri" : "https://rcm-2.wmflabs.org",
+  "repository.callsign" : "LBC",
+  "history.immutable" : false,
+  "unit.engine": "NoseTestEngine"
+}
