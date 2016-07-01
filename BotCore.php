@@ -619,5 +619,27 @@ class Core extends password {
 		}
 		return (serialize ($Site));
 	}
+	/** getPageID
+	* Gibt zu der angegebenen Seite die ID an
+	* @author: Luke081515
+	* @param: Name der Seite
+	* @return: int: PageID, bool: false falls Seite nicht vorhanden
+	* @version: V1.0
+	*/
+	public function GetPageID ($PageName) {
+		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($PageName);
+		try {
+			$result = $this->httpRequest($data, $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		if (strstr ($result, "missing") !== false)
+			return false;
+		$answer = unserialize($result); 
+		$a=0;
+		while (isset ($answer ["query"]["pages"][$a]) === false)
+			$a++;
+		return $a;
+	}
 }
 ?>
