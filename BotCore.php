@@ -28,10 +28,12 @@ class Core extends password {
 			$this->curlHandle = $curl;
 		$this->login();
 	}
-	/** DO NOT use this function
-	* It's for unit-tests only!
+	/** initcurlArgs
+	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
+	* Ansonsten bitte initcurl benutzen
+	* @Author Luke081515
 	*/
-	public function testInitcurl ($Job, $pUseHTTPS = true) {
+	public function initcurlArgs ($Job, $pUseHTTPS = true) {
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
 			$this->protocol = 'https'; 
