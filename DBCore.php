@@ -32,18 +32,24 @@ class DBCore extends DBPassword {
 			die (1);
 		}
 	}
-	public function query ($sql) {
+	public function query ($sql, $sensitive = false) {
 		if(!$result = $this->DB->query($sql)) {
-			die('There was an error running the query [' . $DB->error . ']');
+			if ($sensitive === false)
+				die('There was an error running the query [' . $this->DB->error . ']');
+			else
+				echo ('\nThere was an error running the query [' . $this->DB->error . ']');
 		} else if ($result->num_rows === 0) {
 			return 0;
 		} else {
 			return $result;
 		}
 	}
-	public function modify ($sql) {
+	public function modify ($sql, $sensitive = false) {
 		if(!$result = $this->DB->query($sql)) {
-			die('There was an error running the query [' . $this->DB->error . ']');
+			if ($sensitive === false)
+				die('There was an error running the command [' . $this->DB->error . ']');
+			else
+				echo ('\nThere was an error running the command [' . $this->DB->error . ']');
 		}
 		else 
 			return $result;
