@@ -34,7 +34,7 @@ class DBCore extends DBPassword {
 	}
 	public function query ($sql) {
 		if(!$result = $this->DB->query($sql)) {
-			die('There was an error running the query [' . $DB->error . ']');
+			die('There was an error running the query [' . $this->DB->error . ']');
 		} else if ($result->num_rows === 0) {
 			return 0;
 		} else {
