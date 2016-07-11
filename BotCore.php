@@ -643,5 +643,29 @@ class Core extends password {
 			$a++;
 		return $a;
 	}
+	
+	/** getLinks
+	* Gibt aus, welche Wikilinks sich auf einer Seite befinden
+	* @author Luke081515
+	* @param $Site - Seite die analysiert wird
+	* @returns Array mit Ergebnissen
+	*/
+	public function getLinks ($Site) {
+		$data = "action=query&prop=links&format=xml&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&titles=" . urlencode($Site);
+		try {
+			$website = $this->httpRequest($data, $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$Answer = explode ("\"", $website);
+		$b=13;
+		$q=0;
+		while (isset($Answer [$b]) === true) {
+			$Result [$q] = $Answer [$b];
+			$b = $b + 4;
+			$q++;
+		}
+		return $Result;
+	}
 }
 ?>
