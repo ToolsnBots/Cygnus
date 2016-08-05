@@ -71,18 +71,18 @@ class Core extends password {
 	* @author Hgzh
 	* @returns Antwort der API
 	*/
-	protected function httpRequest($pArguments, $job, $pMethod = 'POST', $pTarget = 'w/api.php') {
+	protected function httpRequest($Arguments, $Job, $Method = 'POST', $Target = 'w/api.php') {
 		$baseURL = $this->protocol . '://' . 
 				   $this->site . '/' . 
-				   $pTarget;
-		$pMethod = strtoupper($pMethod);
-		if ($pArguments != '') {
-			if ($pMethod === 'POST') {
+				   $Target;
+		$Method = strtoupper($Method);
+		if ($Arguments != '') {
+			if ($Method === 'POST') {
 				$requestURL = $baseURL;
-				$postFields = $pArguments;
-			} elseif ($pMethod === 'GET') {
+				$postFields = $Arguments;
+			} elseif ($Method === 'GET') {
 				$requestURL = $baseURL . '?' .
-							  $pArguments;
+							  $Arguments;
 			} else 
 				throw new Exception('unknown http request method.');
 		}
@@ -95,10 +95,10 @@ class Core extends password {
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
 		curl_setopt($this->curlHandle, CURLOPT_ENCODING, "UTF-8");
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($this->curlHandle, CURLOPT_COOKIEFILE, realpath('Cookies' . $job . '.tmp'));
-		curl_setopt($this->curlHandle, CURLOPT_COOKIEJAR, realpath('Cookies' . $job . '.tmp'));
+		curl_setopt($this->curlHandle, CURLOPT_COOKIEFILE, realpath('Cookies' . $Job . '.tmp'));
+		curl_setopt($this->curlHandle, CURLOPT_COOKIEJAR, realpath('Cookies' . $Job . '.tmp'));
 		// if posted, add post fields
-		if ($pMethod === 'POST' && $postFields != '') {
+		if ($Method === 'POST' && $postFields != '') {
 			curl_setopt($this->curlHandle, CURLOPT_POST, 1);
 			curl_setopt($this->curlHandle, CURLOPT_POSTFIELDS, $postFields);
 		} else {
@@ -161,14 +161,14 @@ class Core extends password {
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setUsername ($username) {
-		$this->username = $username;
+	public function setUsername ($Username) {
+		$this->username = $Username;
 	}
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setPassword ($password) {
-		$this->password = $password;
+	public function setPassword ($Password) {
+		$this->password = $Password;
 	}
 	/** editPage
 	* Bearbeitet eine Seite
@@ -179,7 +179,16 @@ class Core extends password {
 	* @author Hgzh / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPage($title, $content, $summary, $nocreate = 1) {
+	/** editPage
+	* Bearbeitet eine Seite
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -191,17 +200,17 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.
-				'&text=' . urlencode($content) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary);
+				'&summary=' . urlencode($Summary);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
+			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary);
+				'&summary=' . urlencode($Summary);
 		}
 		try {
 			$result = $this->httpRequest($request, $this->job);
@@ -218,16 +227,16 @@ class Core extends password {
 	}
 	/** editPageD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
 	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
-	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
 	* @author Hgzh / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPageD($title, $content, $summary, $Botflag, $Minorflag, $nocreate = 1) {
+	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -239,19 +248,19 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
-				'&text=' . urlencode($content) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		}
@@ -297,13 +306,13 @@ class Core extends password {
 	}
 	/** readPage
 	* Liest eine Seite aus
-	* @param $title - Titel der auszulesenden Seite
+	* @param $Title - Titel der auszulesenden Seite
 	* @author: Luke081515
 	* @returns Text der Seite
 	*/
-	public function readPage($title) {
+	public function readPage($Title) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -335,13 +344,13 @@ class Core extends password {
     }
     /** readPageJs
 	* Liest eine JavaScript-Seite aus
-	* @param $title - Titel der auszulesenden Seite
+	* @param $Title - Titel der auszulesenden Seite
 	* @author: Luke081515
 	* @returns Text der Seite
 	*/
-	public function readPageJs($title) {
+	public function readPageJs($Title) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -354,14 +363,14 @@ class Core extends password {
 	}
 	/** readSection
 	* Liest einen Abschnitt einer Seite aus
-	* @param $title - Titel der Auszulesenden Seite
-	* @param $section Nummer des Abschnitts
+	* @param $Title - Titel der Auszulesenden Seite
+	* @param $Section Nummer des Abschnitts
 	* @author: Luke081515
 	* @returns Text des Abschnitts
 	*/
-	public function readSection($title, $section) {
+	public function readSection($Title, $Section) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($section) . '&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvSection=' . urlencode($Section) . '&Titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -374,15 +383,15 @@ class Core extends password {
 	}
 	/** editSection
 	* Bearbeitet einen Abschnitt
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
 	* @param $Sectionnumber - Nummer des Abschnitts
-	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
 	* @author Hgzh / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editSection($title, $content, $summary, $Sectionnumber, $nocreate = 1) {
+	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -394,19 +403,19 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
-				'&text=' . urlencode($content) .
+				'&text=' . urlencode($Content) .
 				'&token=' . urlencode($token) .
 				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($summary);
+				'&summary=' . urlencode($Summary);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) .
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) .
 				'&token=' . urlencode($token) .
 				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($summary);
+				'&summary=' . urlencode($Summary);
 		}
 		try {
 			$result = $this->httpRequest($request, $this->job);
@@ -423,17 +432,17 @@ class Core extends password {
 	}
 	/** editSectionD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
 	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
 	* @param $Sectionnumber - Nummer des Abschnitts
-	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
 	* @author Hgzh / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editSectionD($title, $content, $summary, $Sectionnumber, $Botflag, $Minorflag, $nocreate = 1) {
+	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -445,20 +454,20 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
-				'&text=' . urlencode($content) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
@@ -480,10 +489,10 @@ class Core extends password {
 	* Verschiebt eine Seite
 	* @param $StartLemma - Alter Titel der Seite
 	* @param $TargetLemma - Neuer Titel der Seite
-	* @param $reason - Grund der Verschiebung, der im Log vermerkt wird
+	* @param $Reason - Grund der Verschiebung, der im Log vermerkt wird
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
-	public function MovePage ($StartLemma, $TargetLemma, $reason) {
+	public function MovePage ($StartLemma, $TargetLemma, $Reason) {
 		$data = "action=query&format=php&meta=tokens&type=csrf";
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -492,7 +501,7 @@ class Core extends password {
 		}
 		$answer = unserialize($result);
 		$token = $answer['query']['tokens']['csrftoken'];
-		$data = "action=move&format=php&assert=bot" . "&from=" . urlencode($StartLemma) . "&to=" . urlencode($TargetLemma) . "&reason=" . urlencode($reason) . "&bot=0" . "&movetalk=&noredirect=&watchlist=nochange&token=" . urlencode($token);
+		$data = "action=move&format=php&assert=bot" . "&from=" . urlencode($StartLemma) . "&to=" . urlencode($TargetLemma) . "&reason=" . urlencode($Reason) . "&bot=0" . "&movetalk=&noredirect=&watchlist=nochange&token=" . urlencode($token);
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -507,10 +516,10 @@ class Core extends password {
 	* Erfordert Botflag, da Limit auf 5000 gesetzt, (geht zwar sonst auch, aber nur mit Warnung)
 	* @author Luke081515
 	* @param $Kat - Kategorie die analyisiert werden soll.
-	* @param $onlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
+	* @param $OnlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	protected function getCatMembers ($Kat, $onlySubCats = false)
+	protected function getCatMembers ($Kat, $OnlySubCats = false)
 	{
 		$b=0;
 		$SubCat [0] = $Kat;
@@ -532,7 +541,7 @@ class Core extends password {
 		else {}
 		$b=0;
 		$c=0;
-		if ($onlySubCats === true)
+		if ($OnlySubCats === true)
 			return $SubCat;
 		while (isset ($SubCat [$b]) === true)
 		{
