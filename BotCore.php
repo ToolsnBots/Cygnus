@@ -7,8 +7,12 @@ class Core extends password {
 	protected $site;
 	protected $protocol;
 	protected $job;
+	private $version;
 
-	/** constructor
+	public function Core () {
+		$this->version = "BotCore V2.0alpha - Luke081515Bot-Framework";
+	}
+	/** initcurl
 	* initialisiert curl
 	* Diese Methode sollte im Normallfall aufgerufen werden
 	* Erstellt das Verbindungsobjekt und loggt den Bot ein
@@ -84,8 +88,10 @@ class Core extends password {
 		}
 		if (!$requestURL) 
 			throw new Exception('no arguments for http request found.');
+		$UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		echo ("\n***** Starting up....\nUseragent: " . $this->version . "\n*****");
 		// set curl options
-		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, 'Luke081515Bot-Beta');
+		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $UA);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
 		curl_setopt($this->curlHandle, CURLOPT_ENCODING, "UTF-8");
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
