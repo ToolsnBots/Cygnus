@@ -1,7 +1,6 @@
 <?php
 include 'Password.php';
 class Core extends password {
-
 	protected $username;
 	protected $password;
 	protected $curlHandle;
@@ -11,7 +10,12 @@ class Core extends password {
 
 	/** constructor
 	* initialisiert curl
+	* Diese Methode sollte im Normallfall aufgerufen werden
+	* Erstellt das Verbindungsobjekt und loggt den Bot ein
 	* @author Hgzh
+	* @param $Account - Name des angegebenen Accounts in Password.php
+	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
+	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	*/
 	public function initcurl ($Account, $Job, $pUseHTTPS = true) {
 		$this->start($Account);
@@ -31,7 +35,10 @@ class Core extends password {
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
 	* Ansonsten bitte initcurl benutzen
+	* Erstellt das Verbindungsobjekt und loggt den Bot ein
 	* @Author Luke081515
+	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
+	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	*/
 	public function initcurlArgs ($Job, $pUseHTTPS = true) {
 		$this->job = $Job;
@@ -52,7 +59,13 @@ class Core extends password {
 	}
 	/** httpRequest
 	* führt http(s) request durch
+	* Wird meistens benutzt um die API anzusteuern
+	* @param $pArguments - API-Parameter die aufgerufen werden sollen (beginnt normalerweise mit action=)
+	* @param $job - Jobname, wird benutzt um die richtigen Cookies etc zu finden. Hier einfach $this->job benutzen.
+	* @param $pMethod - [optional: POST] Methode des Requests. Bei querys sollte stattdessen GET genommen werden
+	* @param $pTarget - [optional: w/api.php] Verwende diesen Parameter, wenn die API deines Wikis einen anderen Einstiegspfad hat. (Special:Version)
 	* @author Hgzh
+	* @returns Antwort der API
 	*/
 	protected function httpRequest($pArguments, $job, $pMethod = 'POST', $pTarget = 'w/api.php') {
 		$baseURL = $this->protocol . '://' . 
@@ -94,6 +107,7 @@ class Core extends password {
 	}
 	/** login
 	* loggt den Benutzer ein
+	* Nicht! verwenden. Diese Methode wird nur von initcurl/initcurlargs genutzt.
 	* @author Hgzh
 	*/
 	public function login() {
@@ -121,6 +135,9 @@ class Core extends password {
 		else
 			throw new Exception('login failed with message ' . $lgResult);
 	}
+	/** logout
+	* Loggt den Benutzer aus
+	*/
 	public function logout() 
 	{
 		try {
@@ -149,12 +166,13 @@ class Core extends password {
 	}
 	/** editPage
 	* Bearbeitet eine Seite
-	* @param: pTitle - Seitenname
-	* @param: pNewText - Neuer Seitentext
-	* @param: pSummary - Zusammenfassung
-	* @param: nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
 	* @author Hgzh / Luke081515
-	*/	
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
 	public function editPage($title, $content, $summary, $nocreate = 1) {
 		// get csrf token
 		try {
@@ -192,6 +210,17 @@ class Core extends password {
 		else
 			throw new Exception('page edit failed with message: ' . $editres);
 	}
+	/** editPageD
+	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
 	public function editPageD($title, $content, $summary, $Botflag, $Minorflag, $nocreate = 1) {
 		// get csrf token
 		try {
@@ -235,6 +264,7 @@ class Core extends password {
 	}
 	/** start
 	* Sucht Logindaten aus Password.php, führt anschließend Login durch
+	* Sollte im Normallfall nicht manuel angewendet werden, dies macht bereits initcurl
 	* @author Luke081515
 	*/
 	public function start ($Account) {
@@ -259,8 +289,11 @@ class Core extends password {
 			die(1); // exit with error
 		}
 	}
-	/**
+	/** readPage
+	* Liest eine Seite aus
+	* @param $title - Titel der auszulesenden Seite
 	* @author: Luke081515
+	* @returns Text der Seite
 	*/
 	public function readPage($title) {
 		try {
@@ -275,6 +308,12 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
+	/** readPageId
+	* Liest eine Seite aus
+	* @param $PageID - ID der auszulesenden Seite
+	* @author: Luke081515
+	* @returns Text der Seite
+	*/
 	public function readPageID ($PageID) {
 		try {
 			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID), $this->job, 'GET');
@@ -288,8 +327,11 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
     }
-    /**
+    /** readPageJs
+	* Liest eine JavaScript-Seite aus
+	* @param $title - Titel der auszulesenden Seite
 	* @author: Luke081515
+	* @returns Text der Seite
 	*/
 	public function readPageJs($title) {
 		try {
@@ -304,8 +346,12 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
-	/**
+	/** readSection
+	* Liest einen Abschnitt einer Seite aus
+	* @param $title - Titel der Auszulesenden Seite
+	* @param $section Nummer des Abschnitts
 	* @author: Luke081515
+	* @returns Text des Abschnitts
 	*/
 	public function readSection($title, $section) {
 		try {
@@ -320,8 +366,15 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
-	/**
-	* @author: Hgzh/Luke081515
+	/** editSection
+	* Bearbeitet einen Abschnitt
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $Sectionnumber - Nummer des Abschnitts
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSection($title, $content, $summary, $Sectionnumber, $nocreate = 1) {
 		// get csrf token
@@ -362,6 +415,18 @@ class Core extends password {
 		else
 			throw new Exception('page edit failed with message ' . $editres);
 	}
+	/** editSectionD
+	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $Sectionnumber - Nummer des Abschnitts
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
 	public function editSectionD($title, $content, $summary, $Sectionnumber, $Botflag, $Minorflag, $nocreate = 1) {
 		// get csrf token
 		try {
@@ -405,6 +470,13 @@ class Core extends password {
 		else
 			throw new Exception('page edit failed with message ' . $editres);
 	}
+	/** MovePage
+	* Verschiebt eine Seite
+	* @param $StartLemma - Alter Titel der Seite
+	* @param $TargetLemma - Neuer Titel der Seite
+	* @param $reason - Grund der Verschiebung, der im Log vermerkt wird
+	* @returns Serialisierte Antwort der API-Parameter
+	*/
 	public function MovePage ($StartLemma, $TargetLemma, $reason) {
 		$data = "action=query&format=php&meta=tokens&type=csrf";
 		try {
@@ -427,11 +499,10 @@ class Core extends password {
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
 	* Erfordert Botflag, da Limit auf 5000 gesetzt, (geht zwar sonst auch, aber nur mit Warnung)
-	* @author: Luke081515
-	* @param: Kategorie die analyisiert werden soll.
-	* @return: false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T244
+	* @author Luke081515
+	* @param $Kat - Kategorie die analyisiert werden soll.
+	* @param $onlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
+	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
 	protected function getCatMembers ($Kat, $onlySubCats = false)
 	{
@@ -508,14 +579,14 @@ class Core extends password {
 		else
 			return (serialize ($Site));
 	}
+	
 	/** getPageCats
 	* Liest alle Kategorien einer Seite aus
 	* Funktioniert bis zu 500 Kategorien einer Seite
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
-	* @author: Luke081515
-	* @param: $Site - Seite die analyisiert werden soll; [$Mode] - Modus der Rückgabe
-	* @return: Alle Kategorien als Liste durch Pipes getrennt
-	* @version: V1.0
+	* @author Luke081515
+	* @param $Site - Seite die analyisiert werden soll
+	* @returns Alle Kategorien als Liste durch Pipes getrennt
 	*/
 	public function GetPageCats ($Site) {
 		try {
@@ -543,11 +614,9 @@ class Core extends password {
 	/** getAllEmbedings
 	* Liest alle Einbindungen einer Vorlage aus
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
-	* @author: Luke081515
-	* @param: Vorlage, deren Einbindungen aufgelistet werden sollen
-	* @return: false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T246
+	* @author Luke081515
+	* @param Vorlage, deren Einbindungen aufgelistet werden sollen
+	* @returns false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
 	public function getAllEmbedings ($Templ) {
 		$b=0;
@@ -584,11 +653,9 @@ class Core extends password {
 	/** getAllPages
 	* Liest alle Seiten eines Namensraumes aus
 	* Erfordert Botflag, da Limit auf 5000 gesetzt (geht zwar sonst auch, aber nur mit Warnung)
-	* @author: Luke081515
-	* @param: Nummer des Namensraumes, von dem die Seiten ausgelesen werden
-	* @return: false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T247
+	* @author Luke081515
+	* @param Nummer des Namensraumes, von dem die Seiten ausgelesen werden
+	* @returns false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
 	public function getAllPages ($Namespace) {
 		$b=0;
@@ -624,9 +691,8 @@ class Core extends password {
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
 	* @author: Luke081515
-	* @param: Name der Seite
-	* @return: int: PageID, bool: false falls Seite nicht vorhanden
-	* @version: V1.0
+	* @param $PageName - Name der Seite
+	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
 	public function GetPageID ($PageName) {
 		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($PageName);
