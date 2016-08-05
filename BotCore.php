@@ -170,113 +170,6 @@ class Core extends password {
 	public function setPassword ($Password) {
 		$this->password = $Password;
 	}
-	/** editPage
-	* Bearbeitet eine Seite
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
-	*/
-	/** editPage
-	* Bearbeitet eine Seite
-	* @param $Title - Seitenname
-	* @param $Content - Neuer Seitentext
-	* @param $Summary - Zusammenfassung
-	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
-	*/
-	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		}  catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
-				'&nocreate='.
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary);
-		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message: ' . $editres);
-	}
-	/** editPageD
-	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
-	* @param $Title - Seitenname
-	* @param $Content - Neuer Seitentext
-	* @param $Summary - Zusammenfassung
-	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
-	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
-	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
-	*/
-	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
-				'&nocreate='.  
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message ' . $editres);
-	}
 	/** start
 	* Sucht Logindaten aus Password.php, führt anschließend Login durch
 	* Sollte im Normallfall nicht manuel angewendet werden, dies macht bereits initcurl
@@ -380,6 +273,104 @@ class Core extends password {
 		$Answer = substr ($Answer, 1);
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
+	}
+	/** editPage
+	* Bearbeitet eine Seite
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+		// get csrf token
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		}  catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
+		// perform edit
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
+				'&nocreate='.
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary);
+		} else {
+			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary);
+		}
+		try {
+			$result = $this->httpRequest($request, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree = unserialize($result);
+		$editres = $tree['edit']['result'];
+		// manage result
+		if ($editres == 'Success')
+			return $result;
+		else
+			throw new Exception('page edit failed with message: ' . $editres);
+	}
+	/** editPageD
+	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
+		// get csrf token
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
+		// perform edit
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+				'&nocreate='.  
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary) .
+				'&bot=' . urlencode($Botflag) . 
+				'&minor=' . urlencode($Minorflag);
+		} else {
+			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary) .
+				'&bot=' . urlencode($Botflag) . 
+				'&minor=' . urlencode($Minorflag);
+		}
+		try {
+			$result = $this->httpRequest($request, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree = unserialize($result);
+		$editres = $tree['edit']['result'];
+		// manage result
+		if ($editres == 'Success')
+			return $result;
+		else
+			throw new Exception('page edit failed with message ' . $editres);
 	}
 	/** editSection
 	* Bearbeitet einen Abschnitt
@@ -509,7 +500,6 @@ class Core extends password {
 		}
 		return ($result);
 	}
-
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
@@ -724,7 +714,6 @@ class Core extends password {
 			$a++;
 		return $a;
 	}
-	
 	/** getLinks
 	* Gibt aus, welche Wikilinks sich auf einer Seite befinden
 	* @author Luke081515
