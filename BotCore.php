@@ -737,5 +737,33 @@ class Core extends password {
 		}
 		return $Result;
 	}
+	/** getSectionTitle
+	* Gibt Titel und Ebene eines Abschnittes zurück
+	* @Author Freddy2001 <freddy2001@wikipedia.de>
+	* @param title - Titel der Seite
+	* @param section - Abschnitt der Seite
+	* @return Titel und Überschriftenebene als Array
+	*/
+	public function getSectionTitle ($title, $section) {
+		$content = $this->readSection($title, $section);
+		$sectionlevel = 5;
+		while($sectionlevel > 1) {
+			$searchnum = 1;
+			$search = "=";
+			while($searchnum < $sectionlevel) {
+				$search = $search . "=";
+				$searchnum++;
+			}
+			if(strpos(substr($content, strpos($content, "="), 5), $search) === false) {
+				$sectionlevel--;
+			} else {
+				break;
+			}
+		}
+		$content = substr($content, strpos($content, "=") + $sectionlevel);
+		$content = substr($content, 0, strpos($content, "="));
+		return ["title" => $content, "level" => $sectionlevel, ];
+	}
+
 }
 ?>
