@@ -274,6 +274,31 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
+	/** getTableOfContents
+	* Gibt das Inhalstverzeichnis einer Seite aus
+	* @param $Page - Titel der Seite
+	* @author Luke081515
+	* @returns Zwei dimensionales Array
+	* @returns Erste Dimension: Der entsprechende Abschnitt
+	* @retuns Zweite Dimension: [0] => level; [1] => Titel des Abschnitts; [2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); [3] => Abschnittsnummer, ohne Komma, reiner int;
+	*/
+	public function getTableOfContents ($Page) {
+		try {
+			$result = $this->httpRequest('action=parse&format=php&maxlag=5&page=' . urlencode ($Page) . '&prop=sections', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$Data = unserialize ($result);
+		$a=0;
+		while (isset ($Data['parse']['sections'][$a]['level']) === true) {
+			$ret [$a] [0] = $Data['parse']['sections'][$a]['level'];
+			$ret [$a] [1] = $Data['parse']['sections'][$a]['line'];
+			$ret [$a] [2] = $Data['parse']['sections'][$a]['number'];
+			$ret [$a] [3] = $Data['parse']['sections'][$a]['index'];
+			$a++;
+		}
+		return $ret;
+	}
 	/** editPage
 	* Bearbeitet eine Seite
 	* @param $title - Seitenname
