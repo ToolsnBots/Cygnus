@@ -341,7 +341,7 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else
 			throw new Exception('page edit failed with message: ' . $editres);
 	}
@@ -393,7 +393,7 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else
 			throw new Exception('page edit failed with message ' . $editres);
 	}
@@ -442,7 +442,7 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else
 			throw new Exception('page edit failed with message ' . $editres);
 	}
@@ -497,7 +497,7 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else
 			throw new Exception('page edit failed with message ' . $editres);
 	}
