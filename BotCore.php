@@ -197,6 +197,37 @@ class Core extends password {
 			die(1); // exit with error
 		}
 	}
+	/** checkResult
+	* Diese Methode ist fuer interne Verwendung bestimmt
+	* Sie steht daher auf private
+	* Sie wird aufgerufen, falls es einen Fehler gibt
+	* Je nach Fehler werden entsprechende Aktionen eingeleitet
+	* @author Luke081515
+	* @param $Result - Fehlercode der API
+	* @returns fail - Edit fehlgeschlagen, Fehlercode zeigt, das ein erneuter versuch nicht sinnvoll ist
+	* @returns retry - Ein erneuter Versuch kann das Problem beheben
+	* @retuns conflict - Ein Bearbeitungskonflikt ist vorhanden 
+	*/
+	private function checkResult ($Result) {
+		if ($Result === "maxlag" || $Result === "readonly" || $Result === "unknownerror-nocode" || $Result === "unknownerror" || $Result === "ratelimited") {
+			echo ("\nEdit fehlgeschlangen. Grund: $Result. Versuche es erneut");
+			return "retry";
+		} else if ($Result === "blocked" || $Result === "confirmemail" || $Result === "autoblocked") {
+			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $Result');
+			die (1);
+		} else if ($Result === "assertuserfailed" || $Result === "assertbotfailed") {
+			$this->login();
+			return "retry";
+		} else if ($Result === "editconflict") {
+			echo ("\nBearbeitungskonflikt festgestellt");
+			return "conflict";
+		} else {
+			echo ('Aktion fehlgeschlagen. Fehlercode: $Result');
+			return "fail";
+		}
+	}
+	
+	
 	/** readPage
 	* Liest eine Seite aus
 	* @param $Title - Titel der auszulesenden Seite
@@ -309,6 +340,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -342,8 +374,15 @@ class Core extends password {
 		// manage result
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else
-			throw new Exception('page edit failed with message: ' . $editres);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
 	/** editPageD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
@@ -357,6 +396,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -394,8 +434,15 @@ class Core extends password {
 		// manage result
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
 	/** editSection
 	* Bearbeitet einen Abschnitt
@@ -408,6 +455,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -443,8 +491,15 @@ class Core extends password {
 		// manage result
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
 	/** editSectionD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
@@ -459,6 +514,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -498,8 +554,15 @@ class Core extends password {
 		// manage result
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
 	/** MovePage
 	* Verschiebt eine Seite
