@@ -853,5 +853,17 @@ class Core extends password {
 		return ["title" => $content, "level" => $sectionlevel, ];
 	}
 
+	/** AskOperator
+	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
+	* @Author Luke081515
+	* @param $Question - zu stellende Frage
+	* @returns Antwort des Ops als String
+	*/
+	public function AskOperator ($Question) {
+		echo ($Question);
+		$handle = fopen ("php://stdin","r");
+		$line = fgets($handle);
+		return trim($line);
+	}
 }
 ?>
