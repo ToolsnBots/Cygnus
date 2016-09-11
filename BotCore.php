@@ -794,7 +794,7 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		if (strstr ($result, "missing") !== false)
+		if (strpos ($result, "missing") !== false)
 			return false;
 		$answer = unserialize($result); 
 		$a=0;
