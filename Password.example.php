@@ -3,17 +3,17 @@ class Password
 {
 	/** Dies ist eine Example-Datei
 	* Damit das Programm funktioniert, muessen die Daten angepasst werden!
+	* chmod 0600 nicht vergessen!
 	*/
 	private $LoginName;
 	private $LoginHost;
 	private $LoginAccount;
 	private $LoginPassword;
+	private $MailAddress;
 	
-	public function Password()
-    {}
+	public function Password() {}
 	
-	protected function init()
-	{
+	protected function init() {
 		$this->LoginName = array( // Empfohlen: Username@wiki
 			'User@dewiki',
 			'Bot@dewikisource',
@@ -31,22 +31,25 @@ class Password
 			'Userpassword',
 			'Botpassword',
 		);
+		$this->MailAddress = array( // Mailadresse an die Daten gesendet werden koennen
+			'hello@example.org',
+			'support@example.org',
+		);
 	}
-	protected function getLoginName ()
-	{
+	protected function getLoginName () {
 		return serialize ($this->LoginName);
 	}
-	protected function getLoginHost ()
-	{
+	protected function getLoginHost () {
 		return serialize ($this->LoginHost);
 	}
-	protected function getLoginAccount ()
-	{
+	protected function getLoginAccount () {
 		return serialize ($this->LoginAccount);
 	}
-	protected function getLoginPassword ()
-	{
+	protected function getLoginPassword () {
 		return serialize ($this->LoginPassword);	
+	}
+	protected function getMail () {
+		return serialize ($this->MailAddress);	
 	}
 }
 ?>
