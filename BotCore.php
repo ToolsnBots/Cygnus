@@ -239,8 +239,6 @@ class Core extends password {
 			return "fail";
 		}
 	}
-	
-	
 	/** readPage
 	* Liest eine Seite aus
 	* @param $Title - Titel der auszulesenden Seite
@@ -319,7 +317,7 @@ class Core extends password {
 		return  $Answer;
 	}
 	/** getTableOfContents
-	* Gibt das Inhalstverzeichnis einer Seite aus
+	* Gibt das Inhaltsverzeichnis einer Seite aus
 	* @param $Page - Titel der Seite
 	* @author Luke081515
 	* @returns Zwei dimensionales Array
