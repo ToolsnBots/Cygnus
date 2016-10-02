@@ -7,6 +7,7 @@ class Core extends password {
 	protected $site;
 	protected $protocol;
 	protected $job;
+	protected $assert;
 	private $version;
 
 	public function Core () {
@@ -20,8 +21,12 @@ class Core extends password {
 	* @param $Account - Name des angegebenen Accounts in Password.php
 	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
+	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurl ($Account, $Job, $pUseHTTPS = true) {
+	public function initcurl ($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
+		if ($assert !== "bot" && $assert !== "user")
+			exit (1);
+		$this->assert = $assert;
 		$this->start($Account);
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
@@ -43,8 +48,12 @@ class Core extends password {
 	* @Author Luke081515
 	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
+	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurlArgs ($Job, $pUseHTTPS = true) {
+	public function initcurlArgs ($Job, $pUseHTTPS = true, $assert = "bot") {
+		if ($assert !== "bot" && $assert !== "user")
+			exit (1);
+		$this->assert = $assert;
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
 			$this->protocol = 'https'; 
@@ -353,13 +362,13 @@ class Core extends password {
 			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary);
@@ -409,7 +418,7 @@ class Core extends password {
 			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
@@ -417,7 +426,7 @@ class Core extends password {
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
@@ -468,14 +477,14 @@ class Core extends password {
 			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
 				'&text=' . urlencode($Content) .
 				'&token=' . urlencode($token) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&summary=' . urlencode($Summary);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) .
 				'&token=' . urlencode($token) .
 				'&section=' . urlencode($Sectionnumber) .
@@ -527,7 +536,7 @@ class Core extends password {
 			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
@@ -536,7 +545,7 @@ class Core extends password {
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&Title=' . urlencode($Title) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
@@ -580,7 +589,7 @@ class Core extends password {
 		}
 		$answer = unserialize($result);
 		$token = $answer['query']['tokens']['csrftoken'];
-		$data = "action=move&format=php&assert=bot" . "&from=" . urlencode($StartLemma) . "&to=" . urlencode($TargetLemma) . "&reason=" . urlencode($Reason) . "&bot=0" . "&movetalk=&noredirect=&watchlist=nochange&token=" . urlencode($token);
+		$data = 'action=move&format=php&assert=' . $this->assert . '&from=' . urlencode($StartLemma) . '&to=' . urlencode($TargetLemma) . '&reason=' . urlencode($Reason) . '&bot=0' . '&movetalk=&noredirect=&watchlist=nochange&token=' . urlencode($token);
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
