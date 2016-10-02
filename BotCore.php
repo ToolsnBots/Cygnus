@@ -1,5 +1,12 @@
 <?php
 include 'Password.php';
+/** BotCore.php
+* Zentrale Datei des Cygnus-Frameworks
+* Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
+* @author Luke081515, Freddy2001, Hgzh
+* @version V2.0 beta
+* Vielen Dank an alle, die zu diesem Framework beigetragen haben
+*/
 class Core extends password {
 	protected $username;
 	protected $password;
@@ -11,9 +18,10 @@ class Core extends password {
 	protected $mail;
 	protected $mailcontent;
 	private $version;
-	
+	private $UA;
+
 	public function Core () {
-		$this->version = "BotCore V2.0alpha - Luke081515Bot-Framework";
+		$this->version = "Cygnus-Framework V2.0 beta";
 	}
 	/** initcurl
 	* initialisiert curl
@@ -42,12 +50,14 @@ class Core extends password {
 		else
 			$this->curlHandle = $curl;
 		$this->login();
+		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
 	* Ansonsten bitte initcurl benutzen
 	* Erstellt das Verbindungsobjekt und loggt den Bot ein
-	* @Author Luke081515
+	* @author Luke081515
 	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
@@ -67,6 +77,8 @@ class Core extends password {
 			throw new Exception('curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
+		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	public function __construct($Account, $Job, $pUseHTTPS = true) {}
 	public function __destruct() {
@@ -99,10 +111,8 @@ class Core extends password {
 		}
 		if (!$requestURL) 
 			throw new Exception('no arguments for http request found.');
-		$UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
-		echo ("\n***** Starting up....\nUseragent: " . $this->version . "\n*****");
 		// set curl options
-		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $UA);
+		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->UA);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
 		curl_setopt($this->curlHandle, CURLOPT_ENCODING, "UTF-8");
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
@@ -219,7 +229,7 @@ class Core extends password {
 	* @param $Result - Fehlercode der API
 	* @returns fail - Edit fehlgeschlagen, Fehlercode zeigt, das ein erneuter versuch nicht sinnvoll ist
 	* @returns retry - Ein erneuter Versuch kann das Problem beheben
-	* @retuns conflict - Ein Bearbeitungskonflikt ist vorhanden 
+	* @returns conflict - Ein Bearbeitungskonflikt ist vorhanden 
 	*/
 	private function checkResult ($Result) {
 		if ($Result === "maxlag" || $Result === "readonly" || $Result === "unknownerror-nocode" || $Result === "unknownerror" || $Result === "ratelimited") {
@@ -885,7 +895,7 @@ class Core extends password {
 	}
 	/** getSectionTitle
 	* Gibt Titel und Ebene eines Abschnittes zurück
-	* @Author Freddy2001 <freddy2001@wikipedia.de>
+	* @author Freddy2001 <freddy2001@wikipedia.de>
 	* @param title - Titel der Seite
 	* @param section - Abschnitt der Seite
 	* @return Titel und Überschriftenebene als Array
@@ -910,10 +920,9 @@ class Core extends password {
 		$content = substr($content, 0, strpos($content, "="));
 		return ["title" => $content, "level" => $sectionlevel, ];
 	}
-
 	/** AskOperator
 	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
-	* @Author Luke081515
+	* @author Luke081515
 	* @param $Question - zu stellende Frage
 	* @returns Antwort des Ops als String
 	*/
