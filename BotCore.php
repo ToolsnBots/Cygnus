@@ -8,8 +8,10 @@ class Core extends password {
 	protected $protocol;
 	protected $job;
 	protected $assert;
+	protected $mail;
+	protected $mailcontent;
 	private $version;
-
+	
 	public function Core () {
 		$this->version = "BotCore V2.0alpha - Luke081515Bot-Framework";
 	}
@@ -192,11 +194,13 @@ class Core extends password {
 		$LoginHost = unserialize($this->getLoginHost());
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
+		$Mail = unserialize($this->getMail());
 		while (isset ($LoginName [$a]) === true) {
 			if ($LoginName [$a] === $Account) {
 				$this->site = $LoginHost [$a];
 				$this->username = $LoginAccount [$a];
 				$this->password = $LoginPassword [$a];
+				$this->mail = $Mail [$a];
 				$Found = true;
 			}
 			$a++;
@@ -920,6 +924,24 @@ class Core extends password {
 		$handle = fopen ("php://stdin","r");
 		$line = fgets($handle);
 		return trim($line);
+	}
+	/** addMail
+	* Fuegt $Content in eine neue Zeile der Mail ein
+	* @author Luke081515
+	* @param $Content - Inhalt der hinzugegeben wird
+	*/
+	public function addMail ($Content) {
+		$this->mailcontent = $this->mailcontent . "\n" . $Content;
+	}
+	/** sendMail
+	* Sendet die gespeicherte Mail
+	* Leert hinterher den Mail-Buffer
+	* @author Luke081515
+	* @param $Content - Inhalt der hinzugegeben wird
+	*/
+	public function sendMail ($Subject) {
+		mail($this->mail, $Subject, $this->mailcontent);
+		$this->mailcontent = "";
 	}
 }
 ?>
