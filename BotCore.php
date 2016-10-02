@@ -595,9 +595,10 @@ class Core extends password {
 	* @author Luke081515
 	* @param $Kat - Kategorie die analyisiert werden soll.
 	* @param $OnlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
+	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	protected function getCatMembers ($Kat, $OnlySubCats = false)
+	protected function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
 	{
 		$b=0;
 		$SubCat [0] = $Kat;
@@ -621,20 +622,43 @@ class Core extends password {
 		$c=0;
 		if ($OnlySubCats === true)
 			return $SubCat;
-		while (isset ($SubCat [$b]) === true)
-		{
-			try {
-				$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
-			} catch (Exception $e) {
-				throw $e;
-			}
-			$answer = unserialize($result); 
-			$Cont = false;
-			if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-				$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
-				$Cont = true;
-			}
-			while ($Cont === true) {
+		if ($ExcludeWls === false) {	
+			while (isset ($SubCat [$b]) === true)
+			{
+				try {
+					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+				} catch (Exception $e) {
+					throw $e;
+				}
+				$answer = unserialize($result); 
+				$Cont = false;
+				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+					$Cont = true;
+				}
+				while ($Cont === true) {
+					$a=0;
+					if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+						while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+							$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
+							$c++;
+							$a++;
+						}
+					} else  {}
+					try {
+						$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmcontinue=' . $Continue 
+						. '&cmtitle=' . urlencode($SubCat [$b]) 
+						. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					} catch (Exception $e) {
+						throw $e;
+					}
+					$answer = unserialize($result); 
+					if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+						$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+						$Cont = true;
+					} else
+						$Cont = false;
+				}
 				$a=0;
 				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
 					while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
@@ -642,37 +666,60 @@ class Core extends password {
 						$c++;
 						$a++;
 					}
-				} else  {}
+				} else {}
+				$b++;
+			}
+		} else {
+			while (isset ($SubCat [$b]) === true)
+			{
 				try {
-					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmcontinue=' . $Continue 
-					. '&cmtitle=' . urlencode($SubCat [$b]) 
-					. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					$result = $this->httpRequest('action=query&format=php&generator=categorymembers&gcmtitle=' . urlencode($SubCat [$b]) . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				} catch (Exception $e) {
 					throw $e;
 				}
 				$answer = unserialize($result); 
-				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+				$Cont = false;
+				if (isset ($answer ["query-continue"]["categorymembers"]["gcmcontinue"]) === true) {
+					$Continue = $answer ["query-continue"]["categorymembers"]["gcmcontinue"];
 					$Cont = true;
-				} else
-					$Cont = false;
-			}
-			$a=0;
-			if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-				while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
-					$c++;
-					$a++;
 				}
-			} else {}
-			$b++;
+				while ($Cont === true) {
+					$a=0;
+					if (isset ($answer["query"]['pages'][$a]['title']) === true) {
+						while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+							$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+							$c++;
+							$a++;
+						}
+					} else  {}
+					try {
+						$result = $this->httpRequest('action=query&format=php&generator=categorymembers&gcmtitle=' . urlencode($SubCat [$b]) . '&gmcontinue=' . $Continue . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+					} catch (Exception $e) {
+						throw $e;
+					}
+					$answer = unserialize($result); 
+					if (isset ($answer ["query-continue"]["pages"]["gcmcontinue"]) === true) {
+						$Continue = $answer ["query-continue"]["pages"]["gcmcontinue"];
+						$Cont = true;
+					} else
+						$Cont = false;
+				}
+				$a=0;
+				if (isset ($answer["query"]['pages'][$a]['title']) === true) {
+					while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+						$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+						$c++;
+						$a++;
+					}
+				} else {}
+				$b++;
+			}
 		}
 		if (isset ($Site [0]) === false)
-			return false;
+				return false;
 		else
 			return (serialize ($Site));
 	}
-	
 	/** getPageCats
 	* Liest alle Kategorien einer Seite aus
 	* Funktioniert bis zu 500 Kategorien einer Seite
