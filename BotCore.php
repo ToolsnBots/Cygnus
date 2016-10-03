@@ -1,19 +1,42 @@
 <?php
 include 'Password.php';
+/** BotCore.php
+* Zentrale Datei des Cygnus-Frameworks
+* Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
+* @author Luke081515, Freddy2001, Hgzh
+* @version V2.0 beta
+* Vielen Dank an alle, die zu diesem Framework beigetragen haben
+*/
 class Core extends password {
-
 	protected $username;
 	protected $password;
 	protected $curlHandle;
 	protected $site;
 	protected $protocol;
 	protected $job;
+	protected $assert;
+	protected $mail;
+	protected $mailcontent;
+	private $version;
+	private $UA;
 
-	/** constructor
+	public function Core () {
+		$this->version = "Cygnus-Framework V2.0 beta";
+	}
+	/** initcurl
 	* initialisiert curl
+	* Diese Methode sollte im Normallfall aufgerufen werden
+	* Erstellt das Verbindungsobjekt und loggt den Bot ein
 	* @author Hgzh
+	* @param $Account - Name des angegebenen Accounts in Password.php
+	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
+	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
+	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurl ($Account, $Job, $pUseHTTPS = true) {
+	public function initcurl ($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
+		if ($assert !== "bot" && $assert !== "user")
+			exit (1);
+		$this->assert = $assert;
 		$this->start($Account);
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
@@ -27,13 +50,22 @@ class Core extends password {
 		else
 			$this->curlHandle = $curl;
 		$this->login();
+		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
 	* Ansonsten bitte initcurl benutzen
-	* @Author Luke081515
+	* Erstellt das Verbindungsobjekt und loggt den Bot ein
+	* @author Luke081515
+	* @param $Job - Name des Jobs; dient zur Internen Speicherung der Cookies
+	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
+	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurlArgs ($Job, $pUseHTTPS = true) {
+	public function initcurlArgs ($Job, $pUseHTTPS = true, $assert = "bot") {
+		if ($assert !== "bot" && $assert !== "user")
+			exit (1);
+		$this->assert = $assert;
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
 			$this->protocol = 'https'; 
@@ -45,6 +77,8 @@ class Core extends password {
 			throw new Exception('curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
+		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	public function __construct($Account, $Job, $pUseHTTPS = true) {}
 	public function __destruct() {
@@ -52,34 +86,40 @@ class Core extends password {
 	}
 	/** httpRequest
 	* führt http(s) request durch
+	* Wird meistens benutzt um die API anzusteuern
+	* @param $pArguments - API-Parameter die aufgerufen werden sollen (beginnt normalerweise mit action=)
+	* @param $job - Jobname, wird benutzt um die richtigen Cookies etc zu finden. Hier einfach $this->job benutzen.
+	* @param $pMethod - [optional: POST] Methode des Requests. Bei querys sollte stattdessen GET genommen werden
+	* @param $pTarget - [optional: w/api.php] Verwende diesen Parameter, wenn die API deines Wikis einen anderen Einstiegspfad hat. (Special:Version)
 	* @author Hgzh
+	* @returns Antwort der API
 	*/
-	protected function httpRequest($pArguments, $job, $pMethod = 'POST', $pTarget = 'w/api.php') {
+	protected function httpRequest($Arguments, $Job, $Method = 'POST', $Target = 'w/api.php') {
 		$baseURL = $this->protocol . '://' . 
 				   $this->site . '/' . 
-				   $pTarget;
-		$pMethod = strtoupper($pMethod);
-		if ($pArguments != '') {
-			if ($pMethod === 'POST') {
+				   $Target;
+		$Method = strtoupper($Method);
+		if ($Arguments != '') {
+			if ($Method === 'POST') {
 				$requestURL = $baseURL;
-				$postFields = $pArguments;
-			} elseif ($pMethod === 'GET') {
+				$postFields = $Arguments;
+			} elseif ($Method === 'GET') {
 				$requestURL = $baseURL . '?' .
-							  $pArguments;
+							  $Arguments;
 			} else 
 				throw new Exception('unknown http request method.');
 		}
 		if (!$requestURL) 
 			throw new Exception('no arguments for http request found.');
 		// set curl options
-		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, 'Luke081515Bot-Beta');
+		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->UA);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
 		curl_setopt($this->curlHandle, CURLOPT_ENCODING, "UTF-8");
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($this->curlHandle, CURLOPT_COOKIEFILE, realpath('Cookies' . $job . '.tmp'));
-		curl_setopt($this->curlHandle, CURLOPT_COOKIEJAR, realpath('Cookies' . $job . '.tmp'));
+		curl_setopt($this->curlHandle, CURLOPT_COOKIEFILE, realpath('Cookies' . $Job . '.tmp'));
+		curl_setopt($this->curlHandle, CURLOPT_COOKIEJAR, realpath('Cookies' . $Job . '.tmp'));
 		// if posted, add post fields
-		if ($pMethod === 'POST' && $postFields != '') {
+		if ($Method === 'POST' && $postFields != '') {
 			curl_setopt($this->curlHandle, CURLOPT_POST, 1);
 			curl_setopt($this->curlHandle, CURLOPT_POSTFIELDS, $postFields);
 		} else {
@@ -94,6 +134,7 @@ class Core extends password {
 	}
 	/** login
 	* loggt den Benutzer ein
+	* Nicht! verwenden. Diese Methode wird nur von initcurl/initcurlargs genutzt.
 	* @author Hgzh
 	*/
 	public function login() {
@@ -121,6 +162,9 @@ class Core extends password {
 		else
 			throw new Exception('login failed with message ' . $lgResult);
 	}
+	/** logout
+	* Loggt den Benutzer aus
+	*/
 	public function logout() 
 	{
 		try {
@@ -138,103 +182,18 @@ class Core extends password {
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setUsername ($username) {
-		$this->username = $username;
+	public function setUsername ($Username) {
+		$this->username = $Username;
 	}
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setPassword ($password) {
-		$this->password = $password;
-	}
-	/** editPage
-	* Bearbeitet eine Seite
-	* @param: pTitle - Seitenname
-	* @param: pNewText - Neuer Seitentext
-	* @param: pSummary - Zusammenfassung
-	* @param: nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
-	*/	
-	public function editPage($title, $content, $summary, $nocreate = 1) {
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		}  catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&nocreate='.
-				'&text=' . urlencode($content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary);
-		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message: ' . $editres);
-	}
-	public function editPageD($title, $content, $summary, $Botflag, $Minorflag, $nocreate = 1) {
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&nocreate='.  
-				'&text=' . urlencode($content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+	public function setPassword ($Password) {
+		$this->password = $Password;
 	}
 	/** start
 	* Sucht Logindaten aus Password.php, führt anschließend Login durch
+	* Sollte im Normallfall nicht manuel angewendet werden, dies macht bereits initcurl
 	* @author Luke081515
 	*/
 	public function start ($Account) {
@@ -245,11 +204,13 @@ class Core extends password {
 		$LoginHost = unserialize($this->getLoginHost());
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
+		$Mail = unserialize($this->getMail());
 		while (isset ($LoginName [$a]) === true) {
 			if ($LoginName [$a] === $Account) {
 				$this->site = $LoginHost [$a];
 				$this->username = $LoginAccount [$a];
 				$this->password = $LoginPassword [$a];
+				$this->mail = $Mail [$a];
 				$Found = true;
 			}
 			$a++;
@@ -259,12 +220,44 @@ class Core extends password {
 			die(1); // exit with error
 		}
 	}
-	/**
-	* @author: Luke081515
+	/** checkResult
+	* Diese Methode ist fuer interne Verwendung bestimmt
+	* Sie steht daher auf private
+	* Sie wird aufgerufen, falls es einen Fehler gibt
+	* Je nach Fehler werden entsprechende Aktionen eingeleitet
+	* @author Luke081515
+	* @param $Result - Fehlercode der API
+	* @returns fail - Edit fehlgeschlagen, Fehlercode zeigt, das ein erneuter versuch nicht sinnvoll ist
+	* @returns retry - Ein erneuter Versuch kann das Problem beheben
+	* @returns conflict - Ein Bearbeitungskonflikt ist vorhanden 
 	*/
-	public function readPage($title) {
+	private function checkResult ($Result) {
+		if ($Result === "maxlag" || $Result === "readonly" || $Result === "unknownerror-nocode" || $Result === "unknownerror" || $Result === "ratelimited") {
+			echo ("\nEdit fehlgeschlangen. Grund: $Result. Versuche es erneut");
+			return "retry";
+		} else if ($Result === "blocked" || $Result === "confirmemail" || $Result === "autoblocked") {
+			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $Result');
+			die (1);
+		} else if ($Result === "assertuserfailed" || $Result === "assertbotfailed") {
+			$this->login();
+			return "retry";
+		} else if ($Result === "editconflict") {
+			echo ("\nBearbeitungskonflikt festgestellt");
+			return "conflict";
+		} else {
+			echo ('Aktion fehlgeschlagen. Fehlercode: $Result');
+			return "fail";
+		}
+	}
+	/** readPage
+	* Liest eine Seite aus
+	* @param $Title - Titel der auszulesenden Seite
+	* @author: Luke081515
+	* @returns Text der Seite
+	*/
+	public function readPage($Title) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -275,6 +268,12 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
+	/** readPageId
+	* Liest eine Seite aus
+	* @param $PageID - ID der auszulesenden Seite
+	* @author: Luke081515
+	* @returns Text der Seite
+	*/
 	public function readPageID ($PageID) {
 		try {
 			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID), $this->job, 'GET');
@@ -288,12 +287,15 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
     }
-    /**
+    /** readPageJs
+	* Liest eine JavaScript-Seite aus
+	* @param $Title - Titel der auszulesenden Seite
 	* @author: Luke081515
+	* @returns Text der Seite
 	*/
-	public function readPageJs($title) {
+	public function readPageJs($Title) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -304,12 +306,16 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
-	/**
+	/** readSection
+	* Liest einen Abschnitt einer Seite aus
+	* @param $Title - Titel der Auszulesenden Seite
+	* @param $Section Nummer des Abschnitts
 	* @author: Luke081515
+	* @returns Text des Abschnitts
 	*/
-	public function readSection($title, $section) {
+	public function readSection($Title, $Section) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($section) . '&titles=' . urlencode($title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvSection=' . urlencode($Section) . '&Titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -320,10 +326,98 @@ class Core extends password {
 		$Answer = strstr ($Answer, "\";}}}}}}", true);
 		return  $Answer;
 	}
-	/**
-	* @author: Hgzh/Luke081515
+	/** getTableOfContents
+	* Gibt das Inhaltsverzeichnis einer Seite aus
+	* @param $Page - Titel der Seite
+	* @author Luke081515
+	* @returns Zwei dimensionales Array
+	* @returns Erste Dimension: Der entsprechende Abschnitt
+	* @retuns Zweite Dimension: [0] => level; [1] => Titel des Abschnitts; [2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); [3] => Abschnittsnummer, ohne Komma, reiner int;
 	*/
-	public function editSection($title, $content, $summary, $Sectionnumber, $nocreate = 1) {
+	public function getTableOfContents ($Page) {
+		try {
+			$result = $this->httpRequest('action=parse&format=php&maxlag=5&page=' . urlencode ($Page) . '&prop=sections', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$Data = unserialize ($result);
+		$a=0;
+		while (isset ($Data['parse']['sections'][$a]['level']) === true) {
+			$ret [$a] [0] = $Data['parse']['sections'][$a]['level'];
+			$ret [$a] [1] = $Data['parse']['sections'][$a]['line'];
+			$ret [$a] [2] = $Data['parse']['sections'][$a]['number'];
+			$ret [$a] [3] = $Data['parse']['sections'][$a]['index'];
+			$a++;
+		}
+		return $ret;
+	}
+	/** editPage
+	* Bearbeitet eine Seite
+	* @param $title - Seitenname
+	* @param $content - Neuer Seitentext
+	* @param $summary - Zusammenfassung
+	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+		retry:
+		// get csrf token
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		}  catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
+		// perform edit
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
+				'&nocreate='.
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary);
+		} else {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary);
+		}
+		try {
+			$result = $this->httpRequest($request, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree = unserialize($result);
+		$editres = $tree['edit']['result'];
+		// manage result
+		if ($editres == 'Success')
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
+	}
+	/** editPageD
+	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -335,19 +429,21 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
-				'&text=' . urlencode($content) .
-				'&token=' . urlencode($token) .
-				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($summary);
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary) .
+				'&bot=' . urlencode($Botflag) . 
+				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) .
-				'&token=' . urlencode($token) .
-				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($summary);
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
+				'&token=' . urlencode($token) . 
+				'&summary=' . urlencode($Summary) .
+				'&bot=' . urlencode($Botflag) . 
+				'&minor=' . urlencode($Minorflag);
 		}
 		try {
 			$result = $this->httpRequest($request, $this->job);
@@ -358,11 +454,29 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
-	public function editSectionD($title, $content, $summary, $Sectionnumber, $Botflag, $Minorflag, $nocreate = 1) {
+	/** editSection
+	* Bearbeitet einen Abschnitt
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Sectionnumber - Nummer des Abschnitts
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
+		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -374,20 +488,79 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($nocreate === 1) {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
 				'&nocreate='.  
-				'&text=' . urlencode($content) . 
+				'&text=' . urlencode($Content) .
+				'&token=' . urlencode($token) .
+				'&section=' . urlencode($Sectionnumber) .
+				'&summary=' . urlencode($Summary);
+		} else {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) .
+				'&token=' . urlencode($token) .
+				'&section=' . urlencode($Sectionnumber) .
+				'&summary=' . urlencode($Summary);
+		}
+		try {
+			$result = $this->httpRequest($request, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree = unserialize($result);
+		$editres = $tree['edit']['result'];
+		// manage result
+		if ($editres == 'Success')
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
+	}
+	/** editSectionD
+	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $Sectionnumber - Nummer des Abschnitts
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
+	* @author Hgzh / Luke081515
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
+		retry:
+		// get csrf token
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
+		// perform edit
+		if ($NoCreate === 1) {
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
+				'&nocreate='.  
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
-			$request = 'action=edit&assert=bot&format=php&bot=&title=' . urlencode($title) . 
-				'&text=' . urlencode($content) . 
+			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&Title=' . urlencode($Title) . 
+				'&text=' . urlencode($Content) . 
 				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($summary) .
+				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
@@ -401,11 +574,25 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success')
-			return $result;
-		else
-			throw new Exception('page edit failed with message ' . $editres);
+			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		else {
+			$Code = $this-checkResult($editres);
+			if ($Code === "fail")
+				return "fail";
+			else if ($Code === "retry")
+				goto retry;
+			else if ($Code === "conflict")
+				return "conflict";
+		}
 	}
-	public function MovePage ($StartLemma, $TargetLemma, $reason) {
+	/** MovePage
+	* Verschiebt eine Seite
+	* @param $StartLemma - Alter Titel der Seite
+	* @param $TargetLemma - Neuer Titel der Seite
+	* @param $Reason - Grund der Verschiebung, der im Log vermerkt wird
+	* @returns Serialisierte Antwort der API-Parameter
+	*/
+	public function MovePage ($StartLemma, $TargetLemma, $Reason) {
 		$data = "action=query&format=php&meta=tokens&type=csrf";
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -414,7 +601,7 @@ class Core extends password {
 		}
 		$answer = unserialize($result);
 		$token = $answer['query']['tokens']['csrftoken'];
-		$data = "action=move&format=php&assert=bot" . "&from=" . urlencode($StartLemma) . "&to=" . urlencode($TargetLemma) . "&reason=" . urlencode($reason) . "&bot=0" . "&movetalk=&noredirect=&watchlist=nochange&token=" . urlencode($token);
+		$data = 'action=move&format=php&assert=' . $this->assert . '&from=' . urlencode($StartLemma) . '&to=' . urlencode($TargetLemma) . '&reason=' . urlencode($Reason) . '&bot=0' . '&movetalk=&noredirect=&watchlist=nochange&token=' . urlencode($token);
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -422,18 +609,17 @@ class Core extends password {
 		}
 		return ($result);
 	}
-
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
 	* Erfordert Botflag, da Limit auf 5000 gesetzt, (geht zwar sonst auch, aber nur mit Warnung)
-	* @author: Luke081515
-	* @param: Kategorie die analyisiert werden soll.
-	* @return: false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T244
+	* @author Luke081515
+	* @param $Kat - Kategorie die analyisiert werden soll.
+	* @param $OnlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
+	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
+	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	protected function getCatMembers ($Kat, $onlySubCats = false)
+	protected function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
 	{
 		$b=0;
 		$SubCat [0] = $Kat;
@@ -455,22 +641,45 @@ class Core extends password {
 		else {}
 		$b=0;
 		$c=0;
-		if ($onlySubCats === true)
+		if ($OnlySubCats === true)
 			return $SubCat;
-		while (isset ($SubCat [$b]) === true)
-		{
-			try {
-				$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
-			} catch (Exception $e) {
-				throw $e;
-			}
-			$answer = unserialize($result); 
-			$Cont = false;
-			if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-				$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
-				$Cont = true;
-			}
-			while ($Cont === true) {
+		if ($ExcludeWls === false) {	
+			while (isset ($SubCat [$b]) === true)
+			{
+				try {
+					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+				} catch (Exception $e) {
+					throw $e;
+				}
+				$answer = unserialize($result); 
+				$Cont = false;
+				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+					$Cont = true;
+				}
+				while ($Cont === true) {
+					$a=0;
+					if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+						while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+							$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
+							$c++;
+							$a++;
+						}
+					} else  {}
+					try {
+						$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmcontinue=' . $Continue 
+						. '&cmtitle=' . urlencode($SubCat [$b]) 
+						. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					} catch (Exception $e) {
+						throw $e;
+					}
+					$answer = unserialize($result); 
+					if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+						$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+						$Cont = true;
+					} else
+						$Cont = false;
+				}
 				$a=0;
 				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
 					while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
@@ -478,33 +687,57 @@ class Core extends password {
 						$c++;
 						$a++;
 					}
-				} else  {}
+				} else {}
+				$b++;
+			}
+		} else {
+			while (isset ($SubCat [$b]) === true)
+			{
 				try {
-					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmcontinue=' . $Continue 
-					. '&cmtitle=' . urlencode($SubCat [$b]) 
-					. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					$result = $this->httpRequest('action=query&format=php&generator=categorymembers&gcmtitle=' . urlencode($SubCat [$b]) . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				} catch (Exception $e) {
 					throw $e;
 				}
 				$answer = unserialize($result); 
-				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+				$Cont = false;
+				if (isset ($answer ["query-continue"]["categorymembers"]["gcmcontinue"]) === true) {
+					$Continue = $answer ["query-continue"]["categorymembers"]["gcmcontinue"];
 					$Cont = true;
-				} else
-					$Cont = false;
-			}
-			$a=0;
-			if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-				while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
-					$c++;
-					$a++;
 				}
-			} else {}
-			$b++;
+				while ($Cont === true) {
+					$a=0;
+					if (isset ($answer["query"]['pages'][$a]['title']) === true) {
+						while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+							$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+							$c++;
+							$a++;
+						}
+					} else  {}
+					try {
+						$result = $this->httpRequest('action=query&format=php&generator=categorymembers&gcmtitle=' . urlencode($SubCat [$b]) . '&gmcontinue=' . $Continue . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+					} catch (Exception $e) {
+						throw $e;
+					}
+					$answer = unserialize($result); 
+					if (isset ($answer ["query-continue"]["pages"]["gcmcontinue"]) === true) {
+						$Continue = $answer ["query-continue"]["pages"]["gcmcontinue"];
+						$Cont = true;
+					} else
+						$Cont = false;
+				}
+				$a=0;
+				if (isset ($answer["query"]['pages'][$a]['title']) === true) {
+					while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+						$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+						$c++;
+						$a++;
+					}
+				} else {}
+				$b++;
+			}
 		}
 		if (isset ($Site [0]) === false)
-			return false;
+				return false;
 		else
 			return (serialize ($Site));
 	}
@@ -512,10 +745,9 @@ class Core extends password {
 	* Liest alle Kategorien einer Seite aus
 	* Funktioniert bis zu 500 Kategorien einer Seite
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
-	* @author: Luke081515
-	* @param: $Site - Seite die analyisiert werden soll; [$Mode] - Modus der Rückgabe
-	* @return: Alle Kategorien als Liste durch Pipes getrennt
-	* @version: V1.0
+	* @author Luke081515
+	* @param $Site - Seite die analyisiert werden soll
+	* @returns Alle Kategorien als Liste durch Pipes getrennt
 	*/
 	public function GetPageCats ($Site) {
 		try {
@@ -543,11 +775,9 @@ class Core extends password {
 	/** getAllEmbedings
 	* Liest alle Einbindungen einer Vorlage aus
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
-	* @author: Luke081515
-	* @param: Vorlage, deren Einbindungen aufgelistet werden sollen
-	* @return: false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T246
+	* @author Luke081515
+	* @param Vorlage, deren Einbindungen aufgelistet werden sollen
+	* @returns false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
 	public function getAllEmbedings ($Templ) {
 		$b=0;
@@ -584,11 +814,9 @@ class Core extends password {
 	/** getAllPages
 	* Liest alle Seiten eines Namensraumes aus
 	* Erfordert Botflag, da Limit auf 5000 gesetzt (geht zwar sonst auch, aber nur mit Warnung)
-	* @author: Luke081515
-	* @param: Nummer des Namensraumes, von dem die Seiten ausgelesen werden
-	* @return: false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
-	* @version: V2.1
-	* Tasks: T247
+	* @author Luke081515
+	* @param Nummer des Namensraumes, von dem die Seiten ausgelesen werden
+	* @returns false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
 	public function getAllPages ($Namespace) {
 		$b=0;
@@ -624,9 +852,8 @@ class Core extends password {
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
 	* @author: Luke081515
-	* @param: Name der Seite
-	* @return: int: PageID, bool: false falls Seite nicht vorhanden
-	* @version: V1.0
+	* @param $PageName - Name der Seite
+	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
 	public function GetPageID ($PageName) {
 		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($PageName);
@@ -635,7 +862,7 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		if (strstr ($result, "missing") !== false)
+		if (strpos ($result, "missing") !== false)
 			return false;
 		$answer = unserialize($result); 
 		$a=0;
@@ -643,7 +870,6 @@ class Core extends password {
 			$a++;
 		return $a;
 	}
-	
 	/** getLinks
 	* Gibt aus, welche Wikilinks sich auf einer Seite befinden
 	* @author Luke081515
@@ -666,6 +892,63 @@ class Core extends password {
 			$q++;
 		}
 		return $Result;
+	}
+	/** getSectionTitle
+	* Gibt Titel und Ebene eines Abschnittes zurück
+	* @author Freddy2001 <freddy2001@wikipedia.de>
+	* @param title - Titel der Seite
+	* @param section - Abschnitt der Seite
+	* @return Titel und Überschriftenebene als Array
+	*/
+	public function getSectionTitle ($title, $section) {
+		$content = $this->readSection($title, $section);
+		$sectionlevel = 5;
+		while($sectionlevel > 1) {
+			$searchnum = 1;
+			$search = "=";
+			while($searchnum < $sectionlevel) {
+				$search = $search . "=";
+				$searchnum++;
+			}
+			if(strpos(substr($content, strpos($content, "="), 5), $search) === false) {
+				$sectionlevel--;
+			} else {
+				break;
+			}
+		}
+		$content = substr($content, strpos($content, "=") + $sectionlevel);
+		$content = substr($content, 0, strpos($content, "="));
+		return ["title" => $content, "level" => $sectionlevel, ];
+	}
+	/** AskOperator
+	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
+	* @author Luke081515
+	* @param $Question - zu stellende Frage
+	* @returns Antwort des Ops als String
+	*/
+	public function AskOperator ($Question) {
+		echo ($Question);
+		$handle = fopen ("php://stdin","r");
+		$line = fgets($handle);
+		return trim($line);
+	}
+	/** addMail
+	* Fuegt $Content in eine neue Zeile der Mail ein
+	* @author Luke081515
+	* @param $Content - Inhalt der hinzugegeben wird
+	*/
+	public function addMail ($Content) {
+		$this->mailcontent = $this->mailcontent . "\n" . $Content;
+	}
+	/** sendMail
+	* Sendet die gespeicherte Mail
+	* Leert hinterher den Mail-Buffer
+	* @author Luke081515
+	* @param $Content - Inhalt der hinzugegeben wird
+	*/
+	public function sendMail ($Subject) {
+		mail($this->mail, $Subject, $this->mailcontent);
+		$this->mailcontent = "";
 	}
 }
 ?>
