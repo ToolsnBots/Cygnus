@@ -315,7 +315,7 @@ class Core extends password {
 	*/
 	public function readSection($Title, $Section) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvSection=' . urlencode($Section) . '&Titles=' . urlencode($Title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
