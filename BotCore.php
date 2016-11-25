@@ -393,10 +393,15 @@ class Core extends password {
 		$tree = unserialize($result);
 		$editres = $tree['edit']['result'];
 		// manage result
-		if ($editres == 'Success')
-			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		if ($editres == 'Success') {
+			if(array_key_exists('nochange', $tree['edit'])) {
+				return array ("nochange");
+			} else {
+				return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+			}
+		}
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
