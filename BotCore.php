@@ -315,7 +315,7 @@ class Core extends password {
 	*/
 	public function readSection($Title, $Section) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvSection=' . urlencode($Section) . '&Titles=' . urlencode($Title), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -393,10 +393,15 @@ class Core extends password {
 		$tree = unserialize($result);
 		$editres = $tree['edit']['result'];
 		// manage result
-		if ($editres == 'Success')
-			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+		if ($editres == 'Success') {
+			if(array_key_exists('nochange', $tree['edit'])) {
+				return array ("nochange");
+			} else {
+				return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+			}
+		}
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
@@ -456,7 +461,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
@@ -513,7 +518,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
@@ -576,7 +581,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
