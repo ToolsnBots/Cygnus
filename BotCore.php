@@ -461,7 +461,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
@@ -518,7 +518,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
@@ -581,7 +581,7 @@ class Core extends password {
 		if ($editres == 'Success')
 			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 		else {
-			$Code = $this-checkResult($editres);
+			$Code = $this->checkResult($editres);
 			if ($Code === "fail")
 				return "fail";
 			else if ($Code === "retry")
