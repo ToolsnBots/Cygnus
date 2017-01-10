@@ -2,10 +2,11 @@
 include "DBPassword.php";
 class DBCore extends DBPassword {
 	protected $DBusername;
-    protected $DBDBpassword;
+	protected $DBDBpassword;
 	protected $database;
 	protected $DB;
-	public function DBCore ($Accountdata, $Database) {
+
+	public function __construct($Accountdata, $Database) {
 		$a=0;
 		$Found = false;
 		$this->init();
@@ -53,6 +54,9 @@ class DBCore extends DBPassword {
 		}
 		else 
 			return $result;
+	}
+	function __destruct() {
+		$this->DB->close();
 	}
 }
 ?>

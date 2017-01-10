@@ -20,9 +20,6 @@ class Core extends password {
 	private $version;
 	private $UA;
 
-	public function Core () {
-		$this->version = "Cygnus-Framework V2.0 beta";
-	}
 	/** initcurl
 	* initialisiert curl
 	* Diese Methode sollte im Normallfall aufgerufen werden
@@ -34,6 +31,7 @@ class Core extends password {
 	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
 	public function initcurl ($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
+		$this->version = "Cygnus-Framework V2.0 beta";
 		if ($assert !== "bot" && $assert !== "user")
 			exit (1);
 		$this->assert = $assert;
