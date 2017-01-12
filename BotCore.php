@@ -873,8 +873,12 @@ class Core extends password {
 			return false;
 		$answer = unserialize($result); 
 		$a=0;
-		while (isset ($answer ["query"]["pages"][$a]) === false)
-			$a++;
+		try {
+			$arr = $tree ['query']['pages'];
+			$ID = array_keys($arr);
+		} catch (Exception $e) {
+			return false;
+		}
 		return $a;
 	}
 	/** getLinks
