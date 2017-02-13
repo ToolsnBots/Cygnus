@@ -17,7 +17,6 @@ class Core extends password {
 	protected $assert;
 	protected $mail;
 	protected $mailcontent;
-	protected $tokens = [];
 	private $version;
 	private $UA;
 
@@ -131,49 +130,25 @@ class Core extends password {
 			throw new Exception('curl request failed: ' . curl_error($this->curlHandle));
 		return $rqResult;
 	}
-	/** requireToken
-	* prüft, ob das angegebene Token vorhanden ist und fordert falls nötig ein neues an.
-	* @author Hgzh
-	* @param $type - Typ des Tokens (siehe API-Dokumentation), falls leer, wird zuletzt genutzter Typ neu angefordert
-	* @param $forceUpdate - falls true, wird immer neues Token geholt
-	*/
-	public function requireToken($type, $forceUpdate = false) {
-		static $prevType = '';
-		// zuletzt geholten Token-Typ wieder benutzen
-		if ($type === '' && $prevType !== '') {
-			$type = $prevType;
-		}
-		$prevType = $type;
-		if (!isset($this->tokens[$type]) || $this->tokens[$type] == '' || $forceUpdate === true) {
-			// neues Token benötigt
-			try {
-				$result = $this->httpRequest('format=php&action=query&meta=tokens&type=' . $type, $this->job, 'GET');
-			} catch (Exception $e) {
-				throw $e;
-			}
-			$tree  = unserialize($result);
-			$token = $tree['query']['tokens'][$type . 'token'];
-			if ($token === '') {
-				throw new Exception('requireToken: no ' . $type . 'token received.');
-			}
-			$this->tokens[$type] = urlencode($token);
-			return true;
-		} else {
-			// nichts geändert
-			return false;
-		}
-	}
 	/** login
 	* loggt den Benutzer ein
 	* Nicht! verwenden. Diese Methode wird nur von initcurl/initcurlargs genutzt.
 	* @author Hgzh
 	*/
 	public function login() {
-		$this->requireToken('login');
-	
+		// get login token
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=login', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree = unserialize($result);
+		$lgToken = $tree['query']['tokens']['logintoken'];
+		if ($lgToken === '')
+			throw new Exception('could not receive login token.');	
 		// perform login
 		try {
-			$result = $this->httpRequest('action=login&format=php&lgname=' . urlencode($this->username) . '&lgpassword=' . urlencode($this->password) . '&lgtoken=' . $this->tokens['login'], $this->job);
+			$result = $this->httpRequest('action=login&format=php&lgname=' . urlencode($this->username) . '&lgpassword=' . urlencode($this->password) . '&lgtoken=' . urlencode($lgToken), $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -264,10 +239,6 @@ class Core extends password {
 		} else if ($Result === "assertuserfailed" || $Result === "assertbotfailed") {
 			$this->login();
 			return "retry";
-		} elseif ($Result === 'notoken' || $Result === 'badtoken') {
-			echo 'Token-Fehler. Es wird ein neues Token geholt und erneut versucht.';
-			$this->requireToken('', true);
-			return 'retry';
 		} else if ($Result === "editconflict") {
 			echo ("\nBearbeitungskonflikt festgestellt");
 			return "conflict";
@@ -390,19 +361,26 @@ class Core extends password {
 	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
 		retry:
 		// get csrf token
-		$this->requireToken('csrf');
-	
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		}  catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary);
 		} else {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary);
 		}
 		try {
@@ -444,21 +422,28 @@ class Core extends password {
 	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
 		retry:
 		// get csrf token
-    		$this->requireToken('csrf');
-	
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.  
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
 		} else {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
 				'&bot=' . urlencode($Botflag) . 
 				'&minor=' . urlencode($Minorflag);
@@ -496,20 +481,27 @@ class Core extends password {
 	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
 		retry:
 		// get csrf token
-		$this->requireToken('csrf');
-
-  		  // perform edit
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
+		// perform edit
 		if ($NoCreate === 1) {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.
 				'&text=' . urlencode($Content) . 
-       				'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&section=' . urlencode($Sectionnumber) .
 				'&summary=' . urlencode($Summary);
 		} else {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&section=' . urlencode($Sectionnumber) .
 				'&summary=' . urlencode($Summary);
 		}
@@ -552,14 +544,21 @@ class Core extends password {
 	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
 		retry:
 		// get csrf token
-		$this->requireToken('csrf');
-	
+		try {
+			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$tree  = unserialize($result);
+		$token = $tree['query']['tokens']['csrftoken'];
+		if ($token === '')
+			throw new Exception('could not receive csrf token.');
 		// perform edit
 		if ($NoCreate === 1) {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&nocreate='.  
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
@@ -567,7 +566,7 @@ class Core extends password {
 		} else {
 			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
 				'&text=' . urlencode($Content) . 
-        			'&token=' . $this->tokens['csrf'] . 
+				'&token=' . urlencode($token) . 
 				'&summary=' . urlencode($Summary) .
 				'&section=' . urlencode($Sectionnumber) .
 				'&bot=' . urlencode($Botflag) . 
@@ -601,10 +600,15 @@ class Core extends password {
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
 	public function MovePage ($StartLemma, $TargetLemma, $Reason) {
-	
-		$this->requireToken('csrf');
-  
-    		$data = 'action=move&format=php&assert=' . $this->assert . '&from=' . urlencode($StartLemma) . '&to=' . urlencode($TargetLemma) . '&reason=' . urlencode($Reason) . '&bot=0' . '&movetalk=&noredirect=&watchlist=nochange&token=' . $this->tokens['csrf'];
+		$data = "action=query&format=php&meta=tokens&type=csrf";
+		try {
+			$result = $this->httpRequest($data, $this->job, 'GET');
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$answer = unserialize($result);
+		$token = $answer['query']['tokens']['csrftoken'];
+		$data = 'action=move&format=php&assert=' . $this->assert . '&from=' . urlencode($StartLemma) . '&to=' . urlencode($TargetLemma) . '&reason=' . urlencode($Reason) . '&bot=0' . '&movetalk=&noredirect=&watchlist=nochange&token=' . urlencode($token);
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
