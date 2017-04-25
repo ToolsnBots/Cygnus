@@ -668,7 +668,7 @@ class Core extends password {
 					$a=0;
 					if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
 						while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-							$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
+							$Page [$c] = $answer["query"]['categorymembers'][$a]['title'];	
 							$c++;
 							$a++;
 						}
@@ -690,7 +690,7 @@ class Core extends password {
 				$a=0;
 				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
 					while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-						$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
+						$Page [$c] = $answer["query"]['categorymembers'][$a]['title'];	
 						$c++;
 						$a++;
 					}
@@ -715,7 +715,7 @@ class Core extends password {
 					$a=0;
 					if (isset ($answer["query"]['pages'][$a]['title']) === true) {
 						while (isset ($answer["query"]['pages'][$a]['title']) === true) {
-							$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+							$Page [$c] = $answer["query"]['pages'][$a]['title'];	
 							$c++;
 							$a++;
 						}
@@ -735,7 +735,7 @@ class Core extends password {
 				$a=0;
 				if (isset ($answer["query"]['pages'][$a]['title']) === true) {
 					while (isset ($answer["query"]['pages'][$a]['title']) === true) {
-						$Site [$c] = $answer["query"]['pages'][$a]['title'];	
+						$Page [$c] = $answer["query"]['pages'][$a]['title'];	
 						$c++;
 						$a++;
 					}
@@ -743,22 +743,22 @@ class Core extends password {
 				$b++;
 			}
 		}
-		if (isset ($Site [0]) === false)
+		if (isset ($Page [0]) === false)
 				return false;
 		else
-			return (serialize ($Site));
+			return (serialize ($Page));
 	}
 	/** getPageCats
 	* Liest alle Kategorien einer Seite aus
 	* Funktioniert bis zu 500 Kategorien einer Seite
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
 	* @author Luke081515
-	* @param $Site - Seite die analyisiert werden soll
+	* @param $Page - Seite die analyisiert werden soll
 	* @returns Alle Kategorien als Liste durch Pipes getrennt
 	*/
-	public function GetPageCats ($Site) {
+	public function GetPageCats ($Page) {
 		try {
-			$result = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&titles=' . urlencode($Site), $this->job, 'GET');
+			$result = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&titles=' . urlencode($Page), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -809,14 +809,14 @@ class Core extends password {
 				$Again = false;
 			if (isset ($answer["query"]['embeddedin'][$a]['title']) === true) {
 				while (isset ($answer["query"]['embeddedin'][$a]['title']) === true) {
-					$Site [$b] = $answer["query"]['embeddedin'][$a]['title'];
+					$Page [$b] = $answer["query"]['embeddedin'][$a]['title'];
 					$b++;
 					$a++;
 				}
 			} else
 				return false;
 		}
-		return (serialize ($Site));
+		return (serialize ($Page));
 	}
 	/** getAllPages
 	* Liest alle Seiten eines Namensraumes aus
@@ -847,14 +847,14 @@ class Core extends password {
 				$Again = false;
 			if (isset ($answer["query"]['allpages'][$a]['title']) === true) {
 				while (isset ($answer["query"]['allpages'][$a]['title']) === true) {
-					$Site [$b] = $answer["query"]['allpages'][$a]['title'];
+					$Page [$b] = $answer["query"]['allpages'][$a]['title'];
 					$b++;
 					$a++;
 				}
 			} else
 				return false;
 		}
-		return (serialize ($Site));
+		return (serialize ($Page));
 	}
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
@@ -884,11 +884,11 @@ class Core extends password {
 	/** getLinks
 	* Gibt aus, welche Wikilinks sich auf einer Seite befinden
 	* @author Luke081515
-	* @param $Site - Seite die analysiert wird
+	* @param $Page - Seite die analysiert wird
 	* @returns Array mit Ergebnissen
 	*/
-	public function getLinks ($Site) {
-		$data = "action=query&prop=links&format=xml&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&titles=" . urlencode($Site);
+	public function getLinks ($Page) {
+		$data = "action=query&prop=links&format=xml&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&titles=" . urlencode($Page);
 		try {
 			$website = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
