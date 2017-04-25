@@ -44,7 +44,7 @@ class Core extends password {
 		// init curl
 		$curl = curl_init();
 		if ($curl === false)
-			throw new Exception('curl initialization failed.');
+			throw new Exception('Curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
 		$this->login();
@@ -72,7 +72,7 @@ class Core extends password {
 		// init curl
 		$curl = curl_init();
 		if ($curl === false)
-			throw new Exception('curl initialization failed.');
+			throw new Exception('Curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
 		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
@@ -105,10 +105,10 @@ class Core extends password {
 				$requestURL = $baseURL . '?' .
 							  $Arguments;
 			} else 
-				throw new Exception('unknown http request method.');
+				throw new Exception('Unknown http request method.');
 		}
 		if (!$requestURL) 
-			throw new Exception('no arguments for http request found.');
+			throw new Exception('No arguments for http request found.');
 		// set curl options
 		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->UA);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
@@ -127,7 +127,7 @@ class Core extends password {
 		// perform request
 		$rqResult = curl_exec($this->curlHandle);
 		if ($rqResult === false)
-			throw new Exception('curl request failed: ' . curl_error($this->curlHandle));
+			throw new Exception('Curl request failed: ' . curl_error($this->curlHandle));
 		return $rqResult;
 	}
 	/** login
@@ -145,7 +145,7 @@ class Core extends password {
 		$tree = unserialize($result);
 		$lgToken = $tree['query']['tokens']['logintoken'];
 		if ($lgToken === '')
-			throw new Exception('could not receive login token.');	
+			throw new Exception('Could not receive login token.');	
 		// perform login
 		try {
 			$result = $this->httpRequest('action=login&format=php&lgname=' . urlencode($this->username) . '&lgpassword=' . urlencode($this->password) . '&lgtoken=' . urlencode($lgToken), $this->job);
@@ -158,7 +158,7 @@ class Core extends password {
 		if ($lgResult == 'Success')
 			return true;
 		else
-			throw new Exception('login failed with message ' . $lgResult);
+			throw new Exception('Login failed with message ' . $lgResult);
 	}
 	/** logout
 	* Loggt den Benutzer aus
