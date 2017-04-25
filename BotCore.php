@@ -859,11 +859,11 @@ class Core extends password {
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
 	* @author: Luke081515
-	* @param $PageName - Name der Seite
+	* @param $Page - Name der Seite
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
-	public function GetPageID ($PageName) {
-		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($PageName);
+	public function GetPageID ($Page) {
+		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($Page);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
