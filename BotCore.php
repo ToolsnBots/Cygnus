@@ -626,7 +626,7 @@ class Core extends password {
 	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	protected function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
+	public function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
 	{
 		$b=0;
 		$SubCat [0] = $Kat;
