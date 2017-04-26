@@ -592,14 +592,14 @@ class Core extends password {
 				return "conflict";
 		}
 	}
-	/** MovePage
+	/** movePage
 	* Verschiebt eine Seite
 	* @param $StartLemma - Alter Titel der Seite
 	* @param $TargetLemma - Neuer Titel der Seite
 	* @param $Reason - Grund der Verschiebung, der im Log vermerkt wird
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
-	public function MovePage ($StartLemma, $TargetLemma, $Reason) {
+	public function movePage ($StartLemma, $TargetLemma, $Reason) {
 		$data = "action=query&format=php&meta=tokens&type=csrf";
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -756,7 +756,7 @@ class Core extends password {
 	* @param $Page - Seite die analyisiert werden soll
 	* @returns Alle Kategorien als Liste durch Pipes getrennt
 	*/
-	public function GetPageCats ($Page) {
+	public function getPageCats ($Page) {
 		try {
 			$result = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&titles=' . urlencode($Page), $this->job, 'GET');
 		} catch (Exception $e) {
@@ -862,7 +862,7 @@ class Core extends password {
 	* @param $Page - Name der Seite
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
-	public function GetPageID ($Page) {
+	public function getPageID ($Page) {
 		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($Page);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
