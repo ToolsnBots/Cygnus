@@ -36,19 +36,19 @@ class Password
 			'support@example.org',
 		);
 	}
-	protected function getLoginName () {
+	protected function getLoginName() {
 		return serialize ($this->LoginName);
 	}
-	protected function getLoginHost () {
+	protected function getLoginHost() {
 		return serialize ($this->LoginHost);
 	}
-	protected function getLoginAccount () {
+	protected function getLoginAccount() {
 		return serialize ($this->LoginAccount);
 	}
-	protected function getLoginPassword () {
+	protected function getLoginPassword() {
 		return serialize ($this->LoginPassword);	
 	}
-	protected function getMail () {
+	protected function getMail() {
 		return serialize ($this->MailAddress);	
 	}
 }

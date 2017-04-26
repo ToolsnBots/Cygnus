@@ -30,10 +30,10 @@ class Core extends password {
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurl ($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
+	public function initcurl($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
 		$this->version = "Cygnus-Framework V2.0 beta";
 		if ($assert !== "bot" && $assert !== "user")
-			exit (1);
+			exit(1);
 		$this->assert = $assert;
 		$this->start($Account);
 		$this->job = $Job;
@@ -48,7 +48,7 @@ class Core extends password {
 		else
 			$this->curlHandle = $curl;
 		$this->login();
-		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	/** initcurlArgs
@@ -60,9 +60,9 @@ class Core extends password {
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurlArgs ($Job, $pUseHTTPS = true, $assert = "bot") {
+	public function initcurlArgs($Job, $pUseHTTPS = true, $assert = "bot") {
 		if ($assert !== "bot" && $assert !== "user")
-			exit (1);
+			exit(1);
 		$this->assert = $assert;
 		$this->job = $Job;
 		if ($pUseHTTPS === true) 
@@ -75,7 +75,7 @@ class Core extends password {
 			throw new Exception('Curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
-		echo ("\n***** Starting up....\nVersion: " . $this->version . "\n*****");
+		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
 	public function __construct($Account, $Job, $pUseHTTPS = true) {}
@@ -101,7 +101,7 @@ class Core extends password {
 			if ($Method === 'POST') {
 				$requestURL = $baseURL;
 				$postFields = $Arguments;
-			} elseif ($Method === 'GET') {
+			} else if ($Method === 'GET') {
 				$requestURL = $baseURL . '?' .
 							  $Arguments;
 			} else 
@@ -163,8 +163,7 @@ class Core extends password {
 	/** logout
 	* Loggt den Benutzer aus
 	*/
-	public function logout() 
-	{
+	public function logout() {
 		try {
 			$this->httpRequest('action=logout', $this->job);
 		} catch (Exception $e) {
@@ -174,19 +173,19 @@ class Core extends password {
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setSite ($site) {
+	public function setSite($site) {
 		$this->site = $site;
 	}
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setUsername ($Username) {
+	public function setUsername($Username) {
 		$this->username = $Username;
 	}
 	/** DO NOT USE this function
 	* This is for unit-tests only
 	*/
-	public function setPassword ($Password) {
+	public function setPassword($Password) {
 		$this->password = $Password;
 	}
 	/** start
@@ -194,16 +193,16 @@ class Core extends password {
 	* Sollte im Normallfall nicht manuel angewendet werden, dies macht bereits initcurl
 	* @author Luke081515
 	*/
-	public function start ($Account) {
+	public function start($Account) {
 		$a=0;
 		$Found = false;
 		$this->init();
-		$LoginName = unserialize($this->getLoginName ());
+		$LoginName = unserialize($this->getLoginName());
 		$LoginHost = unserialize($this->getLoginHost());
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
-		while (isset ($LoginName [$a]) === true) {
+		while (isset($LoginName [$a]) === true) {
 			if ($LoginName [$a] === $Account) {
 				$this->site = $LoginHost [$a];
 				$this->username = $LoginAccount [$a];
@@ -229,21 +228,21 @@ class Core extends password {
 	* @returns retry - Ein erneuter Versuch kann das Problem beheben
 	* @returns conflict - Ein Bearbeitungskonflikt ist vorhanden 
 	*/
-	private function checkResult ($Result) {
+	private function checkResult($Result) {
 		if ($Result === "maxlag" || $Result === "readonly" || $Result === "unknownerror-nocode" || $Result === "unknownerror" || $Result === "ratelimited") {
-			echo ("\nEdit fehlgeschlangen. Grund: $Result. Versuche es erneut");
+			echo "\nEdit fehlgeschlangen. Grund: $Result. Versuche es erneut";
 			return "retry";
 		} else if ($Result === "blocked" || $Result === "confirmemail" || $Result === "autoblocked") {
 			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $Result');
-			die (1);
+			die(1);
 		} else if ($Result === "assertuserfailed" || $Result === "assertbotfailed") {
 			$this->login();
 			return "retry";
 		} else if ($Result === "editconflict") {
-			echo ("\nBearbeitungskonflikt festgestellt");
+			echo "\nBearbeitungskonflikt festgestellt";
 			return "conflict";
 		} else {
-			echo ('Aktion fehlgeschlagen. Fehlercode: $Result');
+			echo 'Aktion fehlgeschlagen. Fehlercode: $Result';
 			return "fail";
 		}
 	}
@@ -259,12 +258,12 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = strstr ($result, "s:1:\"*\";");
-		$Answer = substr ($Answer, 8);
-		$Answer = strstr ($Answer, "\"");
-		$Answer = substr ($Answer, 1);
-		$Answer = strstr ($Answer, "\";}}}}}}", true);
-		return  $Answer;
+		$Answer = strstr($result, "s:1:\"*\";");
+		$Answer = substr($Answer, 8);
+		$Answer = strstr($Answer, "\"");
+		$Answer = substr($Answer, 1);
+		$Answer = strstr($Answer, "\";}}}}}}", true);
+		return $Answer;
 	}
 	/** readPageId
 	* Liest eine Seite aus
@@ -272,18 +271,18 @@ class Core extends password {
 	* @author Luke081515
 	* @returns Text der Seite
 	*/
-	public function readPageID ($PageID) {
+	public function readPageID($PageID) {
 		try {
 			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = strstr ($result, "s:1:\"*\";");
-		$Answer = substr ($Answer, 8);
-		$Answer = strstr ($Answer, "\"");
-		$Answer = substr ($Answer, 1);
-		$Answer = strstr ($Answer, "\";}}}}}}", true);
-		return  $Answer;
+		$Answer = strstr($result, "s:1:\"*\";");
+		$Answer = substr($Answer, 8);
+		$Answer = strstr($Answer, "\"");
+		$Answer = substr($Answer, 1);
+		$Answer = strstr($Answer, "\";}}}}}}", true);
+		return $Answer;
     }
     /** readPageJs
 	* Liest eine JavaScript-Seite aus
@@ -297,12 +296,12 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = strstr ($result, "s:1:\"*\";");
-		$Answer = substr ($Answer, 8);
-		$Answer = strstr ($Answer, "\"");
-		$Answer = substr ($Answer, 1);
-		$Answer = strstr ($Answer, "\";}}}}}}", true);
-		return  $Answer;
+		$Answer = strstr($result, "s:1:\"*\";");
+		$Answer = substr($Answer, 8);
+		$Answer = strstr($Answer, "\"");
+		$Answer = substr($Answer, 1);
+		$Answer = strstr($Answer, "\";}}}}}}", true);
+		return $Answer;
 	}
 	/** readSection
 	* Liest einen Abschnitt einer Seite aus
@@ -317,12 +316,12 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = strstr ($result, "s:1:\"*\";");
-		$Answer = substr ($Answer, 8);
-		$Answer = strstr ($Answer, "\"");
-		$Answer = substr ($Answer, 1);
-		$Answer = strstr ($Answer, "\";}}}}}}", true);
-		return  $Answer;
+		$Answer = strstr($result, "s:1:\"*\";");
+		$Answer = substr($Answer, 8);
+		$Answer = strstr($Answer, "\"");
+		$Answer = substr($Answer, 1);
+		$Answer = strstr($Answer, "\";}}}}}}", true);
+		return $Answer;
 	}
 	/** getTableOfContents
 	* Gibt das Inhaltsverzeichnis einer Seite aus
@@ -332,15 +331,15 @@ class Core extends password {
 	* @returns Erste Dimension: Der entsprechende Abschnitt
 	* @retuns Zweite Dimension: [0] => level; [1] => Titel des Abschnitts; [2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); [3] => Abschnittsnummer, ohne Komma, reiner int;
 	*/
-	public function getTableOfContents ($Page) {
+	public function getTableOfContents($Page) {
 		try {
-			$result = $this->httpRequest('action=parse&format=php&maxlag=5&page=' . urlencode ($Page) . '&prop=sections', $this->job, 'GET');
+			$result = $this->httpRequest('action=parse&format=php&maxlag=5&page=' . urlencode($Page) . '&prop=sections', $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Data = unserialize ($result);
+		$Data = unserialize($result);
 		$a=0;
-		while (isset ($Data['parse']['sections'][$a]['level']) === true) {
+		while (isset($Data['parse']['sections'][$a]['level']) === true) {
 			$ret [$a] [0] = $Data['parse']['sections'][$a]['level'];
 			$ret [$a] [1] = $Data['parse']['sections'][$a]['line'];
 			$ret [$a] [2] = $Data['parse']['sections'][$a]['number'];
@@ -393,10 +392,10 @@ class Core extends password {
 		$editres = $tree['edit']['result'];
 		// manage result
 		if ($editres == 'Success') {
-			if(array_key_exists('nochange', $tree['edit'])) {
-				return array ("nochange");
+			if (array_key_exists('nochange', $tree['edit'])) {
+				return array("nochange");
 			} else {
-				return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
+				return array($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 			}
 		}
 		else {
@@ -419,7 +418,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
-		if($this->assert == "bot")
+		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
@@ -435,7 +434,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPageMinor($Title, $Content, $Summary, $NoCreate = 1) {
-		if($this->assert == "bot")
+		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
@@ -466,7 +465,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
-		if($this->assert == "bot")
+		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
@@ -485,7 +484,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSectionMinor($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
-		if($this->assert == "bot")
+		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
@@ -517,7 +516,7 @@ class Core extends password {
 	* @param $Reason - Grund der Verschiebung, der im Log vermerkt wird
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
-	public function movePage ($StartLemma, $TargetLemma, $Reason) {
+	public function movePage($StartLemma, $TargetLemma, $Reason) {
 		$data = "action=query&format=php&meta=tokens&type=csrf";
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -544,7 +543,7 @@ class Core extends password {
 	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	public function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
+	public function getCatMembers($Kat, $OnlySubCats = false, $ExcludeWls = false)
 	{
 		$b=0;
 		$SubCat [0] = $Kat;
@@ -674,7 +673,7 @@ class Core extends password {
 	* @param $Page - Seite die analyisiert werden soll
 	* @returns Alle Kategorien als Liste durch Pipes getrennt
 	*/
-	public function getPageCats ($Page) {
+	public function getPageCats($Page) {
 		try {
 			$result = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&titles=' . urlencode($Page), $this->job, 'GET');
 		} catch (Exception $e) {
@@ -704,7 +703,7 @@ class Core extends password {
 	* @param Vorlage, deren Einbindungen aufgelistet werden sollen
 	* @returns false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	public function getAllEmbedings ($Templ) {
+	public function getAllEmbedings($Templ) {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
@@ -743,7 +742,7 @@ class Core extends password {
 	* @param Nummer des Namensraumes, von dem die Seiten ausgelesen werden
 	* @returns false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	public function getAllPages ($Namespace) {
+	public function getAllPages($Namespace) {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
@@ -780,7 +779,7 @@ class Core extends password {
 	* @param $Page - Name der Seite
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
-	public function getPageID ($Page) {
+	public function getPageID($Page) {
 		$data = "action=query&format=php&maxlag=5&prop=info&titles=" . urlencode ($Page);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -805,7 +804,7 @@ class Core extends password {
 	* @param $Page - Seite die analysiert wird
 	* @returns Array mit Ergebnissen
 	*/
-	public function getLinks ($Page) {
+	public function getLinks($Page) {
 		$data = "action=query&prop=links&format=xml&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&titles=" . urlencode($Page);
 		try {
 			$website = $this->httpRequest($data, $this->job, 'GET');
@@ -829,7 +828,7 @@ class Core extends password {
 	* @param section - Abschnitt der Seite
 	* @return Titel und Überschriftenebene als Array
 	*/
-	public function getSectionTitle ($title, $section) {
+	public function getSectionTitle($title, $section) {
 		$content = $this->readSection($title, $section);
 		$sectionlevel = 5;
 		while($sectionlevel > 1) {
@@ -839,7 +838,7 @@ class Core extends password {
 				$search = $search . "=";
 				$searchnum++;
 			}
-			if(strpos(substr($content, strpos($content, "="), 5), $search) === false) {
+			if (strpos(substr($content, strpos($content, "="), 5), $search) === false) {
 				$sectionlevel--;
 			} else {
 				break;
@@ -855,8 +854,8 @@ class Core extends password {
 	* @param $Question - zu stellende Frage
 	* @returns Antwort des Ops als String
 	*/
-	public function AskOperator ($Question) {
-		echo ($Question);
+	public function AskOperator($Question) {
+		echo $Question;
 		$handle = fopen ("php://stdin","r");
 		$line = fgets($handle);
 		return trim($line);
@@ -866,7 +865,7 @@ class Core extends password {
 	* @author Luke081515
 	* @param $Content - Inhalt der hinzugegeben wird
 	*/
-	public function addMail ($Content) {
+	public function addMail($Content) {
 		$this->mailcontent = $this->mailcontent . "\n" . $Content;
 	}
 	/** sendMail
@@ -875,20 +874,18 @@ class Core extends password {
 	* @author Luke081515
 	* @param $Content - Inhalt der hinzugegeben wird
 	*/
-	public function sendMail ($Subject) {
+	public function sendMail($Subject) {
 		mail($this->mail, $Subject, $this->mailcontent);
 		$this->mailcontent = "";
 	}
-	
 	/** curlRequest
 	* Sendet einen Curl-Request an eine beliebige Webseite
 	* @author: Freddy2001 <freddy2001@wikipedia.de>
 	* @param $url - URL der Seite
 	* @param $https - true:benutze https, false: benutze http
 	*/
-
 	protected function curlRequest($url, $https = true) {
-		if($https == true) {
+		if ($https == true) {
 			$protocol = 'https';
 		} else {
 			$protocol = 'http';

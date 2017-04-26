@@ -5,8 +5,8 @@ class DBCore extends DBPassword {
 	protected $DBDBpassword;
 	protected $database;
 	protected $DB;
-
-	function __construct ($Accountdata, $Database) {
+	//TODO Write documentation
+	function __construct($Accountdata, $Database) {
 		$a=0;
 		$Found = false;
 		$this->init();
@@ -14,7 +14,7 @@ class DBCore extends DBPassword {
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginDBpassword = unserialize($this->getLoginDBpassword());
 		$LoginHost = unserialize($this->getLoginHost());
-		while (isset ($LoginName [$a]) === true) {
+		while (isset($LoginName [$a]) === true) {
 			if ($LoginName [$a] === $Accountdata) {
 				$this->DBusername = $LoginAccount [$a];
 				$this->DBpassword = $LoginDBpassword [$a];
@@ -24,8 +24,8 @@ class DBCore extends DBPassword {
 			$a++;
 		}
 		if (!$Found) {
-				throw new Exception('Keine passenden DB-Anmeldeinformationen vorhanden.');
-				die(1); // exit with error
+			throw new Exception('Keine passenden DB-Anmeldeinformationen vorhanden.');
+			die(1); // exit with error
 		}
 		$this->DB = new mysqli($this->LoginHost, $this->DBusername, $this->DBpassword, $Database);
 		if ($this->DB->connect_errno) {
@@ -35,8 +35,7 @@ class DBCore extends DBPassword {
 			die (1);
 		}
 	}
-
-	public function query ($sql, $sensitive = false) {
+	public function query($sql, $sensitive = false) {
 		if(!$result = $this->DB->query($sql)) {
 			if ($sensitive === false)
 				die('There was an error running the query [' . $this->DB->error . ']');
@@ -48,24 +47,20 @@ class DBCore extends DBPassword {
 			return $result;
 		}
 	}
-
 	public function modify ($sql, $sensitive = false) {
-		if(!$result = $this->DB->query($sql)) {
+		if (!$result = $this->DB->query($sql)) {
 			if ($sensitive === false)
 				die('There was an error running the command [' . $this->DB->error . ']');
 			else
 				echo ('\nThere was an error running the command [' . $this->DB->error . ']');
-		}
-		else
+		} else
 			return $result;
 	}
-
 	public function close() {
-			mysqli_close($this->DB);
+		mysqli_close($this->DB);
 	}
-
 	function __destruct() {
-			mysqli_close($this->DB);
+		mysqli_close($this->DB);
 	}
 }
 ?>
