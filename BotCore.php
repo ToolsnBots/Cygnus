@@ -3,7 +3,7 @@ include 'Password.php';
 /** BotCore.php
 * Zentrale Datei des Cygnus-Frameworks
 * Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
-* @author Luke081515, Freddy2001, Hgzh
+* @author Freddy2001 <freddy2001@wikipedia.de>, Hgzh, Luke081515 <luke081515@tools.wmflabs.org>, MGChecker <hgasuser@gmail.com>
 * @version V2.0 beta
 * Vielen Dank an alle, die zu diesem Framework beigetragen haben
 */
@@ -250,7 +250,7 @@ class Core extends password {
 	/** readPage
 	* Liest eine Seite aus
 	* @param $Title - Titel der auszulesenden Seite
-	* @author: Luke081515
+	* @author Luke081515
 	* @returns Text der Seite
 	*/
 	public function readPage($Title) {
@@ -269,7 +269,7 @@ class Core extends password {
 	/** readPageId
 	* Liest eine Seite aus
 	* @param $PageID - ID der auszulesenden Seite
-	* @author: Luke081515
+	* @author Luke081515
 	* @returns Text der Seite
 	*/
 	public function readPageID ($PageID) {
@@ -288,7 +288,7 @@ class Core extends password {
     /** readPageJs
 	* Liest eine JavaScript-Seite aus
 	* @param $Title - Titel der auszulesenden Seite
-	* @author: Luke081515
+	* @author Luke081515
 	* @returns Text der Seite
 	*/
 	public function readPageJs($Title) {
@@ -308,7 +308,7 @@ class Core extends password {
 	* Liest einen Abschnitt einer Seite aus
 	* @param $Title - Titel der Auszulesenden Seite
 	* @param $Section Nummer des Abschnitts
-	* @author: Luke081515
+	* @author Luke081515
 	* @returns Text des Abschnitts
 	*/
 	public function readSection($Title, $Section) {
@@ -349,21 +349,24 @@ class Core extends password {
 		}
 		return $ret;
 	}
-	/** editPage
-	* Bearbeitet eine Seite
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $nocreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
+	/** editPageEngine
+	* Interne Methode, die die eigentliche Bearbeitung durchführt. Stattdessen eine der folgenden 6 Funktionen nutzen.
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
+	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @param $Sectionnumber - Welcher Abschnitt soll bearbeitet werden? (Standard => ganze Seite)
+	* @author Hgzh / Luke081515 / MGChecker
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+	private function editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1, $Sectionnumber = -1) {
 		retry:
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		}  catch (Exception $e) {
+		} catch (Exception $e) {
 			throw $e;
 		}
 		$tree  = unserialize($result);
@@ -371,18 +374,16 @@ class Core extends password {
 		if ($token === '')
 			throw new Exception('could not receive csrf token.');
 		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&nocreate='.
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary);
-		} else {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary);
-		}
+		$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
+			'&text=' . urlencode($Content) . 
+			'&token=' . urlencode($token) . 
+			'&summary=' . urlencode($Summary) .
+			'&bot=' . urlencode($Botflag) . 
+			'&minor=' . urlencode($Minorflag);
+		if ($NoCreate === 1)
+			$request .= '&minor=' . urlencode($Minorflag);
+		if ($Sectionnumber !== -1)
+			$request .= '&section=' . urlencode($Sectionnumber);
 		try {
 			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
@@ -408,65 +409,51 @@ class Core extends password {
 				return "conflict";
 		}
 	}
+	/** editPage
+	* Bearbeitet eine Seite
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author Freddy2001
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+		if($this->assert == "bot")
+			$Botflag = true;
+		else
+			$Botflag = false;
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate);
+	}
+	/** editPageMinor
+	* Bearbeitet eine Seite als kleine Bearbeitung
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author Freddy2001
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editPageMinor($Title, $Content, $Summary, $NoCreate = 1) {
+		if($this->assert == "bot")
+			$Botflag = true;
+		else
+			$Botflag = false;
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate);
+	}
 	/** editPageD
-	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
+	* Bearbeitet eine Seite
 	* @param $Title - Seitenname
 	* @param $Content - Neuer Seitentext
 	* @param $Summary - Zusammenfassung
 	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
-	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author MGChecker
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
-		retry:
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&nocreate='.  
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		} else {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else {
-			$Code = $this->checkResult($editres);
-			if ($Code === "fail")
-				return "fail";
-			else if ($Code === "retry")
-				goto retry;
-			else if ($Code === "conflict")
-				return "conflict";
-		}
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate);
 	}
 	/** editSection
 	* Bearbeitet einen Abschnitt
@@ -474,60 +461,37 @@ class Core extends password {
 	* @param $Content - Neuer Seitentext
 	* @param $Summary - Zusammenfassung
 	* @param $Sectionnumber - Nummer des Abschnitts
-	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author Freddy2001 / MGChecker
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
-		retry:
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&nocreate='.
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($Summary);
-		} else {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&section=' . urlencode($Sectionnumber) .
-				'&summary=' . urlencode($Summary);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success') {
-			if(array_key_exists('nochange', $tree['edit'])) {
-				return array ("nochange"); 
-			} else {
-				return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-			}
-		} else {
-			$Code = $this->checkResult($editres);
-			if ($Code === "fail")
-				return "fail";
-			else if ($Code === "retry")
-				goto retry;
-			else if ($Code === "conflict")
-				return "conflict";
-		}
+		if($this->assert == "bot")
+			$Botflag = true;
+		else
+			$Botflag = false;
+		if ($Sectionnumber < 0)
+			throw new Exception('You selected a invalid section number. To edit a whole page, use editPage().');
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate, $Sectionnumber);
+	}
+	/** editSectionMinor
+	* Bearbeitet einen Abschnitt
+	* @param $Title - Seitenname
+	* @param $Content - Neuer Seitentext
+	* @param $Summary - Zusammenfassung
+	* @param $Sectionnumber - Nummer des Abschnitts
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author Freddy2001 / MGChecker
+	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	*/
+	public function editSectionMinor($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
+		if($this->assert == "bot")
+			$Botflag = true;
+		else
+			$Botflag = false;
+		if ($Sectionnumber < 0)
+			throw new Exception('You selected a invalid section number. To edit a whole page, use editPageMinor().');
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate, $Sectionnumber);
 	}
 	/** editSectionD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
@@ -537,60 +501,14 @@ class Core extends password {
 	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
 	* @param $Sectionnumber - Nummer des Abschnitts
-	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standart => nein)
-	* @author Hgzh / Luke081515
+	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
+	* @author MGChecker
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
-		retry:
-		// get csrf token
-		try {
-			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree  = unserialize($result);
-		$token = $tree['query']['tokens']['csrftoken'];
-		if ($token === '')
-			throw new Exception('could not receive csrf token.');
-		// perform edit
-		if ($NoCreate === 1) {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&nocreate='.  
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&section=' . urlencode($Sectionnumber) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		} else {
-			$request = 'action=edit&assert=' . $this->assert . '&format=php&bot=&title=' . urlencode($Title) . 
-				'&text=' . urlencode($Content) . 
-				'&token=' . urlencode($token) . 
-				'&summary=' . urlencode($Summary) .
-				'&section=' . urlencode($Sectionnumber) .
-				'&bot=' . urlencode($Botflag) . 
-				'&minor=' . urlencode($Minorflag);
-		}
-		try {
-			$result = $this->httpRequest($request, $this->job);
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$tree = unserialize($result);
-		$editres = $tree['edit']['result'];
-		// manage result
-		if ($editres == 'Success')
-			return array ($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
-		else {
-			$Code = $this->checkResult($editres);
-			if ($Code === "fail")
-				return "fail";
-			else if ($Code === "retry")
-				goto retry;
-			else if ($Code === "conflict")
-				return "conflict";
-		}
+		if ($Sectionnumber < 0)
+			throw new Exception('You selected a invalid section number. To edit a whole page, use editPageD().');
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag,  $Minorflag, $NoCreate, $Sectionnumber);
 	}
 	/** movePage
 	* Verschiebt eine Seite
@@ -858,7 +776,7 @@ class Core extends password {
 	}
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
-	* @author: Luke081515
+	* @author Luke081515
 	* @param $Page - Name der Seite
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
@@ -906,7 +824,7 @@ class Core extends password {
 	}
 	/** getSectionTitle
 	* Gibt Titel und Ebene eines Abschnittes zurück
-	* @author Freddy2001 <freddy2001@wikipedia.de>
+	* @author Freddy2001
 	* @param title - Titel der Seite
 	* @param section - Abschnitt der Seite
 	* @return Titel und Überschriftenebene als Array
