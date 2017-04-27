@@ -879,5 +879,43 @@ class Core extends password {
 		mail($this->mail, $Subject, $this->mailcontent);
 		$this->mailcontent = "";
 	}
+	
+	/** curlRequest
+	* Sendet einen Curl-Request an eine beliebige Webseite
+	* @author: Freddy2001 <freddy2001@wikipedia.de>
+	* @param $url - URL der Seite
+	* @param $https - true:benutze https, false: benutze http
+	*/
+
+	protected function curlRequest($url, $https = true) {
+		if($https == true) {
+			$protocol = 'https';
+		} else {
+			$protocol = 'http';
+		}		
+		$baseURL = $protocol . '://' . 
+				   $url;
+		$Job = $baseURL;
+
+		$curl = curl_init();
+
+		if (!$baseURL) 
+			throw new Exception('no arguments for http request found.');
+		// set curl options
+		curl_setopt($curl, CURLOPT_USERAGENT, "Cygnus");
+		curl_setopt($curl, CURLOPT_URL, $baseURL);
+		curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_COOKIEFILE, realpath('Cookies' . $Job . '.tmp'));
+		curl_setopt($curl, CURLOPT_COOKIEJAR, realpath('Cookies' . $Job . '.tmp'));
+		curl_setopt($curl, CURLOPT_POST, 0);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, '');
+
+		// perform request
+		$rqResult = curl_exec($curl);
+		if ($rqResult === false)
+			throw new Exception('curl request failed: ' . curl_error($curl));
+		return $rqResult;
+	}
 }
 ?>
