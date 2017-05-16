@@ -4,7 +4,7 @@ include 'Password.php';
 * Zentrale Datei des Cygnus-Frameworks
 * Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
 * @author Freddy2001 <freddy2001@wikipedia.de>, Hgzh, Luke081515 <luke081515@tools.wmflabs.org>, MGChecker <hgasuser@gmail.com>
-* @version V2.0 beta
+* @version V2.1 alpha
 * Vielen Dank an alle, die zu diesem Framework beigetragen haben
 */
 class Core extends password {
@@ -31,7 +31,7 @@ class Core extends password {
 	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
 	public function initcurl($Account, $Job, $pUseHTTPS = true, $assert = "bot") {
-		$this->version = "Cygnus-Framework V2.0 beta";
+		$this->version = "Cygnus-Framework V2.1 alpha";
 		if ($assert !== "bot" && $assert !== "user")
 			exit(1);
 		$this->assert = $assert;
@@ -190,7 +190,7 @@ class Core extends password {
 	}
 	/** start
 	* Sucht Logindaten aus Password.php, führt anschließend Login durch
-	* Sollte im Normallfall nicht manuel angewendet werden, dies macht bereits initcurl
+	* Sollte im Normalfall nicht manuell angewendet werden, dies macht bereits initcurl
 	* @author Luke081515
 	*/
 	public function start($Account) {
@@ -246,15 +246,15 @@ class Core extends password {
 			return "fail";
 		}
 	}
-	/** readPage
-	* Liest eine Seite aus
-	* @param $Title - Titel der auszulesenden Seite
+	/** readPageEngine
+	* Interne Methode, um die Ergebnisse einer Anfrage zum Auslesen einer Seite zu bearbeiten
+	* @param $Request – Die API-Abfrage, die den Seiteninhalt ausgibt
 	* @author Luke081515
 	* @returns Text der Seite
 	*/
-	public function readPage($Title) {
+	private function readPageEngine($Request) {
 		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
+			$result = $this->httpRequest($Request, $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -265,63 +265,56 @@ class Core extends password {
 		$Answer = strstr($Answer, "\";}}}}}}", true);
 		return $Answer;
 	}
+	/** readPage
+	* Liest eine Seite aus
+	* @param $Title - Titel der auszulesenden Seite
+	* @author MGChecker
+	* @returns Text der Seite
+	*/
+	public function readPage($Title) {
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		return $this->readPageEngine($Request);
+	}
 	/** readPageId
 	* Liest eine Seite aus
 	* @param $PageID - ID der auszulesenden Seite
-	* @author Luke081515
+	* @author MGChecker
 	* @returns Text der Seite
 	*/
 	public function readPageID($PageID) {
-		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID), $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$Answer = strstr($result, "s:1:\"*\";");
-		$Answer = substr($Answer, 8);
-		$Answer = strstr($Answer, "\"");
-		$Answer = substr($Answer, 1);
-		$Answer = strstr($Answer, "\";}}}}}}", true);
-		return $Answer;
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID);
+		return $this->readPageEngine($Request);
     }
     /** readPageJs
 	* Liest eine JavaScript-Seite aus
 	* @param $Title - Titel der auszulesenden Seite
-	* @author Luke081515
+	* @author MGChecker
 	* @returns Text der Seite
 	*/
 	public function readPageJs($Title) {
-		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($Title), $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$Answer = strstr($result, "s:1:\"*\";");
-		$Answer = substr($Answer, 8);
-		$Answer = strstr($Answer, "\"");
-		$Answer = substr($Answer, 1);
-		$Answer = strstr($Answer, "\";}}}}}}", true);
-		return $Answer;
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		return $this->readPageEngine($Request);
+	}
+	/** readPageCss
+	* Liest eine CSS-Seite aus
+	* @param $Title - Titel der auszulesenden Seite
+	* @author MGChecker
+	* @returns Text der Seite
+	*/
+	public function readPageCss($Title) {
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		return $this->readPageEngine($Request);
 	}
 	/** readSection
 	* Liest einen Abschnitt einer Seite aus
 	* @param $Title - Titel der Auszulesenden Seite
 	* @param $Section Nummer des Abschnitts
-	* @author Luke081515
+	* @author MGChecker
 	* @returns Text des Abschnitts
 	*/
 	public function readSection($Title, $Section) {
-		try {
-			$result = $this->httpRequest('action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title), $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$Answer = strstr($result, "s:1:\"*\";");
-		$Answer = substr($Answer, 8);
-		$Answer = strstr($Answer, "\"");
-		$Answer = substr($Answer, 1);
-		$Answer = strstr($Answer, "\";}}}}}}", true);
-		return $Answer;
+		return $this->readPageEngine($Request);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title);
 	}
 	/** getTableOfContents
 	* Gibt das Inhaltsverzeichnis einer Seite aus
@@ -543,8 +536,7 @@ class Core extends password {
 	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	public function getCatMembers($Kat, $OnlySubCats = false, $ExcludeWls = false)
-	{
+	public function getCatMembers($Kat, $OnlySubCats = false, $ExcludeWls = false) {
 		$b=0;
 		$SubCat [0] = $Kat;
 		try {
