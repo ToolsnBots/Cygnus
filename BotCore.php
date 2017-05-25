@@ -4,7 +4,7 @@ include 'Password.php';
 * Zentrale Datei des Cygnus-Frameworks
 * Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
 * @author Luke081515, Freddy2001, Hgzh
-* @version V2.0 beta
+* @version V2.0
 * Vielen Dank an alle, die zu diesem Framework beigetragen haben
 */
 class Core extends password {
@@ -21,7 +21,7 @@ class Core extends password {
 	private $UA;
 
 	public function Core () {
-		$this->version = "Cygnus-Framework V2.0 beta";
+		$this->version = "Cygnus-Framework V2.0";
 	}
 	/** initcurl
 	* initialisiert curl
