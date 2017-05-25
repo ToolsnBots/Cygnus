@@ -687,7 +687,6 @@ class Core extends password {
 		}
 		return $Ret;
 	}
-
 	/** getAllEmbedings
 	* Liest alle Einbindungen einer Vorlage aus
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
@@ -840,13 +839,13 @@ class Core extends password {
 		$content = substr($content, 0, strpos($content, "="));
 		return ["title" => $content, "level" => $sectionlevel, ];
 	}
-	/** AskOperator
+	/** askOperator
 	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
 	* @author Luke081515
 	* @param $Question - zu stellende Frage
 	* @returns Antwort des Ops als String
 	*/
-	public function AskOperator($Question) {
+	public function askOperator($Question) {
 		echo $Question;
 		$handle = fopen ("php://stdin","r");
 		$line = fgets($handle);
