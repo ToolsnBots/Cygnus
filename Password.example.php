@@ -1,9 +1,8 @@
 <?php
-class Password
-{
-	/** Dies ist eine Example-Datei
-	* Damit das Programm funktioniert, muessen die Daten angepasst werden!
-	* chmod 0600 nicht vergessen!
+class Password {
+	/** This is just an example!
+	* For running any Job properly, the data needs to be adapted!
+	* Do not forget chmod 0600!
 	*/
 	private $LoginName;
 	private $LoginHost;
@@ -14,24 +13,24 @@ class Password
 	public function Password() {}
 
 	protected function init() {
-		$this->LoginName = array( // Empfohlen: Username@wiki
+		$this->LoginName = array( // Recommended: Username@wiki
 			'User@dewiki',
 			'Bot@dewikisource',
 		);
-		# Bitte beachten, Accounts müssen in der selben Reihenfolge genannt werden, wie bei LoginName! #
-		$this->LoginHost = array( // Internetdomain
+		// Please note, that the following settings need to be made in the same order as LoginName!
+		$this->LoginHost = array( // Domain of the Wiki
 			'de.wikipedia.org',
 			'de.wikisource.org',
 		);
-		$this->LoginAccount = array( // Name das Accounts
+		$this->LoginAccount = array( // Name of the account
 			'User',
 			'Bot',
 		);
-		$this->LoginPassword = array( // Passwort des Accounts
+		$this->LoginPassword = array( // Password of the account
 			'Userpassword',
 			'Botpassword',
 		);
-		$this->MailAddress = array( // Mailadresse an die Daten gesendet werden koennen
+		$this->MailAddress = array( // The script sends triggered mails to this address
 			'hello@example.org',
 			'support@example.org',
 		);
