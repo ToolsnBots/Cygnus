@@ -350,11 +350,16 @@ class Core extends password {
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
 	* @param $Sectionnumber - Welcher Abschnitt soll bearbeitet werden? (Standard => ganze Seite)
+	* @param $OverrideNobots - Soll die NoBots Vorlage ignoriert werden?
 	* @author Hgzh / Luke081515 / MGChecker
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	private function editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1, $Sectionnumber = -1) {
+	private function editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1, $Sectionnumber = -1, $OverrideNobots = false) {
 		retry:
+		if ($OverrideNobots !== true) {
+			if ($this->allowBots($this->readPage($Title)) === false)
+				return "nobots";
+		}
 		// get csrf token
 		try {
 			$result = $this->httpRequest('action=query&format=php&meta=tokens&type=csrf', $this->job, 'GET');
@@ -407,15 +412,16 @@ class Core extends password {
 	* @param $Content - Neuer Seitentext
 	* @param $Summary - Zusammenfassung
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author Freddy2001
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author Freddy2001 / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPage($Title, $Content, $Summary, $NoCreate = 1) {
+	public function editPage($Title, $Content, $Summary, $NoCreate = 1, $OverrideNobots = false) {
 		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate);
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate, -1, $OverrideNobots);
 	}
 	/** editPageMinor
 	* Bearbeitet eine Seite als kleine Bearbeitung
@@ -423,15 +429,16 @@ class Core extends password {
 	* @param $Content - Neuer Seitentext
 	* @param $Summary - Zusammenfassung
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author Freddy2001
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author Freddy2001 / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPageMinor($Title, $Content, $Summary, $NoCreate = 1) {
+	public function editPageMinor($Title, $Content, $Summary, $NoCreate = 1, $OverrideNobots = false) {
 		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate);
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate, -1, $OverrideNobots);
 	}
 	/** editPageD
 	* Bearbeitet eine Seite
@@ -441,11 +448,12 @@ class Core extends password {
 	* @param $Botflag - Falls true wird der Edit mit Botflag markiert
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author MGChecker
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author MGChecker / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1) {
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate);
+	public function editPageD($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate = 1, $OverrideNobots = false) {
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, $Minorflag, $NoCreate, -1, $OverrideNobots);
 	}
 	/** editSection
 	* Bearbeitet einen Abschnitt
@@ -454,17 +462,18 @@ class Core extends password {
 	* @param $Summary - Zusammenfassung
 	* @param $Sectionnumber - Nummer des Abschnitts
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author Freddy2001 / MGChecker
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author Freddy2001 / MGChecker / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
+	public function editSection($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1, $OverrideNobots = false) {
 		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
 		if ($Sectionnumber < 0)
 			throw new Exception('You selected a invalid section number. To edit a whole page, use editPage().');
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate, $Sectionnumber);
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, false, $NoCreate, $Sectionnumber, $OverrideNobots);
 	}
 	/** editSectionMinor
 	* Bearbeitet einen Abschnitt
@@ -473,17 +482,18 @@ class Core extends password {
 	* @param $Summary - Zusammenfassung
 	* @param $Sectionnumber - Nummer des Abschnitts
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author Freddy2001 / MGChecker
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author Freddy2001 / MGChecker / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editSectionMinor($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1) {
+	public function editSectionMinor($Title, $Content, $Summary, $Sectionnumber, $NoCreate = 1, $OverrideNobots = false) {
 		if ($this->assert == "bot")
 			$Botflag = true;
 		else
 			$Botflag = false;
 		if ($Sectionnumber < 0)
 			throw new Exception('You selected a invalid section number. To edit a whole page, use editPageMinor().');
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate, $Sectionnumber);
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag, true, $NoCreate, $Sectionnumber, $OverrideNobots);
 	}
 	/** editSectionD
 	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
@@ -494,13 +504,14 @@ class Core extends password {
 	* @param $MinorFlag - Falls true wird der Edit als Klein markiert
 	* @param $Sectionnumber - Nummer des Abschnitts
 	* @param $NoCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @author MGChecker
+	* @param $OverrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* @author MGChecker / Luke081515
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
-	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1) {
+	public function editSectionD($Title, $Content, $Summary, $Sectionnumber, $Botflag, $Minorflag, $NoCreate = 1, $OverrideNobots = false) {
 		if ($Sectionnumber < 0)
 			throw new Exception('You selected a invalid section number. To edit a whole page, use editPageD().');
-		return $this->editPageEngine($Title, $Content, $Summary, $Botflag,  $Minorflag, $NoCreate, $Sectionnumber);
+		return $this->editPageEngine($Title, $Content, $Summary, $Botflag,  $Minorflag, $NoCreate, $Sectionnumber, $OverrideNobots);
 	}
 	/** movePage
 	* Verschiebt eine Seite
@@ -903,6 +914,21 @@ class Core extends password {
 		if ($rqResult === false)
 			throw new Exception('curl request failed: ' . curl_error($curl));
 		return $rqResult;
+	}
+	/** allowBots
+	* checks if bots are not allowed, via Template {{nobots}}
+	* adapted from https://en.wikipedia.org/wiki/Template:Bots#PHP
+	* @param $text - Content to check
+	* @returns false if bot is not allowed, otherwise true
+	*/
+	private function allowBots ($text) {
+		if (preg_match('/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?'.preg_quote($this->username,'/').'.*?)\}\}/iS',$text))
+			return false;
+		if (preg_match('/\{\{(bots\|allow=all|bots\|allow=.*?'.preg_quote($this->username,'/').'.*?)\}\}/iS', $text))
+			return true;
+		if (preg_match('/\{\{(bots\|allow=.*?)\}\}/iS', $text))
+			return false;
+		return true;
 	}
 }
 ?>
