@@ -1,6 +1,6 @@
 {
   "phabricator.uri" : "https://rcm-2.wmflabs.org",
-  "repository.callsign" : "LBC",
+  "repository.callsign" : "CYG",
   "history.immutable" : false,
   "unit.engine": "NoseTestEngine"
 }
