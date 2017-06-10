@@ -10,9 +10,9 @@ class Password
 	private $LoginAccount;
 	private $LoginPassword;
 	private $MailAddress;
-	
+
 	public function Password() {}
-	
+
 	protected function init() {
 		$this->LoginName = array( // Empfohlen: Username@wiki
 			'User@dewiki',
@@ -46,10 +46,10 @@ class Password
 		return serialize ($this->LoginAccount);
 	}
 	protected function getLoginPassword() {
-		return serialize ($this->LoginPassword);	
+		return serialize ($this->LoginPassword);
 	}
 	protected function getMail() {
-		return serialize ($this->MailAddress);	
+		return serialize ($this->MailAddress);
 	}
 }
 ?>
