@@ -669,30 +669,24 @@ class Core extends password {
 	* Funktioniert bis zu 500 Kategorien einer Seite
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
 	* @author Luke081515
-	* @param $Page - Seite die analyisiert werden soll
-	* @returns Alle Kategorien als Liste durch Pipes getrennt
+	* @param $page - Seite die analyisiert werden soll
+	* @returns Alle Kategorien als Array, false falls keine Kategorien vorhanden
 	*/
-	public function getPageCats($Page) {
+	public function getPageCats($page) {
 		try {
-			$result = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&titles=' . urlencode($Page), $this->job, 'GET');
+			$cats = $this->httpRequest('action=query&prop=categories&format=php&cllimit=5000&cldir=ascending&rawcontinue=&indexpageids=1&titles=' . urlencode($Page), $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Result = explode ("\"", $result);
-		$a=19;
-		$b=0;
-		while (isset ($Result [$a])) {
-			$Kats [$b] = $Result [$a];
-			$a = $a +  6;
-			$b++;
+		$pageID = $cats ["query"]["pageids"][0];
+		$a=0;
+		while (isset ($cats ["query"]["pages"][$pageID]["categories"][$a])) {
+			$catResults [$a] = $cats ["query"]["pages"][$pageID]["categories"][$a];
+			$a++;
 		}
-		$b=1;
-		$Ret = $Kats [0];
-		while (isset ($Kats [$b])) {
-			$Ret = $Ret . "|" . $Kats [$b];
-			$b++;
-		}
-		return $Ret;
+		if (!isset ($catResults [0]))
+			return false;
+		return (serialize ($catResults));
 	}
 	/** getAllEmbedings
 	* Liest alle Einbindungen einer Vorlage aus
