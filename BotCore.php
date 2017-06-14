@@ -202,7 +202,7 @@ class Core extends password {
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
-		while (isset($LoginName [$a]) === true) {
+		while (isset ($LoginName [$a])) {
 			if ($LoginName [$a] === $Account) {
 				$this->site = $LoginHost [$a];
 				$this->username = $LoginAccount [$a];
@@ -332,7 +332,7 @@ class Core extends password {
 		}
 		$Data = unserialize($result);
 		$a=0;
-		while (isset($Data['parse']['sections'][$a]['level']) === true) {
+		while (isset ($Data['parse']['sections'][$a]['level'])) {
 			$ret [$a] [0] = $Data['parse']['sections'][$a]['level'];
 			$ret [$a] [1] = $Data['parse']['sections'][$a]['line'];
 			$ret [$a] [2] = $Data['parse']['sections'][$a]['number'];
@@ -546,9 +546,9 @@ class Core extends password {
 		}
 		$answer = unserialize($result); 
 		$a=0;
-		if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+		if (isset ($answer["query"]['categorymembers'][$a]['title'])) {
 			$Sub = true;
-			while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+			while (isset ($answer["query"]['categorymembers'][$a]['title'])) {
 				$SubCat [$b] = $answer["query"]['categorymembers'][$a]['title'];	
 				$b++;
 				$a++;
@@ -560,7 +560,7 @@ class Core extends password {
 		if ($OnlySubCats === true)
 			return $SubCat;
 		if ($ExcludeWls === false) {	
-			while (isset ($SubCat [$b]) === true)
+			while (isset ($SubCat [$b]))
 			{
 				try {
 					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
@@ -569,14 +569,14 @@ class Core extends password {
 				}
 				$answer = unserialize($result); 
 				$Cont = false;
-				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"])) {
 					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
 					$Cont = true;
 				}
 				while ($Cont === true) {
 					$a=0;
-					if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-						while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+					if (isset ($answer["query"]['categorymembers'][$a]['title'])) {
+						while (isset ($answer["query"]['categorymembers'][$a]['title'])) {
 							$Page [$c] = $answer["query"]['categorymembers'][$a]['title'];	
 							$c++;
 							$a++;
@@ -590,7 +590,7 @@ class Core extends password {
 						throw $e;
 					}
 					$answer = unserialize($result); 
-					if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
+					if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"])) {
 						$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
 						$Cont = true;
 					} else
@@ -598,7 +598,7 @@ class Core extends password {
 				}
 				$a=0;
 				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+					while (isset ($answer["query"]['categorymembers'][$a]['title'])) {
 						$Page [$c] = $answer["query"]['categorymembers'][$a]['title'];	
 						$c++;
 						$a++;
@@ -607,8 +607,7 @@ class Core extends password {
 				$b++;
 			}
 		} else {
-			while (isset ($SubCat [$b]) === true)
-			{
+			while (isset ($SubCat [$b])) {
 				try {
 					$result = $this->httpRequest('action=query&format=php&generator=categorymembers&gcmtitle=' . urlencode($SubCat [$b]) . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				} catch (Exception $e) {
@@ -616,14 +615,14 @@ class Core extends password {
 				}
 				$answer = unserialize($result); 
 				$Cont = false;
-				if (isset ($answer ["query-continue"]["categorymembers"]["gcmcontinue"]) === true) {
+				if (isset ($answer ["query-continue"]["categorymembers"]["gcmcontinue"])) {
 					$Continue = $answer ["query-continue"]["categorymembers"]["gcmcontinue"];
 					$Cont = true;
 				}
 				while ($Cont === true) {
 					$a=0;
-					if (isset ($answer["query"]['pages'][$a]['title']) === true) {
-						while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+					if (isset ($answer["query"]['pages'][$a]['title'])) {
+						while (isset ($answer["query"]['pages'][$a]['title'])) {
 							$Page [$c] = $answer["query"]['pages'][$a]['title'];	
 							$c++;
 							$a++;
@@ -635,15 +634,15 @@ class Core extends password {
 						throw $e;
 					}
 					$answer = unserialize($result); 
-					if (isset ($answer ["query-continue"]["pages"]["gcmcontinue"]) === true) {
+					if (isset ($answer ["query-continue"]["pages"]["gcmcontinue"])) {
 						$Continue = $answer ["query-continue"]["pages"]["gcmcontinue"];
 						$Cont = true;
 					} else
 						$Cont = false;
 				}
 				$a=0;
-				if (isset ($answer["query"]['pages'][$a]['title']) === true) {
-					while (isset ($answer["query"]['pages'][$a]['title']) === true) {
+				if (isset ($answer["query"]['pages'][$a]['title'])) {
+					while (isset ($answer["query"]['pages'][$a]['title'])) {
 						$Page [$c] = $answer["query"]['pages'][$a]['title'];	
 						$c++;
 						$a++;
@@ -652,7 +651,7 @@ class Core extends password {
 				$b++;
 			}
 		}
-		if (isset ($Page [0]) === false)
+		if (!isset ($Page [0]))
 				return false;
 		else
 			return (serialize ($Page));
@@ -674,14 +673,14 @@ class Core extends password {
 		$Result = explode ("\"", $result);
 		$a=19;
 		$b=0;
-		while (isset ($Result [$a]) === true) {
+		while (isset ($Result [$a])) {
 			$Kats [$b] = $Result [$a];
 			$a = $a +  6;
 			$b++;
 		}
 		$b=1;
 		$Ret = $Kats [0];
-		while (isset ($Kats [$b]) === true) {
+		while (isset ($Kats [$b])) {
 			$Ret = $Ret . "|" . $Kats [$b];
 			$b++;
 		}
@@ -698,7 +697,7 @@ class Core extends password {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset ($Continue) === true)
+			if (isset ($Continue))
 				$data = "action=query&list=embeddedin&format=php&eititle=" . urlencode($Templ) . "&einamespace=0&eicontinue=" . urlencode($Continue) . "&eidir=ascending&eilimit=5000&rawcontinue=";
 			else
 				$data = "action=query&list=embeddedin&format=php&eititle=" . urlencode($Templ) . "&einamespace=0&eidir=ascending&eilimit=5000&rawcontinue=";
@@ -709,14 +708,14 @@ class Core extends password {
 			}
 			$answer = unserialize($result); 
 			$a=0;
-			if (isset ($answer ["query-continue"]["embeddedin"]["eicontinue"]) === true) {
+			if (isset ($answer ["query-continue"]["embeddedin"]["eicontinue"])) {
 				$Continue = $answer ["query-continue"]["embeddedin"]["eicontinue"];
 				$Again = true;
 			}
 			else
 				$Again = false;
-			if (isset ($answer["query"]['embeddedin'][$a]['title']) === true) {
-				while (isset ($answer["query"]['embeddedin'][$a]['title']) === true) {
+			if (isset ($answer["query"]['embeddedin'][$a]['title'])) {
+				while (isset ($answer["query"]['embeddedin'][$a]['title'])) {
 					$Page [$b] = $answer["query"]['embeddedin'][$a]['title'];
 					$b++;
 					$a++;
@@ -737,7 +736,7 @@ class Core extends password {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset ($Continue) === true)
+			if (isset ($Continue))
 				$data = "action=query&list=allpages&format=php&apcontinue=" . $Continue . "&apnamespace=" . $Namespace . "&aplimit=5000&apdir=ascending&rawcontinue=";
 			else
 				$data = "action=query&list=allpages&format=php&apnamespace=" . $Namespace . "&aplimit=5000&apdir=ascending&rawcontinue=";
@@ -748,13 +747,13 @@ class Core extends password {
 			}
 			$answer = unserialize($result); 
 			$a=0;
-			if (isset ($answer ["query-continue"]["allpages"]["apcontinue"]) === true) {
+			if (isset ($answer ["query-continue"]["allpages"]["apcontinue"])) {
 				$Continue = $answer ["query-continue"]["allpages"]["apcontinue"];
 				$Again = true;
 			} else
 				$Again = false;
-			if (isset ($answer["query"]['allpages'][$a]['title']) === true) {
-				while (isset ($answer["query"]['allpages'][$a]['title']) === true) {
+			if (isset ($answer["query"]['allpages'][$a]['title'])) {
+				while (isset ($answer["query"]['allpages'][$a]['title'])) {
 					$Page [$b] = $answer["query"]['allpages'][$a]['title'];
 					$b++;
 					$a++;
@@ -805,7 +804,7 @@ class Core extends password {
 		$Answer = explode ("\"", $website);
 		$b=13;
 		$q=0;
-		while (isset($Answer [$b]) === true) {
+		while (isset ($Answer [$b]) ) {
 			$Result [$q] = $Answer [$b];
 			$b = $b + 4;
 			$q++;
