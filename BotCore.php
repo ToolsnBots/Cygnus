@@ -248,22 +248,19 @@ class Core extends password {
 	}
 	/** readPageEngine
 	* Interne Methode, um die Ergebnisse einer Anfrage zum Auslesen einer Seite zu bearbeiten
-	* @param $Request – Die API-Abfrage, die den Seiteninhalt ausgibt
+	* @param $request – Die API-Abfrage, die den Seiteninhalt ausgibt
 	* @author Luke081515
 	* @returns Text der Seite
 	*/
-	private function readPageEngine($Request) {
+	private function readPageEngine($request) {
 		try {
-			$result = $this->httpRequest($Request, $this->job, 'GET');
+			$page = $this->httpRequest($request, $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = strstr($result, "s:1:\"*\";");
-		$Answer = substr($Answer, 8);
-		$Answer = strstr($Answer, "\"");
-		$Answer = substr($Answer, 1);
-		$Answer = strstr($Answer, "\";}}}}}}", true);
-		return $Answer;
+		$a=0;
+		$pageID = $page ["query"]["pageids"][0];
+		return $Text ["query"]["pages"][$pageID]["revisions"][0]["*"];
 	}
 	/** readPage
 	* Liest eine Seite aus
@@ -272,7 +269,7 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPage($Title) {
-		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($Title);
 		return $this->readPageEngine($Request);
 	}
 	/** readPageId
@@ -282,7 +279,7 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageID($PageID) {
-		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&pageids=' . urlencode($PageID);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&indexpageids=1&pageids=' . urlencode($PageID);
 		return $this->readPageEngine($Request);
     }
     /** readPageJs
@@ -292,7 +289,7 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageJs($Title) {
-		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($Title);
 		return $this->readPageEngine($Request);
 	}
 	/** readPageCss
@@ -302,7 +299,7 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageCss($Title) {
-		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&rvdir=older&rawcontinue=&titles=' . urlencode($Title);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($Title);
 		return $this->readPageEngine($Request);
 	}
 	/** readSection
@@ -314,7 +311,7 @@ class Core extends password {
 	*/
 	public function readSection($Title, $Section) {
 		return $this->readPageEngine($Request);
-		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title);
+		$Request = 'action=query&prop=revisions&format=php&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($Section) . '&titles=' . urlencode($Title);
 	}
 	/** getTableOfContents
 	* Gibt das Inhaltsverzeichnis einer Seite aus
