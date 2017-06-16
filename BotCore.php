@@ -797,27 +797,27 @@ class Core extends password {
 		return $a;
 	}
 	/** getLinks
-	* Gibt aus, welche Wikilinks sich auf einer Seite befinden
+	* Gibt aus, welche Wikilinks sich auf einer Seite befinden, maximal 5000
 	* @author Luke081515
-	* @param $Page - Seite die analysiert wird
+	* @param $page - Seite die analysiert wird
 	* @returns Array mit Ergebnissen
 	*/
-	public function getLinks($Page) {
-		$data = "action=query&prop=links&format=xml&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&titles=" . urlencode($Page);
+	public function getLinks($page) {
+		$data = "action=query&prop=links&format=php&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=" . urlencode($page);
 		try {
-			$website = $this->httpRequest($data, $this->job, 'GET');
+			$result = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$Answer = explode ("\"", $website);
-		$b=13;
-		$q=0;
-		while (isset ($Answer [$b]) ) {
-			$Result [$q] = $Answer [$b];
-			$b = $b + 4;
-			$q++;
+		$a=0;
+		while (isset ($result ["query"]["pages"][$pageID]["links"][$a]["title"])) {
+			$Links [$a] = $result ["query"]["pages"][$pageID]["links"][$a]["title"];
+			$a++;
+		$pageID = $result ["query"]["pageids"][0];
 		}
-		return $Result;
+		if (isset($Links [0]))
+			return $Links;
+		return false;
 	}
 	/** getSectionTitle
 	* Gibt Titel und Ebene eines Abschnittes zurück
