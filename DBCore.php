@@ -2,9 +2,10 @@
 include "DBPassword.php";
 class DBCore extends DBPassword {
 	protected $DBusername;
-	protected $DBDBpassword;
+	protected $DBpassword;
 	protected $database;
 	protected $DB;
+
 	//TODO Write documentation
 	function __construct($Accountdata, $Database) {
 		$a=0;
@@ -35,6 +36,7 @@ class DBCore extends DBPassword {
 			die (1);
 		}
 	}
+
 	public function query($sql, $sensitive = false) {
 		if(!$result = $this->DB->query($sql)) {
 			if ($sensitive === false)
@@ -47,6 +49,7 @@ class DBCore extends DBPassword {
 			return $result;
 		}
 	}
+
 	public function modify ($sql, $sensitive = false) {
 		if (!$result = $this->DB->query($sql)) {
 			if ($sensitive === false)
@@ -56,9 +59,15 @@ class DBCore extends DBPassword {
 		} else
 			return $result;
 	}
+
+	public function real_escape_string($string) {
+		return $this->DB->real_escape_string($string);
+	}
+
 	public function close() {
 		mysqli_close($this->DB);
 	}
+
 	function __destruct() {
 		mysqli_close($this->DB);
 	}
