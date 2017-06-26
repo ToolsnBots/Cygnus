@@ -514,10 +514,13 @@ class Core extends password {
 	* Verschiebt eine Seite
 	* @param $startLemma - Alter Titel der Seite
 	* @param $targetLemma - Neuer Titel der Seite
+	* @param - $bot (default: 0) - Botflag setzen?
+	* @param - $movetalk (default: 1) - Diskussionsseite mitverschieben?
+	* @param - $noredirect - (default: 1) - Weiterleitung erstellen?
 	* @param $reason - Grund der Verschiebung, der im Log vermerkt wird
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
-	public function movePage($startLemma, $targetLemma, $reason) {
+	public function movePage($startLemma, $targetLemma, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$data = "action=query&format=json&meta=tokens&type=csrf";
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
@@ -526,13 +529,20 @@ class Core extends password {
 		}
 		$answer = json_decode($result, true);
 		$token = $answer['query']['tokens']['csrftoken'];
-		$data = 'action=move&format=php&assert=' . $this->assert . '&from=' . urlencode($startLemma) . '&to=' . urlencode($targetLemma) . '&reason=' . urlencode($reason) . '&bot=0' . '&movetalk=&noredirect=&watchlist=nochange&token=' . urlencode($token);
+		$data = 'action=move&format=json&assert=' . $this->assert . 
+			'&from=' . urlencode($startLemma) . 
+			'&to=' . urlencode($targetLemma) . 
+			'&reason=' . urlencode($reason) . 
+			'&bot=' . $bot . 
+			'&movetalk=' . $movetalk . 
+			'&noredirect=' . $noredirect . 
+			'&token=' . urlencode($token);
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
-		return ($result);
+		return (serialize(json_decode($result, true)));
 	}
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
