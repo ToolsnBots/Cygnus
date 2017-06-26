@@ -149,7 +149,9 @@ class Core extends password {
 			throw new Exception('Could not receive login token.');	
 		// perform login
 		try {
-			$result = $this->httpRequest('action=login&format=json&lgname=' . urlencode($this->username) . '&lgpassword=' . urlencode($this->password) . '&lgtoken=' . urlencode($lgToken), $this->job);
+			$result = $this->httpRequest('action=login&format=json&lgname=' . urlencode($this->username) . 
+				'&lgpassword=' . urlencode($this->password) . 
+				'&lgtoken=' . urlencode($lgToken), $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -269,7 +271,8 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPage($title) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&titles=' . urlencode($title) . 
+			'&rvdir=older&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readPageId
@@ -279,7 +282,8 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageID($PageID) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&rawcontinue=&indexpageids=1&pageids=' . urlencode($PageID);
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=' . urlencode($PageID) . 
+			'&rvdir=older&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
     }
     /** readPageJs
@@ -289,7 +293,8 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageJs($title) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&titles=' . urlencode($title) . 
+			'&rvdir=older&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readPageCss
@@ -299,7 +304,8 @@ class Core extends password {
 	* @returns Text der Seite
 	*/
 	public function readPageCss($title) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&rvdir=older&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&titles=' . urlencode($title) . 
+			'&rvdir=older&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readSection
@@ -310,7 +316,8 @@ class Core extends password {
 	* @returns Text des Abschnitts
 	*/
 	public function readSection($title, $section) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($section) . '&titles=' . urlencode($title);
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($section) . 
+			'&titles=' . urlencode($title);
 		return $this->readPageEngine($request);
 	}
 	/** getTableOfContents
@@ -319,7 +326,11 @@ class Core extends password {
 	* @author Luke081515
 	* @returns Zwei dimensionales Array
 	* @returns Erste Dimension: Der entsprechende Abschnitt
-	* @retuns Zweite Dimension: [0] => level; [1] => Titel des Abschnitts; [2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); [3] => Abschnittsnummer, ohne Komma, reiner int;
+	* @retuns Zweite Dimension: 
+	* 	[0] => level; 
+	* 	[1] => Titel des Abschnitts; 
+	* 	[2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); 
+	* 	[3] => Abschnittsnummer, ohne Komma, reiner int;
 	*/
 	public function getTableOfContents($page) {
 		try {
@@ -558,7 +569,8 @@ class Core extends password {
 		$b=0;
 		$subCat[0] = $kat;
 		try {
-			$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) . '&cmprop=title&cmtype=subcat&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+			$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) . 
+				'&cmprop=title&cmtype=subcat&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -580,7 +592,8 @@ class Core extends password {
 			while (isset ($subCat[$b]))
 			{
 				try {
-					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) . 
+						'&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 				} catch (Exception $e) {
 					throw $e;
 				}
@@ -626,7 +639,8 @@ class Core extends password {
 		} else {
 			while (isset ($subCat[$b])) {
 				try {
-					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . 
+						'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				} catch (Exception $e) {
 					throw $e;
 				}
@@ -646,7 +660,9 @@ class Core extends password {
 						}
 					} else  {}
 					try {
-						$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . '&gmcontinue=' . $Continue . '&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+						$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . 
+							'&gmcontinue=' . $Continue . 
+							'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 					} catch (Exception $e) {
 						throw $e;
 					}
@@ -683,7 +699,9 @@ class Core extends password {
 	*/
 	public function getPageCats($page) {
 		try {
-			$cats = json_decode($this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&cldir=ascending&rawcontinue=&indexpageids=1&titles=' . urlencode($Page), $this->job, 'GET'), true);
+			$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($Page) . 
+				'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
+			$cats = json_decode($cats, true);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -709,7 +727,9 @@ class Core extends password {
 		$Again = true;
 		while ($Again === true) {
 			if (isset ($Continue))
-				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&eicontinue=" . urlencode($Continue) . "&eidir=ascending&eilimit=5000&rawcontinue=";
+				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . 
+					"&einamespace=0&eicontinue=" . urlencode($Continue) . 
+					"&eidir=ascending&eilimit=5000&rawcontinue=";
 			else
 				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&eidir=ascending&eilimit=5000&rawcontinue=";
 			try {
