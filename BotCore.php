@@ -29,17 +29,17 @@ class Core extends password {
 	* @param $account - Name des angegebenen Accounts in Password.php
 	* @param $job - Name des Jobs; dient zur Internen Speicherung der Cookies
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
-	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
+	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurl($account, $job, $pUseHTTPS = true, $assert = "bot") {
-		$this->version = "Cygnus-Framework V2.1 alpha";
-		if ($assert !== "bot" && $assert !== "user")
+	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'bot') {
+		$this->version = 'Cygnus-Framework V2.1 alpha';
+		if ($assert !== 'bot' && $assert !== 'user')
 			exit(1);
 		$this->assert = $assert;
 		$this->start($account);
 		$this->job = $job;
 		if ($pUseHTTPS === true) 
-			$this->protocol = 'https'; 
+			$this->protocol = 'https';
 		else 
 			$this->protocol = 'http';
 		// init curl
@@ -49,8 +49,8 @@ class Core extends password {
 		else
 			$this->curlHandle = $curl;
 		$this->login();
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
-		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
+		$this->UA = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
 	}
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
@@ -59,15 +59,15 @@ class Core extends password {
 	* @author Luke081515
 	* @param $job - Name des Jobs; dient zur Internen Speicherung der Cookies
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
-	* @param $assert - [Optional: bot] falls auf "user" gesetzt, kann auch ohne Flag edits gemacht werden
+	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot") {
-		if ($assert !== "bot" && $assert !== "user")
+	public function initcurlArgs($job, $pUseHTTPS = true, $assert = 'bot') {
+		if ($assert !== 'bot' && $assert !== 'user')
 			exit(1);
 		$this->assert = $assert;
 		$this->job = $job;
 		if ($pUseHTTPS === true) 
-			$this->protocol = 'https'; 
+			$this->protocol = 'https';
 		else 
 			$this->protocol = 'http';
 		// init curl
@@ -76,8 +76,8 @@ class Core extends password {
 			throw new Exception('Curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
-		$this->UA = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
+		$this->UA = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
 	}
 	public function __construct($account, $job, $pUseHTTPS = true) {}
 	public function __destruct() {
@@ -113,7 +113,7 @@ class Core extends password {
 		// set curl options
 		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->UA);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
-		curl_setopt($this->curlHandle, CURLOPT_ENCODING, "UTF-8");
+		curl_setopt($this->curlHandle, CURLOPT_ENCODING, 'UTF-8');
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->curlHandle, CURLOPT_COOKIEFILE, realpath('Cookies' . $job . '.tmp'));
 		curl_setopt($this->curlHandle, CURLOPT_COOKIEJAR, realpath('Cookies' . $job . '.tmp'));
@@ -205,7 +205,7 @@ class Core extends password {
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
-		while (isset ($LoginName[$a])) {
+		while (isset($LoginName[$a])) {
 			if ($LoginName[$a] === $account) {
 				$this->site = $LoginHost[$a];
 				$this->username = $LoginAccount[$a];
@@ -232,21 +232,21 @@ class Core extends password {
 	* @returns conflict - Ein Bearbeitungskonflikt ist vorhanden 
 	*/
 	private function checkResult($result) {
-		if ($result === "maxlag" || $result === "readonly" || $result === "unknownerror-nocode" || $result === "unknownerror" || $result === "ratelimited") {
-			echo "\nEdit fehlgeschlangen. Grund: $result. Versuche es erneut";
-			return "retry";
-		} else if ($result === "blocked" || $result === "confirmemail" || $result === "autoblocked") {
+		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
+			echo '\nEdit fehlgeschlangen. Grund: $result. Versuche es erneut';
+			return 'retry';
+		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $result');
 			die(1);
-		} else if ($result === "assertuserfailed" || $result === "assertbotfailed") {
+		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
 			$this->login();
-			return "retry";
-		} else if ($result === "editconflict") {
-			echo "\nBearbeitungskonflikt festgestellt";
-			return "conflict";
+			return 'retry';
+		} else if ($result === 'editconflict') {
+			echo '\nBearbeitungskonflikt festgestellt';
+			return 'conflict';
 		} else {
 			echo 'Aktion fehlgeschlagen. Fehlercode: $result';
-			return "fail";
+			return 'fail';
 		}
 	}
 	/** readPageEngine
@@ -281,8 +281,8 @@ class Core extends password {
 	* @author MGChecker
 	* @returns Text der Seite
 	*/
-	public function readPageID($PageID) {
-		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=' . urlencode($PageID) . 
+	public function readPageID($pageID) {
+		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=' . urlencode($pageID) . 
 			'&rvdir=older&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
     }
@@ -327,9 +327,9 @@ class Core extends password {
 	* @returns Zwei dimensionales Array
 	* @returns Erste Dimension: Der entsprechende Abschnitt
 	* @retuns Zweite Dimension: 
-	* 	[0] => level; 
-	* 	[1] => Titel des Abschnitts; 
-	* 	[2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5); 
+	* 	[0] => level;
+	* 	[1] => Titel des Abschnitts;
+	* 	[2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5);
 	* 	[3] => Abschnittsnummer, ohne Komma, reiner int;
 	*/
 	public function getTableOfContents($page) {
@@ -340,7 +340,7 @@ class Core extends password {
 		}
 		$Data = json_decode($result, true);
 		$a=0;
-		while (isset ($Data['parse']['sections'][$a]['level'])) {
+		while (isset($Data['parse']['sections'][$a]['level'])) {
 			$ret[$a][0] = $Data['parse']['sections'][$a]['level'];
 			$ret[$a][1] = $Data['parse']['sections'][$a]['line'];
 			$ret[$a][2] = $Data['parse']['sections'][$a]['number'];
@@ -366,7 +366,7 @@ class Core extends password {
 		retry:
 		if ($overrideNobots !== true) {
 			if ($this->allowBots($this->readPage($title)) === false)
-				return "nobots";
+				return 'nobots';
 		}
 		// get csrf token
 		try {
@@ -399,19 +399,19 @@ class Core extends password {
 		// manage result
 		if ($editres == 'Success') {
 			if (array_key_exists('nochange', $tree['edit'])) {
-				return array("nochange");
+				return array('nochange');
 			} else {
 				return array($tree['edit']['oldrevid'], $tree['edit']['newrevid']);
 			}
 		}
 		else {
 			$Code = $this->checkResult($editres);
-			if ($Code === "fail")
-				return "fail";
-			else if ($Code === "retry")
+			if ($Code === 'fail')
+				return 'fail';
+			else if ($Code === 'retry')
 				goto retry;
-			else if ($Code === "conflict")
-				return "conflict";
+			else if ($Code === 'conflict')
+				return 'conflict';
 		}
 	}
 	/** editPage
@@ -425,7 +425,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPage($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == 'bot')
 			$botflag = true;
 		else
 			$botflag = false;
@@ -442,7 +442,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editPageMinor($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == 'bot')
 			$botflag = true;
 		else
 			$botflag = false;
@@ -475,7 +475,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSection($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == 'bot')
 			$botflag = true;
 		else
 			$botflag = false;
@@ -495,7 +495,7 @@ class Core extends password {
 	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
 	*/
 	public function editSectionMinor($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == 'bot')
 			$botflag = true;
 		else
 			$botflag = false;
@@ -532,7 +532,7 @@ class Core extends password {
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
 	public function movePage($startLemma, $targetLemma, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
-		$data = "action=query&format=json&meta=tokens&type=csrf";
+		$data = 'action=query&format=json&meta=tokens&type=csrf';
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
@@ -553,7 +553,7 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		return (serialize(json_decode($result, true)));
+		return serialize(json_decode($result, true));
 	}
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
@@ -574,11 +574,11 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$answer = json_decode($result, true); 
+		$answer = json_decode($result, true);
 		$a=0;
-		if (isset ($answer['query']['categorymembers'][$a]['title'])) {
+		if (isset($answer['query']['categorymembers'][$a]['title'])) {
 			$Sub = true;
-			while (isset ($answer['query']['categorymembers'][$a]['title'])) {
+			while (isset($answer['query']['categorymembers'][$a]['title'])) {
 				$subCat[$b] = $answer['query']['categorymembers'][$a]['title'];	
 				$b++;
 				$a++;
@@ -589,7 +589,7 @@ class Core extends password {
 		if ($onlySubCats === true)
 			return $subCat;
 		if ($excludeWls === false) {	
-			while (isset ($subCat[$b]))
+			while (isset($subCat[$b]))
 			{
 				try {
 					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) . 
@@ -597,17 +597,17 @@ class Core extends password {
 				} catch (Exception $e) {
 					throw $e;
 				}
-				$answer = json_decode($result, true); 
+				$answer = json_decode($result, true);
 				$Cont = false;
-				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"])) {
-					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+				if (isset($answer['query-continue']['categorymembers']['cmcontinue'])) {
+					$Continue = $answer['query-continue']['categorymembers']['cmcontinue'];
 					$Cont = true;
 				}
 				while ($Cont === true) {
 					$a=0;
-					if (isset ($answer["query"]['categorymembers'][$a]['title'])) {
-						while (isset ($answer["query"]['categorymembers'][$a]['title'])) {
-							$page[$c] = $answer["query"]['categorymembers'][$a]['title'];	
+					if (isset($answer['query']['categorymembers'][$a]['title'])) {
+						while (isset($answer['query']['categorymembers'][$a]['title'])) {
+							$page[$c] = $answer['query']['categorymembers'][$a]['title'];	
 							$c++;
 							$a++;
 						}
@@ -619,17 +619,17 @@ class Core extends password {
 					} catch (Exception $e) {
 						throw $e;
 					}
-					$answer = json_decode($result, true); 
-					if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"])) {
-						$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+					$answer = json_decode($result, true);
+					if (isset($answer['query-continue']['categorymembers']['cmcontinue'])) {
+						$Continue = $answer['query-continue']['categorymembers']['cmcontinue'];
 						$Cont = true;
 					} else
 						$Cont = false;
 				}
 				$a=0;
-				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					while (isset ($answer["query"]['categorymembers'][$a]['title'])) {
-						$page[$c] = $answer["query"]['categorymembers'][$a]['title'];	
+				if (isset($answer['query']['categorymembers'][$a]['title']) === true) {
+					while (isset($answer['query']['categorymembers'][$a]['title'])) {
+						$page[$c] = $answer['query']['categorymembers'][$a]['title'];	
 						$c++;
 						$a++;
 					}
@@ -637,24 +637,24 @@ class Core extends password {
 				$b++;
 			}
 		} else {
-			while (isset ($subCat[$b])) {
+			while (isset($subCat[$b])) {
 				try {
 					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . 
 						'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				} catch (Exception $e) {
 					throw $e;
 				}
-				$answer = json_decode($result, true); 
+				$answer = json_decode($result, true);
 				$Cont = false;
-				if (isset ($answer ["query-continue"]["categorymembers"]["gcmcontinue"])) {
-					$Continue = $answer ["query-continue"]["categorymembers"]["gcmcontinue"];
+				if (isset($answer['query-continue']['categorymembers']['gcmcontinue'])) {
+					$Continue = $answer['query-continue']['categorymembers']['gcmcontinue'];
 					$Cont = true;
 				}
 				while ($Cont === true) {
 					$a=0;
-					if (isset ($answer["query"]['pages'][$a]['title'])) {
-						while (isset ($answer["query"]['pages'][$a]['title'])) {
-							$page[$c] = $answer["query"]['pages'][$a]['title'];	
+					if (isset($answer['query']['pages'][$a]['title'])) {
+						while (isset($answer['query']['pages'][$a]['title'])) {
+							$page[$c] = $answer['query']['pages'][$a]['title'];	
 							$c++;
 							$a++;
 						}
@@ -666,17 +666,17 @@ class Core extends password {
 					} catch (Exception $e) {
 						throw $e;
 					}
-					$answer = json_decode($result, true); 
-					if (isset ($answer ["query-continue"]["pages"]["gcmcontinue"])) {
-						$Continue = $answer ["query-continue"]["pages"]["gcmcontinue"];
+					$answer = json_decode($result, true);
+					if (isset($answer['query-continue']['pages']['gcmcontinue'])) {
+						$Continue = $answer['query-continue']['pages']['gcmcontinue'];
 						$Cont = true;
 					} else
 						$Cont = false;
 				}
 				$a=0;
-				if (isset ($answer["query"]['pages'][$a]['title'])) {
-					while (isset ($answer["query"]['pages'][$a]['title'])) {
-						$page[$c] = $answer["query"]['pages'][$a]['title'];	
+				if (isset($answer['query']['pages'][$a]['title'])) {
+					while (isset($answer['query']['pages'][$a]['title'])) {
+						$page[$c] = $answer['query']['pages'][$a]['title'];	
 						$c++;
 						$a++;
 					}
@@ -684,10 +684,10 @@ class Core extends password {
 				$b++;
 			}
 		}
-		if (!isset ($page [0]))
+		if (!isset($page[0]))
 				return false;
 		else
-			return (serialize($page));
+			return serialize($page);
 	}
 	/** getPageCats
 	* Liest alle Kategorien einer Seite aus
@@ -705,15 +705,15 @@ class Core extends password {
 		} catch (Exception $e) {
 			throw $e;
 		}
-		$pageID = $cats ["query"]["pageids"][0];
+		$pageID = $cats['query']['pageids'][0];
 		$a=0;
-		while (isset ($cats ["query"]["pages"][$pageID]["categories"][$a])) {
-			$catResults[$a] = $cats ["query"]["pages"][$pageID]["categories"][$a];
+		while (isset($cats['query']['pages'][$pageID]['categories'][$a])) {
+			$catResults[$a] = $cats['query']['pages'][$pageID]['categories'][$a];
 			$a++;
 		}
-		if (!isset ($catResults [0]))
+		if (!isset($catResults[0]))
 			return false;
-		return (serialize($catResults));
+		return serialize($catResults);
 	}
 	/** getAllEmbedings
 	* Liest alle Einbindungen einer Vorlage aus
@@ -726,35 +726,35 @@ class Core extends password {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset ($Continue))
-				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . 
-					"&einamespace=0&eicontinue=" . urlencode($Continue) . 
-					"&eidir=ascending&eilimit=5000&rawcontinue=";
+			if (isset($Continue))
+				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . 
+					'&einamespace=0&eicontinue=' . urlencode($Continue) . 
+					'&eidir=ascending&eilimit=5000&rawcontinue=';
 			else
-				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&eidir=ascending&eilimit=5000&rawcontinue=";
+				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . '&einamespace=0&eidir=ascending&eilimit=5000&rawcontinue=';
 			try {
 				$result = $this->httpRequest($data, $this->job, 'GET');
 			} catch (Exception $e) {
 				throw $e;
 			}
-			$answer = json_decode($result, true); 
+			$answer = json_decode($result, true);
 			$a=0;
-			if (isset ($answer ["query-continue"]["embeddedin"]["eicontinue"])) {
-				$Continue = $answer ["query-continue"]["embeddedin"]["eicontinue"];
+			if (isset($answer['query-continue']['embeddedin']['eicontinue'])) {
+				$Continue = $answer['query-continue']['embeddedin']['eicontinue'];
 				$Again = true;
 			}
 			else
 				$Again = false;
-			if (isset ($answer["query"]['embeddedin'][$a]['title'])) {
-				while (isset ($answer["query"]['embeddedin'][$a]['title'])) {
-					$page[$b] = $answer["query"]['embeddedin'][$a]['title'];
+			if (isset($answer['query']['embeddedin'][$a]['title'])) {
+				while (isset($answer['query']['embeddedin'][$a]['title'])) {
+					$page[$b] = $answer['query']['embeddedin'][$a]['title'];
 					$b++;
 					$a++;
 				}
 			} else
 				return false;
 		}
-		return (serialize($page));
+		return serialize($page);
 	}
 	/** getAllPages
 	* Liest alle Seiten eines Namensraumes aus
@@ -767,32 +767,32 @@ class Core extends password {
 		$b=0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset ($Continue))
-				$data = "action=query&list=allpages&format=json&apcontinue=" . $Continue . "&apnamespace=" . $namespace . "&aplimit=5000&apdir=ascending&rawcontinue=";
+			if (isset($Continue))
+				$data = 'action=query&list=allpages&format=json&apcontinue=' . $Continue . '&apnamespace=' . $namespace . '&aplimit=5000&apdir=ascending&rawcontinue=';
 			else
-				$data = "action=query&list=allpages&format=json&apnamespace=" . $namespace . "&aplimit=5000&apdir=ascending&rawcontinue=";
+				$data = 'action=query&list=allpages&format=json&apnamespace=' . $namespace . '&aplimit=5000&apdir=ascending&rawcontinue=';
 			try {
 				$result = $this->httpRequest($data, $this->job, 'GET');
 			} catch (Exception $e) {
 				throw $e;
 			}
-			$answer = json_decode($result, true); 
+			$answer = json_decode($result, true);
 			$a=0;
-			if (isset ($answer ["query-continue"]["allpages"]["apcontinue"])) {
-				$Continue = $answer ["query-continue"]["allpages"]["apcontinue"];
+			if (isset($answer['query-continue']['allpages']['apcontinue'])) {
+				$Continue = $answer['query-continue']['allpages']['apcontinue'];
 				$Again = true;
 			} else
 				$Again = false;
-			if (isset ($answer["query"]['allpages'][$a]['title'])) {
-				while (isset ($answer["query"]['allpages'][$a]['title'])) {
-					$page[$b] = $answer["query"]['allpages'][$a]['title'];
+			if (isset($answer['query']['allpages'][$a]['title'])) {
+				while (isset($answer['query']['allpages'][$a]['title'])) {
+					$page[$b] = $answer['query']['allpages'][$a]['title'];
 					$b++;
 					$a++;
 				}
 			} else
 				return false;
 		}
-		return (serialize($page));
+		return serialize($page);
 	}
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
@@ -801,15 +801,15 @@ class Core extends password {
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
 	public function getPageID($page) {
-		$data = "action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=" . urlencode ($page);
+		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($page);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
 			throw $e;
 		}
-		if (strpos ($result, "missing") !== false)
+		if (strpos ($result, 'missing') !== false)
 			return false;
-		$answer = json_decode($result, true); 
+		$answer = json_decode($result, true);
 		return $tree['query']['pageids'][0];
 	}
 	/** getLinks
@@ -819,16 +819,16 @@ class Core extends password {
 	* @returns Array mit Ergebnissen
 	*/
 	public function getLinks($page) {
-		$data = "action=query&prop=links&format=json&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=" . urlencode($page);
+		$data = 'action=query&prop=links&format=json&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($page);
 		try {
 			$result = json_decode($this->httpRequest($data, $this->job, 'GET'), true);
 		} catch (Exception $e) {
 			throw $e;
 		}
-		while (isset ($result["query"]["pages"][$pageID]["links"][0]["title"])) {
-		$pageID = $result["query"]["pageids"][0];
+		while (isset($result['query']['pages'][$pageID]['links'][0]['title'])) {
+		$pageID = $result['query']['pageids'][0];
 		}
-		if (isset($links [0]))
+		if (isset($links[0]))
 			return $links;
 		return false;
 	}
@@ -844,20 +844,20 @@ class Core extends password {
 		$sectionlevel = 5;
 		while($sectionlevel > 1) {
 			$searchnum = 1;
-			$search = "=";
+			$search = '=';
 			while($searchnum < $sectionlevel) {
-				$search = $search . "=";
+				$search = $search . '=';
 				$searchnum++;
 			}
-			if (strpos(substr($content, strpos($content, "="), 5), $search) === false) {
+			if (strpos(substr($content, strpos($content, '='), 5), $search) === false) {
 				$sectionlevel--;
 			} else {
 				break;
 			}
 		}
-		$content = substr($content, strpos($content, "=") + $sectionlevel);
-		$content = substr($content, 0, strpos($content, "="));
-		return ["title" => $content, "level" => $sectionlevel, ];
+		$content = substr($content, strpos($content, '=') + $sectionlevel);
+		$content = substr($content, 0, strpos($content, '='));
+		return['title' => $content, 'level' => $sectionlevel, ];
 	}
 	/** askOperator
 	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
@@ -867,7 +867,7 @@ class Core extends password {
 	*/
 	public function askOperator($question) {
 		echo $question;
-		$handle = fopen ("php://stdin","r");
+		$handle = fopen ('php://stdin','r');
 		$line = fgets($handle);
 		return trim($line);
 	}
@@ -877,7 +877,7 @@ class Core extends password {
 	* @param $content - Inhalt der hinzugegeben wird
 	*/
 	public function addMail($content) {
-		$this->mailcontent = $this->mailcontent . "\n" . $content;
+		$this->mailcontent = $this->mailcontent . '\n' . $content;
 	}
 	/** sendMail
 	* Sendet die gespeicherte Mail
@@ -887,7 +887,7 @@ class Core extends password {
 	*/
 	public function sendMail($subject) {
 		mail($this->mail, $subject, $this->mailcontent);
-		$this->mailcontent = "";
+		$this->mailcontent = '';
 	}
 	/** curlRequest
 	* Sendet einen Curl-Request an eine beliebige Webseite
@@ -910,9 +910,9 @@ class Core extends password {
 		if (!$baseURL) 
 			throw new Exception('no arguments for http request found.');
 		// set curl options
-		curl_setopt($curl, CURLOPT_USERAGENT, "Cygnus");
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Cygnus');
 		curl_setopt($curl, CURLOPT_URL, $baseURL);
-		curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
+		curl_setopt($curl, CURLOPT_ENCODING, 'UTF-8');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_COOKIEFILE, realpath('Cookies' . $job . '.tmp'));
 		curl_setopt($curl, CURLOPT_COOKIEJAR, realpath('Cookies' . $job . '.tmp'));
