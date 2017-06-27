@@ -801,7 +801,7 @@ class Core extends password {
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
 	public function getPageID($page) {
-		$data = "action=query&format=json&maxlag=5&prop=info&titles=" . urlencode ($page);
+		$data = "action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=" . urlencode ($page);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
 		} catch (Exception $e) {
@@ -810,14 +810,7 @@ class Core extends password {
 		if (strpos ($result, "missing") !== false)
 			return false;
 		$answer = json_decode($result, true); 
-		$a=0;
-		try {
-			$arr = $tree['query']['pages'];
-			$ID = array_keys($arr);
-		} catch (Exception $e) {
-			return false;
-		}
-		return $a;
+		return $tree['query']['pageids'][0];
 	}
 	/** getLinks
 	* Gibt aus, welche Wikilinks sich auf einer Seite befinden, maximal 5000
