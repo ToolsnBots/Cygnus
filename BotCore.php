@@ -50,7 +50,7 @@ class Core extends password {
 			$this->curlHandle = $curl;
 		$this->login();
 		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
-		$this->UA = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
+		$this->ua = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
 	}
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
@@ -77,7 +77,7 @@ class Core extends password {
 		else
 			$this->curlHandle = $curl;
 		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
-		$this->UA = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
+		$this->ua = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
 	}
 	public function __construct($account, $job, $pUseHTTPS = true) {}
 	public function __destruct() {
@@ -111,7 +111,7 @@ class Core extends password {
 		if (!$requestURL) 
 			throw new Exception('No arguments for http request found.');
 		// set curl options
-		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->UA);
+		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->ua);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
 		curl_setopt($this->curlHandle, CURLOPT_ENCODING, 'UTF-8');
 		curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
