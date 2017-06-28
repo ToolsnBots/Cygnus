@@ -695,7 +695,7 @@ class Core extends password {
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
 	* @author Luke081515
 	* @param $page - Seite die analyisiert werden soll
-	* @returns Alle Kategorien als Liste durch Pipes getrennt
+	* @returns Alle Kategorien als serialisiertes Array
 	*/
 	public function getPageCats($page) {
 		try {
