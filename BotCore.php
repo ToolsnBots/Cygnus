@@ -34,7 +34,7 @@ class Core extends password {
 	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'bot') {
 		$this->version = 'Cygnus-Framework V2.1 alpha';
 		if ($assert !== 'bot' && $assert !== 'user')
-			exit(1);
+			throw new Exception('assert has to be \'bot\' or \'user\'');
 		$this->assert = $assert;
 		$this->start($account);
 		$this->job = $job;
@@ -217,7 +217,6 @@ class Core extends password {
 		}
 		if (!$Found) {
 			throw new Exception('Keine passenden Anmeldeinformationen vorhanden.');
-			die(1); // exit with error
 		}
 	}
 	/** checkResult
@@ -237,7 +236,6 @@ class Core extends password {
 			return 'retry';
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $result');
-			die(1);
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
 			$this->login();
 			return 'retry';
