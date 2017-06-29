@@ -5,7 +5,7 @@ include 'Password.php';
 * Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
 * @author Freddy2001 <freddy2001@wikipedia.de>, Hgzh, Luke081515 <luke081515@tools.wmflabs.org>, MGChecker <hgasuser@gmail.com>
 * @requires extensions: JSON
-* @version V2.1 alpha
+* @version V2.1 beta
 * Vielen Dank an alle, die zu diesem Framework beigetragen haben
 */
 class Core extends password {
@@ -32,7 +32,7 @@ class Core extends password {
 	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
 	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'bot') {
-		$this->version = 'Cygnus-Framework V2.1 alpha';
+		$this->version = 'Cygnus-Framework V2.1 beta';
 		if ($assert !== 'bot' && $assert !== 'user')
 			throw new Exception('assert has to be \'bot\' or \'user\'');
 		$this->assert = $assert;
