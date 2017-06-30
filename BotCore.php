@@ -1,5 +1,5 @@
 <?php
-include 'Password.php';
+require_once  __DIR__ . '/Password.php';
 /** BotCore.php
 * Zentrale Datei des Cygnus-Frameworks
 * Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
