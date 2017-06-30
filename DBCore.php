@@ -1,5 +1,5 @@
 <?php
-include "DBPassword.php";
+require_once __DIR__ . "/DBPassword.php";
 class DBCore extends DBPassword {
 	protected $DBusername;
     protected $DBDBpassword;
