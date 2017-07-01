@@ -60,7 +60,7 @@ class DBCore extends DBPassword {
 			return $result;
 	}
 
-	public function real_escape_string($string) {
+	public function escape($string) {
 		return $this->DB->real_escape_string($string);
 	}
 
