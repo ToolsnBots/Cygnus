@@ -538,6 +538,30 @@ class Core extends password {
 		$result = $this->httpRequest($data, $this->job);
 		return serialize(json_decode($result, true));
 	}
+	/** review
+	* Marks the specified version as reviewed or not reviewed
+	* @param $revid - The revid of the revision to approve/unapprove
+	* @param $comment [optional: ''] - The comment to add for the log
+	* @param $unapprove [optional: 0] - if 1: mark the rev as unreviewed instead of reviewed
+	* @returns string - success if succesful, otherwise the API error-code
+	*/
+	public function review($revid, $comment = '', $unapprove = 0) {
+		$token = $this->requireToken();
+		$data = 'action=review&format=json&assert=' . $this->assert . 
+			'&revid=' . urlencode($revid) . 
+			'&unapprove=' . urlencode($unapprove) . 
+			'&comment=' . urlencode($comment) . 
+			'&token=' . urlencode($token);
+		$result = $this->httpRequest($data, $this->job);
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result)) {
+			if ($result['error']['code'] === 'notreviewable')
+				return $result['error']['code'];
+			else
+				return $this->checkResult($result['error']['code']);
+		} else
+			return 'success';
+	}
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
