@@ -887,5 +887,170 @@ class Core extends password {
 			return false;
 		return true;
 	}
+	
+	/** Admin-functions
+	* The following section includes functions which only sysops can use
+	*/
+	/** deletePage
+	* Deletes a page
+	* requires the "delete" right
+	* @author Luke081515
+	* @param $page - Page to delete
+	* @param $reason - The reason for the deletion, visible in the log
+	* @returns - "success" if the deletion was successful, otherwise the error code of the api
+	*/
+	public function deletePage ($page, $reason) {
+		$token = $this->requireToken();
+		$data = 'action=delete&format=json' .
+			'&title=' . urlencode($page) .
+			'&reason=' . $reason .
+			'&token=' . urlencode($token) .
+			'&maxlag=' . $this->maxlag;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		else
+			return "success";
+	}
+	/** blockUser
+	* Blocks a user or an IP
+	* @author Luke081515
+	* @param - $user - The user or IP to block
+	* @param - $reason - The reason for the block
+	* @param - $expiry - The expiry of the block
+	* @param - $expiry - can be relative, like "5 months"
+	* @param - $expiry - or can be absolute, like 2014-09-18T12:34:56Z, or never
+	* @param - $anononly - if true, blocks only IPs, not logged in users
+	* @param - $nocreate - Disallows creation of accounts
+	* @param - $autoblock - Enables autoblock
+	* @param - $noemail - Blocks wikimail
+	* @param - $hidename - Hides the user
+	* @param - $allowusertalk - Allows the user to write on his own talkpage
+	* @param - $reblock - Overwrites existing blocks
+	* @returns - "success" if successful, otherwise the API errorcode
+	*/
+	public function blockUser ($user, $reason, $expiry, $anononly = 1, $nocreate = 1, $autoblock = 1, $noemail = 0, $hidename = 0, $allowusertalk = 1, $reblock = 0) {
+		$token = $this->requireToken();
+		$data = 'action=block&format=json' .
+			'&user=' . urlencode($user) .
+			'&reason=' . urlencode($reason) .
+			'&expiry=' . urlencode($expiry) .
+			'&anononly=' . urlencode($anononly) .
+			'&nocreate=' . urlencode($nocreate) .
+			'&autoblock=' . urlencode($autoblock) .
+			'&noemail=' . urlencode($noemail) .
+			'&hidename=' . urlencode($hidename) .
+			'&allowusertalk=' . urlencode($allowusertalk) .
+			'&reblock=' . urlencode($reblock) .
+			'&token=' . urlencode($token) . 
+			'&maxlag=' . $this->maxlag;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		else
+			return "success";
+	}
+	/** unblockUser
+	* Unblocks a user or an IP
+	* @author Luke081515
+	* @param - $user - The user or IP to unblock
+	* @param - $reason - The reason for the unblock
+	* @returns - "success" if successful, otherwise the API errorcode
+	*/
+	public function unblockUser ($user, $reason) {
+		$token = $this->requireToken();
+		$data = 'action=unblock&format=json' .
+			'&user=' . urlencode($user) .
+			'&reason=' . urlencode($reason) .
+			'&token=' . urlencode($token) .
+			'&maxlag=' . $this->maxlag;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		else
+			return "success";
+	}
+	/** protectPage
+	* Protects a page
+	* @author Luke081515
+	* @param - $page - The page to protect
+	* @param - $reason - The reason to set
+	* @param - $protections - Pipe-seperated protection. Mention all levels you want to change
+	* @param - $protections - To remove a protection, use all, e.g. "edit=all|move=sysop"
+	* @param - $expiry - Pipe-separated list of expiry timestamps in GNU timestamp format.
+	* @param - $expiry - The first timestamp applies to the first protection in protections, the second to the second, etc. 
+	* @param - $expiry - The timestamps infinite, indefinite and never result in a protection that will never expire. 
+	* @param - $expiry - Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param - $expiry - The number of expiry timestamps must equal the number of protections, or you'll get an error message
+	* @param - $expiry - An exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
+	* @param - $expiry - Not setting this parameter is equivalent to setting it to infinite
+	* @param - $expiry - If you are using all, the param does not matter, but you need to set it
+	* @param - $cascade - Uses cascade protection
+	* @returns - "success" if successful, otherwise the API errorcode
+	*/
+	public function protectPage ($page, $reason, $protections, $expiry, $cascade) {
+		$token = $this->requireToken();
+		$data = 'action=protect&format=json' .
+			'&page=' . urlencode($page) .
+			'&reason=' . urlencode($reason) .
+			'&protections=' . urlencode($protections) .
+			'&expiry=' . urlencode($expiry) .
+			'&cascade=' . urlencode($cascade) .
+			'&token=' . urlencode($token) .
+			'&maxlag=' . $this->maxlag;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		else
+			return "success";
+	}
+	/** stabilize
+	* changes the settings who can review a page, and which version gets shown
+	* @author Luke081515
+	* @param $title - The page to change
+	* @param $expiry - expiry timestamp in GNU timestamp format.
+	**	The timestamps infinite, indefinite and never result in a protection that will never expire. 
+	**	Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param $default - Which version should be shown? 'latest' or 'stable'?
+	* @param $autoreview - Who is allowed to review? 'all' or 'sysop'?
+	* @param $review - Review the current version? 0 or 1
+	* @returns string - success or the error code
+	*/
+	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
+		$token = $this->requireToken();
+		$data = 'action=stabilize&format=json&maxlag=5&default=' . urlencode($default) .
+			'&autoreview=' . urlencode($autoreview) . 
+			'&expiry=' . urlencode($expiry) .
+			'&reason=' . urlencode($reason) .
+			'&title=' . urlencode($title) .
+			'&review=' . urlencode($review) .
+			'&token=' . urlencode($token);
+		$result = $this->httpRequest($data, $this->job);
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		else
+			return "success";
+	}
 }
 ?>
