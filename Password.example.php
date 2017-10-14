@@ -10,7 +10,7 @@ class Password {
 	private $LoginPassword;
 	private $MailAddress;
 
-	public function Password() {}
+	public function __construct() {}
 
 	protected function init() {
 		$this->LoginName = array( // Recommended: Username@wiki

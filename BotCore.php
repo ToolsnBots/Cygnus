@@ -609,7 +609,7 @@ class Core extends password {
 							$c++;
 							$a++;
 						}
-					} else  {}
+					}
 					try {
 						$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmcontinue=' . $Continue
 						. '&cmtitle=' . urlencode($subCat[$b])
@@ -631,7 +631,7 @@ class Core extends password {
 						$c++;
 						$a++;
 					}
-				} else {}
+				}
 				$b++;
 			}
 		} else {
@@ -656,7 +656,7 @@ class Core extends password {
 							$c++;
 							$a++;
 						}
-					} else  {}
+					}
 					try {
 						$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
 							'&gmcontinue=' . $Continue .
@@ -678,7 +678,7 @@ class Core extends password {
 						$c++;
 						$a++;
 					}
-				} else {}
+				}
 				$b++;
 			}
 		}
@@ -697,7 +697,7 @@ class Core extends password {
 	*/
 	public function getPageCats($page) {
 		try {
-			$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($Page) .
+			$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($page) .
 				'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
 			$cats = json_decode($cats, true);
 		} catch (Exception $e) {

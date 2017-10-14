@@ -24,10 +24,8 @@ class DBCore extends DBPassword {
 			}
 			$a++;
 		}
-		if (!$Found) {
+		if (!$Found)
 			throw new Exception('Keine passenden DB-Anmeldeinformationen vorhanden.');
-			die(1); // exit with error
-		}
 		$this->DB = new mysqli($this->LoginHost, $this->DBusername, $this->DBpassword, $Database);
 		if ($this->DB->connect_errno) {
 			echo "Error: Failed to make a MySQL connection, here is why: \n";
@@ -39,10 +37,11 @@ class DBCore extends DBPassword {
 
 	public function query($sql, $sensitive = false) {
 		if(!$result = $this->DB->query($sql)) {
+			$err = $this->DB->error;
 			if ($sensitive === false)
-				die('There was an error running the query [' . $this->DB->error . ']');
+				die('There was an error running the query [' . $err . ']');
 			else
-				echo ('\nThere was an error running the query [' . $this->DB->error . ']');
+				echo ('\nThere was an error running the query [' . $err . ']');
 		} else if ($result->num_rows === 0) {
 			return 0;
 		} else {
@@ -68,7 +67,7 @@ class DBCore extends DBPassword {
 		mysqli_close($this->DB);
 	}
 
-	function __destruct() {
+	public function __destruct() {
 		mysqli_close($this->DB);
 	}
 }

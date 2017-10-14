@@ -7,6 +7,8 @@ class DBpassword {
 	private $LoginHost;
 	private $LoginAccount;
 	private $LoginPassword;
+	
+	public function __construct() {}
 
 	protected function init() {
 		$this->LoginName = array( // Empfohlen: Username@wiki
