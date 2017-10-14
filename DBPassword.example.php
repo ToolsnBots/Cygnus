@@ -12,7 +12,7 @@ class DBpassword {
 		$this->LoginName = array( // Empfohlen: Username@wiki
 			'root@localhost',
 		);
-		# Bitte beachten, Accounts müssen in der selben Reihenfolge genannt werden, wie bei LoginName! #
+		// Bitte beachten, Accounts müssen in der selben Reihenfolge genannt werden, wie bei LoginName! #
 		$this->LoginHost = array( // Internetdomain
 			'127.0.0.1',
 		);

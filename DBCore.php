@@ -8,7 +8,7 @@ class DBCore extends DBPassword {
 
 	//TODO Write documentation
 	function __construct($Accountdata, $Database) {
-		$a=0;
+		$a = 0;
 		$Found = false;
 		$this->init();
 		$LoginName = unserialize($this->getLoginName ());
