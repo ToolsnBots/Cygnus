@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Cygnus">
+<arg name="tab-width" value="4" />
+<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+
+<rule ref="Generic.WhiteSpace.ScopeIndent">
+    <properties>
+        <property name="tabIndent" value="true"/>
+    </properties>
+</rule>
+</ruleset>

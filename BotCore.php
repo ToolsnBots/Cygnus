@@ -582,8 +582,8 @@ class Core extends password {
 				$a++;
 			}
 		}
-		$b=0;
-		$c=0;
+		$b = 0;
+		$c = 0;
 		if ($onlySubCats === true)
 			return $subCat;
 		if ($excludeWls === false) {	
