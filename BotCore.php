@@ -274,7 +274,7 @@ class Core extends password {
 	private function readPageEngine($request) {
 		$page = json_decode($this->httpRequest($request, $this->job, 'GET'), true);
 		$pageID = $page['query']['pageids'][0];
-		return $text['query']['pages'][$pageID]['revisions'][0]['*'];
+		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
 	}
 	/** readPage
 	* Liest eine Seite aus
