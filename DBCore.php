@@ -7,7 +7,7 @@ class DBCore extends DBPassword {
 	protected $DB;
 
 	//TODO Write documentation
-	function __construct($Accountdata, $Database) {
+	public function __construct($Accountdata, $Database) {
 		$a = 0;
 		$Found = false;
 		$this->init();
@@ -36,7 +36,8 @@ class DBCore extends DBPassword {
 	}
 
 	public function query($sql, $sensitive = false) {
-		if(!$result = $this->DB->query($sql)) {
+		$result = $this->DB->query($sql);
+		if(!$result) {
 			$err = $this->DB->error;
 			if ($sensitive === false)
 				die('There was an error running the query [' . $err . ']');
@@ -50,11 +51,13 @@ class DBCore extends DBPassword {
 	}
 
 	public function modify ($sql, $sensitive = false) {
-		if (!$result = $this->DB->query($sql)) {
+		$result = $this->DB->query($sql);
+		if (!$result) {
+			$err = $this->DB->error;
 			if ($sensitive === false)
-				die('There was an error running the command [' . $this->DB->error . ']');
+				die('There was an error running the command [' . $err . ']');
 			else
-				echo ('\nThere was an error running the command [' . $this->DB->error . ']');
+				echo ('\nThere was an error running the command [' . $err . ']');
 		} else
 			return $result;
 	}

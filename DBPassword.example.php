@@ -1,27 +1,27 @@
-﻿<?php
+<?php
 class DBpassword {
-	/** Dies ist eine Example-Datei
-	* Damit das Programm funktioniert, muessen die Daten angepasst werden!
+	/** This is only an example
+	* You need to modify the data to make the program work!
 	*/
 	private $LoginName;
 	private $LoginHost;
 	private $LoginAccount;
 	private $LoginPassword;
-	
+
 	public function __construct() {}
 
 	protected function init() {
-		$this->LoginName = array( // Empfohlen: Username@wiki
+		$this->LoginName = array( // Recommended: Username@wiki
 			'root@localhost',
 		);
-		// Bitte beachten, Accounts müssen in der selben Reihenfolge genannt werden, wie bei LoginName! #
-		$this->LoginHost = array( // Internetdomain
+		// NOTE: Accounts need to follow the same order as at loginname
+		$this->LoginHost = array( // Domain
 			'127.0.0.1',
 		);
-		$this->LoginAccount = array( // Name das Accounts
+		$this->LoginAccount = array( // Name of the account
 			'root',
 		);
-		$this->LoginPassword = array( // Passwort des Accounts
+		$this->LoginPassword = array( // Password of the account
 			'Password',
 		);
 	}

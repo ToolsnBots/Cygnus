@@ -173,8 +173,8 @@ class Core extends password {
 	protected function login() {
 		$lgToken = $this->requireToken('login');
 		// perform login
-		$result = $this->httpRequest('action=login&format=json&lgname=' . urlencode($this->username) . 
-			'&lgpassword=' . urlencode($this->password) . 
+		$result = $this->httpRequest('action=login&format=json&lgname=' . urlencode($this->username) .
+			'&lgpassword=' . urlencode($this->password) .
 			'&lgtoken=' . urlencode($lgToken), $this->job);
 		$tree = json_decode($result, true);
 		$lgResult = $tree['login']['result'];
@@ -527,13 +527,13 @@ class Core extends password {
 	*/
 	public function movePage($startLemma, $targetLemma, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
-		$data = 'action=move&format=json&assert=' . $this->assert . 
-			'&from=' . urlencode($startLemma) . 
-			'&to=' . urlencode($targetLemma) . 
-			'&reason=' . urlencode($reason) . 
-			'&bot=' . $bot . 
-			'&movetalk=' . $movetalk . 
-			'&noredirect=' . $noredirect . 
+		$data = 'action=move&format=json&assert=' . $this->assert .
+			'&from=' . urlencode($startLemma) .
+			'&to=' . urlencode($targetLemma) .
+			'&reason=' . urlencode($reason) .
+			'&bot=' . $bot .
+			'&movetalk=' . $movetalk .
+			'&noredirect=' . $noredirect .
 			'&token=' . urlencode($token);
 		$result = $this->httpRequest($data, $this->job);
 		return serialize(json_decode($result, true));
@@ -547,10 +547,10 @@ class Core extends password {
 	*/
 	public function review($revid, $comment = '', $unapprove = 0) {
 		$token = $this->requireToken();
-		$data = 'action=review&format=json&assert=' . $this->assert . 
-			'&revid=' . urlencode($revid) . 
-			'&unapprove=' . urlencode($unapprove) . 
-			'&comment=' . urlencode($comment) . 
+		$data = 'action=review&format=json&assert=' . $this->assert .
+			'&revid=' . urlencode($revid) .
+			'&unapprove=' . urlencode($unapprove) .
+			'&comment=' . urlencode($comment) .
 			'&token=' . urlencode($token);
 		$result = $this->httpRequest($data, $this->job);
 		$result = json_decode($result, true);
@@ -575,7 +575,7 @@ class Core extends password {
 	public function getCatMembers($kat, $onlySubCats = false, $excludeWls = false) {
 		$b = 0;
 		$subCat[0] = $kat;
-		$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) . 
+		$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) .
 			'&cmprop=title&cmtype=subcat&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 		$answer = json_decode($result, true);
 		$a = 0;
@@ -594,7 +594,7 @@ class Core extends password {
 		if ($excludeWls === false) {
 			while (isset($subCat[$b]))
 			{
-				$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) . 
+				$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) .
 					'&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 				$answer = json_decode($result, true);
 				$Cont = false;
@@ -611,8 +611,8 @@ class Core extends password {
 							$a++;
 						}
 					}
-					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmcontinue=' . $Continue 
-						. '&cmtitle=' . urlencode($subCat[$b]) 
+					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmcontinue=' . $Continue
+						. '&cmtitle=' . urlencode($subCat[$b])
 						. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 					$answer = json_decode($result, true);
 					if (isset($answer['query-continue']['categorymembers']['cmcontinue'])) {
@@ -633,7 +633,7 @@ class Core extends password {
 			}
 		} else {
 			while (isset($subCat[$b])) {
-				$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . 
+				$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
 					'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 				$answer = json_decode($result, true);
 				$Cont = false;
@@ -657,8 +657,8 @@ class Core extends password {
 					} catch (Exception $e) {
 						throw $e;
 					}
-					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) . 
-						'&gmcontinue=' . $Continue . 
+					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
+						'&gmcontinue=' . $Continue .
 						'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
 					$answer = json_decode($result, true);
 					if (isset($answer['query-continue']['pages']['gcmcontinue'])) {
@@ -692,7 +692,7 @@ class Core extends password {
 	* @returns Alle Kategorien als serialisiertes Array
 	*/
 	public function getPageCats($page) {
-		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($Page) . 
+		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($page) .
 			'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
 		$cats = json_decode($cats, true);
 		$pageID = $cats['query']['pageids'][0];
@@ -932,7 +932,7 @@ class Core extends password {
 			return false;
 		return true;
 	}
-	
+
 	/** Admin-functions
 	* The following section includes functions which only sysops can use
 	*/
@@ -992,7 +992,7 @@ class Core extends password {
 			'&hidename=' . urlencode($hidename) .
 			'&allowusertalk=' . urlencode($allowusertalk) .
 			'&reblock=' . urlencode($reblock) .
-			'&token=' . urlencode($token) . 
+			'&token=' . urlencode($token) .
 			'&maxlag=' . $this->maxlag;
 		try {
 			$result = $this->httpRequest($data, $this->job);
@@ -1038,8 +1038,8 @@ class Core extends password {
 	* @param - $protections - Pipe-seperated protection. Mention all levels you want to change
 	* @param - $protections - To remove a protection, use all, e.g. "edit=all|move=sysop"
 	* @param - $expiry - Pipe-separated list of expiry timestamps in GNU timestamp format.
-	* @param - $expiry - The first timestamp applies to the first protection in protections, the second to the second, etc. 
-	* @param - $expiry - The timestamps infinite, indefinite and never result in a protection that will never expire. 
+	* @param - $expiry - The first timestamp applies to the first protection in protections, the second to the second, etc.
+	* @param - $expiry - The timestamps infinite, indefinite and never result in a protection that will never expire.
 	* @param - $expiry - Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
 	* @param - $expiry - The number of expiry timestamps must equal the number of protections, or you'll get an error message
 	* @param - $expiry - An exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
@@ -1074,7 +1074,7 @@ class Core extends password {
 	* @author Luke081515
 	* @param $title - The page to change
 	* @param $expiry - expiry timestamp in GNU timestamp format.
-	**	The timestamps infinite, indefinite and never result in a protection that will never expire. 
+	**	The timestamps infinite, indefinite and never result in a protection that will never expire.
 	**	Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
 	* @param $default - Which version should be shown? 'latest' or 'stable'?
 	* @param $autoreview - Who is allowed to review? 'all' or 'sysop'?
@@ -1084,7 +1084,7 @@ class Core extends password {
 	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
 		$token = $this->requireToken();
 		$data = 'action=stabilize&format=json&maxlag=5&default=' . urlencode($default) .
-			'&autoreview=' . urlencode($autoreview) . 
+			'&autoreview=' . urlencode($autoreview) .
 			'&expiry=' . urlencode($expiry) .
 			'&reason=' . urlencode($reason) .
 			'&title=' . urlencode($title) .
