@@ -156,8 +156,9 @@ class Core extends password {
 	public function requireToken($type = 'csrf') {
 		$result = $this->httpRequest('action=query&format=json&meta=tokens&type=' . $type, $this->job, 'GET');
 		$tree = json_decode($result, true);
+		$tokenname = $type . "token";
 		try {
-			$token = $tree['query']['tokens'][$type];
+			$token = $tree['query']['tokens'][$tokenname];
 		} catch (Exception $e) {
 			throw new Excpetion('You filed an invalid token request.' . $e->getMessage());
 		}
