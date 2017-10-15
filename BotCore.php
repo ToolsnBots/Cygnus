@@ -20,6 +20,7 @@ class Core extends password {
 	protected $mailcontent;
 	private $version;
 	private $ua;
+	private $maxlag;
 
 	/** initcurl
 	* initializes curl
@@ -53,6 +54,8 @@ class Core extends password {
 		$this->login();
 		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
 		$this->ua = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
+		// change if you need more, default is 5
+		$this->setMaxlag(5);
 	}
 	/** initcurlArgs
 	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
@@ -805,6 +808,24 @@ class Core extends password {
 		$content = substr($content, strpos($content, '=') + $sectionlevel);
 		$content = substr($content, 0, strpos($content, '='));
 		return ['title' => $content, 'level' => $sectionlevel, ];
+	}
+	/** getMaxlag
+	* @author Luke081515
+	* @returns $this->maxlag
+	*/
+	final public function getMaxlag() {
+		return $this->maxlag;
+	}
+	/** setMaxlag
+	* sets $this->maxlag
+	* @author Luke081515
+	* @param $maxlag - the maxlag to set
+	*/
+	final public function setMaxlag($maxlag) {
+		if (is_int($maxlag))
+			$this->maxlag = $maxlag;
+		else
+			throw new \Exception('The maxlag you specified is not a valid integer');
 	}
 	/** askOperator
 	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
