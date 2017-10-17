@@ -18,7 +18,7 @@ class Core extends Password {
 	protected $assert;
 	protected $mail;
 	protected $mailcontent;
-	private $version;
+	private $version = 'Cygnus-Framework V2.1 alpha';
 	private $ua;
 	private $maxlag;
 
@@ -35,7 +35,6 @@ class Core extends Password {
 	* @param $loadSettings - [optional: true] if the settings shall be loaded or another way will be used to login
 	*/
 	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'bot') {
-		$this->version = 'Cygnus-Framework V2.1 beta';
 		if ($assert !== 'bot' && $assert !== 'user')
 			throw new Exception('assert has to be \'bot\' or \'user\'');
 		$this->assert = $assert;
@@ -52,8 +51,8 @@ class Core extends Password {
 		else
 			$this->curlHandle = $curl;
 		$this->login();
-		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
-		$this->ua = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
+		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
@@ -81,10 +80,11 @@ class Core extends Password {
 			throw new Exception('Curl initialization failed.');
 		else
 			$this->curlHandle = $curl;
-		echo '\n***** Starting up....\nVersion: ' . $this->version . '\n*****';
-		$this->ua = 'User:' . $this->username . ' - ' . $this->job . ' - ' . $this->version;
+		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 	}
-	public function __construct($account, $job, $pUseHTTPS = true) {}
+	public function __construct($account, $job, $pUseHTTPS = true) {
+	}
 	public function __destruct() {
 		curl_close($this->curlHandle);
 	}
