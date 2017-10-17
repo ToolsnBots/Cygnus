@@ -8,7 +8,7 @@ require_once __DIR__ . '/Password.php';
 * @version V2.1 beta
 * Vielen Dank an alle, die zu diesem Framework beigetragen haben
 */
-class Core extends password {
+class Core extends Password {
 	protected $username;
 	protected $password;
 	protected $curlHandle;
