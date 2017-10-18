@@ -577,7 +577,7 @@ class Core extends Password {
 		$b = 0;
 		$subCat[0] = $kat;
 		$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) .
-			'&cmprop=title&cmtype=subcat&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+			'&cmprop=title&cmtype=subcat&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 		$answer = json_decode($result, true);
 		$a = 0;
 		if (isset($answer['query']['categorymembers'][$a]['title'])) {
@@ -596,7 +596,7 @@ class Core extends Password {
 			while (isset($subCat[$b]))
 			{
 				$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($subCat[$b]) .
-					'&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+					'&cmprop=title&cmtype=page&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 				$answer = json_decode($result, true);
 				$Cont = false;
 				if (isset($answer['query-continue']['categorymembers']['cmcontinue'])) {
@@ -614,7 +614,7 @@ class Core extends Password {
 					}
 					$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmcontinue=' . $Continue
 						. '&cmtitle=' . urlencode($subCat[$b])
-						. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+						. '&cmprop=title&cmtype=page&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 					$answer = json_decode($result, true);
 					if (isset($answer['query-continue']['categorymembers']['cmcontinue'])) {
 						$Continue = $answer['query-continue']['categorymembers']['cmcontinue'];
@@ -635,7 +635,7 @@ class Core extends Password {
 		} else {
 			while (isset($subCat[$b])) {
 				$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
-					'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+					'&prop=info&gcmlimit=max&rawcontinue=&redirects', $this->job, 'GET');
 				$answer = json_decode($result, true);
 				$Cont = false;
 				if (isset($answer['query-continue']['categorymembers']['gcmcontinue'])) {
@@ -654,13 +654,13 @@ class Core extends Password {
 					try {
 						$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
 							'&gmcontinue=' . $Continue .
-							'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+							'&prop=info&gcmlimit=max&rawcontinue=&redirects', $this->job, 'GET');
 					} catch (Exception $e) {
 						throw $e;
 					}
 					$result = $this->httpRequest('action=query&format=json&generator=categorymembers&gcmtitle=' . urlencode($subCat[$b]) .
 						'&gmcontinue=' . $Continue .
-						'&prop=info&gcmlimit=5000&rawcontinue=&redirects', $this->job, 'GET');
+						'&prop=info&gcmlimit=max&rawcontinue=&redirects', $this->job, 'GET');
 					$answer = json_decode($result, true);
 					if (isset($answer['query-continue']['pages']['gcmcontinue'])) {
 						$Continue = $answer['query-continue']['pages']['gcmcontinue'];
@@ -693,7 +693,7 @@ class Core extends Password {
 	* @returns Alle Kategorien als serialisiertes Array
 	*/
 	public function getPageCats($page) {
-		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=5000&titles=' . urlencode($page) .
+		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($page) .
 			'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
 		$cats = json_decode($cats, true);
 		$pageID = $cats['query']['pageids'][0];
@@ -720,9 +720,9 @@ class Core extends Password {
 			if (isset($Continue))
 				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) .
 					'&einamespace=0&eicontinue=' . urlencode($Continue) .
-					'&eidir=ascending&eilimit=5000&rawcontinue=';
+					'&eidir=ascending&eilimit=max&rawcontinue=';
 			else
-				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . '&einamespace=0&eidir=ascending&eilimit=5000&rawcontinue=';
+				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . '&einamespace=0&eidir=ascending&eilimit=max&rawcontinue=';
 			$result = $this->httpRequest($data, $this->job, 'GET');
 			$answer = json_decode($result, true);
 			$a = 0;
@@ -755,9 +755,9 @@ class Core extends Password {
 		$Again = true;
 		while ($Again === true) {
 			if (isset($Continue))
-				$data = 'action=query&list=allpages&format=json&apcontinue=' . $Continue . '&apnamespace=' . $namespace . '&aplimit=5000&apdir=ascending&rawcontinue=';
+				$data = 'action=query&list=allpages&format=json&apcontinue=' . $Continue . '&apnamespace=' . $namespace . '&aplimit=max&apdir=ascending&rawcontinue=';
 			else
-				$data = 'action=query&list=allpages&format=json&apnamespace=' . $namespace . '&aplimit=5000&apdir=ascending&rawcontinue=';
+				$data = 'action=query&list=allpages&format=json&apnamespace=' . $namespace . '&aplimit=max&apdir=ascending&rawcontinue=';
 			$result = $this->httpRequest($data, $this->job, 'GET');
 			$answer = json_decode($result, true);
 			$a = 0;
@@ -798,7 +798,7 @@ class Core extends Password {
 	* @returns Array mit Ergebnissen
 	*/
 	public function getLinks($page) {
-		$data = 'action=query&prop=links&format=json&pllimit=5000&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($page);
+		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($page);
 		$result = json_decode($this->httpRequest($data, $this->job, 'GET'), true);
 		while (isset($result['query']['pages'][$pageID]['links'][0]['title'])) {
 		$pageID = $result['query']['pageids'][0];
