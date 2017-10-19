@@ -693,7 +693,7 @@ class Core extends Password {
 	* @returns Alle Kategorien als serialisiertes Array
 	*/
 	public function getPageCats($title) {
-		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($page) .
+		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($title) .
 			'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
 		$cats = json_decode($cats, true);
 		$pageID = $cats['query']['pageids'][0];
@@ -784,7 +784,7 @@ class Core extends Password {
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
 	public function getPageID($title) {
-		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($page);
+		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($title);
 		$result = $this->httpRequest($data, $this->job, 'GET');
 		if (strpos ($result, 'missing') !== false)
 			return false;
@@ -798,7 +798,7 @@ class Core extends Password {
 	* @returns Array mit Ergebnissen
 	*/
 	public function getLinks($title) {
-		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($page);
+		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
 		$result = json_decode($this->httpRequest($data, $this->job, 'GET'), true);
 		while (isset($result['query']['pages'][$pageID]['links'][0]['title'])) {
 		$pageID = $result['query']['pageids'][0];
