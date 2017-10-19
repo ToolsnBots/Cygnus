@@ -539,6 +539,27 @@ class Core extends Password {
 		$result = $this->httpRequest($data, $this->job);
 		return serialize(json_decode($result, true));
 	}
+	/** watch
+	* Allows to put a page on your watchlist, or remove it
+	* @param $title - Title of the page
+	* @param $unwatch - default 0 - if 1, the page will get removed from the list
+	* @returns mixed - true if successful, otherwise the API error code
+	*/
+	public function watch ($title, $unwatch = 0) {
+		$token = $this->requireToken('watch');
+		$data = 'action=watch'
+			. '&format=json'
+			. '&unwatch=' . $unwatch
+			. '&titles=' . urlencode($title)
+			. '&token=' . urlencode($token)
+			. '&assert=' . $this->assert
+			. '&maxlag=' . $this->maxlag;
+		$result = $this->httpRequest($data, $this->job);
+		$result = json_decode($result, true);
+		if (array_key_exists('error', $result))
+			return $result['error']['code'];
+		return true;
+	}
 	/** review
 	* Marks the specified version as reviewed or not reviewed
 	* @param $revid - The revid of the revision to approve/unapprove

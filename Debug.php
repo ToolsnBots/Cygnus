@@ -218,6 +218,22 @@ class Debug extends Core {
 					$this->processError($e, $endtime);
 				}
 				break;
+			case 'watch':
+				$required = array("title");
+				$optional = array("unwatch");
+				$optvalues = array(0);
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of watch...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->watch($Param[0], intval($Param[2]));
+					$endtime = microtime (true);
+					$this->processFunction($ret, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $endtime);
+				}
+				break;
 			case 'review':
 				$required = array("revid", "comment", "reason");
 				$optional = array("unapprove");
