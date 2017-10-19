@@ -226,7 +226,7 @@ class Debug extends Core {
 				$this->echoNotice('Starting the function call of review...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->review($Param[0], $Param[1], intval($Param[2]));
+					$ret = $this->review($Param[0], $Param[1], $Param[2], intval($Param[3]));
 					$endtime = microtime (true);
 					$this->processFunction($ret, $endtime);
 				} catch (Exception $e) {
