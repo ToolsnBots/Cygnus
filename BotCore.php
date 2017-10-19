@@ -183,7 +183,7 @@ class Core extends Password {
 		if ($lgResult == 'Success')
 			return true;
 		else
-			throw new Exception('Login failed with message ' . $lgResult);
+			throw new Exception('Login failed with message: ' . $lgResult);
 	}
 	/** logout
 	* Loggt den Benutzer aus
@@ -234,7 +234,7 @@ class Core extends Password {
 			$a++;
 		}
 		if (!$Found) {
-			throw new Exception('Keine passenden Anmeldeinformationen vorhanden.');
+			throw new Exception('No matching credentials available.');
 		}
 	}
 	/** checkResult
@@ -250,18 +250,18 @@ class Core extends Password {
 	*/
 	private function checkResult($result) {
 		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
-			echo '\nEdit fehlgeschlangen. Grund: $result. Versuche es erneut';
+			echo '\nEdit failed. Reason: $result. Please try again';
 			return 'retry';
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
-			throw new Exception('Du kannst in der nahen Zukunft keine Aktionen ausfuehren. Grund: $result');
+			throw new Exception('You will not be able to edit soon. Reason: $result');
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
 			$this->login();
 			return 'retry';
 		} else if ($result === 'editconflict') {
-			echo '\nBearbeitungskonflikt festgestellt';
+			echo '\nEditconflict detected';
 			return 'conflict';
 		} else {
-			echo 'Aktion fehlgeschlagen. Fehlercode: $result';
+			echo 'Action failed. Error: ' . $result;
 			return 'fail';
 		}
 	}
