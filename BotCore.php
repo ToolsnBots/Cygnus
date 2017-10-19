@@ -138,7 +138,7 @@ class Core extends Password {
 				$success = true;
 				break 1;
 			} else {
-				echo ('\nCurl request wuth arguments "' . $arguments . '" to ' . $this->site . ' failed (try: $i out of 18)' . curl_error($this->curlHandle));
+				echo ('\nCurl request with arguments "' . $arguments . '" to ' . $this->site . ' failed (try: $i out of 18)' . curl_error($this->curlHandle));
 				sleep(10);
 			}
 		}
