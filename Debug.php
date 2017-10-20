@@ -92,7 +92,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'getTableOfContents':
-				$required = array("page");
+				$required = array("title");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of getTableOfContents...');
 				$starttime = microtime (true);
@@ -252,7 +252,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'getPageCats':
-				$required = array("page");
+				$required = array("title");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of getPageCats...');
 				$starttime = microtime (true);
@@ -294,7 +294,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'getPageID':
-				$required = array("page");
+				$required = array("title");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of getPageID...');
 				$starttime = microtime (true);
@@ -308,7 +308,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'getLinks':
-				$required = array("page");
+				$required = array("title");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of getLinks...');
 				$starttime = microtime (true);
@@ -337,7 +337,7 @@ class Debug extends Core {
 				break;
 			// Admin functions
 			case 'deletePage':
-				$required = array("page", "reason");
+				$required = array("title", "reason");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of deletePage...');
 				$starttime = microtime (true);
@@ -382,7 +382,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'protectPage':
-				$required = array("page", "reason", "protections", "expiry", "cascade");
+				$required = array("title", "reason", "protections", "expiry", "cascade");
 				$Param = $this->getParams($required);
 				$this->echoNotice('Starting the function call of protectPage...');
 				$starttime = microtime (true);

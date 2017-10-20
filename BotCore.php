@@ -334,7 +334,7 @@ class Core extends Password {
 	}
 	/** getTableOfContents
 	* Gibt das Inhaltsverzeichnis einer Seite aus
-	* @param $page - Titel der Seite
+	* @param $title - Titel der Seite
 	* @author Luke081515
 	* @returns Zwei dimensionales Array
 	* @returns Erste Dimension: Der entsprechende Abschnitt
@@ -344,8 +344,8 @@ class Core extends Password {
 	* 	[2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5);
 	* 	[3] => Abschnittsnummer, ohne Komma, reiner int;
 	*/
-	public function getTableOfContents($page) {
-		$result = $this->httpRequest('action=parse&format=json&maxlag=5&page=' . urlencode($page) . '&prop=sections', $this->job, 'GET');
+	public function getTableOfContents($title) {
+		$result = $this->httpRequest('action=parse&format=json&maxlag=5&page=' . urlencode($title) . '&prop=sections', $this->job, 'GET');
 		$Data = json_decode($result, true);
 		$a = 0;
 		while (isset($Data['parse']['sections'][$a]['level'])) {
@@ -689,11 +689,11 @@ class Core extends Password {
 	* Funktioniert bis zu 500 Kategorien einer Seite
 	* Erfordert Botflag, da Limit auf 5000 gesetzt
 	* @author Luke081515
-	* @param $page - Seite die analyisiert werden soll
+	* @param $title - Seite die analyisiert werden soll
 	* @returns Alle Kategorien als serialisiertes Array
 	*/
-	public function getPageCats($page) {
-		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($page) .
+	public function getPageCats($title) {
+		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($title) .
 			'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
 		$cats = json_decode($cats, true);
 		$pageID = $cats['query']['pageids'][0];
@@ -780,11 +780,11 @@ class Core extends Password {
 	/** getPageID
 	* Gibt zu der angegebenen Seite die ID an
 	* @author Luke081515
-	* @param $page - Name der Seite
+	* @param $title - Name der Seite
 	* @returns int: PageID, bool: false falls Seite nicht vorhanden
 	*/
-	public function getPageID($page) {
-		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($page);
+	public function getPageID($title) {
+		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($title);
 		$result = $this->httpRequest($data, $this->job, 'GET');
 		if (strpos ($result, 'missing') !== false)
 			return false;
@@ -794,11 +794,11 @@ class Core extends Password {
 	/** getLinks
 	* Gibt aus, welche Wikilinks sich auf einer Seite befinden, maximal 5000
 	* @author Luke081515
-	* @param $page - Seite die analysiert wird
+	* @param $title - Seite die analysiert wird
 	* @returns Array mit Ergebnissen
 	*/
-	public function getLinks($page) {
-		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($page);
+	public function getLinks($title) {
+		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
 		$result = json_decode($this->httpRequest($data, $this->job, 'GET'), true);
 		while (isset($result['query']['pages'][$pageID]['links'][0]['title'])) {
 		$pageID = $result['query']['pageids'][0];
@@ -941,14 +941,14 @@ class Core extends Password {
 	* Deletes a page
 	* requires the "delete" right
 	* @author Luke081515
-	* @param $page - Page to delete
+	* @param $title - Page to delete
 	* @param $reason - The reason for the deletion, visible in the log
 	* @returns - "success" if the deletion was successful, otherwise the error code of the api
 	*/
-	public function deletePage ($page, $reason) {
+	public function deletePage ($title, $reason) {
 		$token = $this->requireToken();
 		$data = 'action=delete&format=json' .
-			'&title=' . urlencode($page) .
+			'&title=' . urlencode($title) .
 			'&reason=' . $reason .
 			'&token=' . urlencode($token) .
 			'&maxlag=' . $this->maxlag;
@@ -1034,7 +1034,7 @@ class Core extends Password {
 	/** protectPage
 	* Protects a page
 	* @author Luke081515
-	* @param - $page - The page to protect
+	* @param - $title - The page to protect
 	* @param - $reason - The reason to set
 	* @param - $protections - Pipe-seperated protection. Mention all levels you want to change
 	* @param - $protections - To remove a protection, use all, e.g. "edit=all|move=sysop"
@@ -1049,10 +1049,10 @@ class Core extends Password {
 	* @param - $cascade - Uses cascade protection
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
-	public function protectPage ($page, $reason, $protections, $expiry, $cascade) {
+	public function protectPage ($title, $reason, $protections, $expiry, $cascade) {
 		$token = $this->requireToken();
 		$data = 'action=protect&format=json' .
-			'&page=' . urlencode($page) .
+			'&page=' . urlencode($title) .
 			'&reason=' . urlencode($reason) .
 			'&protections=' . urlencode($protections) .
 			'&expiry=' . urlencode($expiry) .
