@@ -518,19 +518,19 @@ class Core extends Password {
 	}
 	/** movePage
 	* Verschiebt eine Seite
-	* @param $startLemma - Alter Titel der Seite
-	* @param $targetLemma - Neuer Titel der Seite
+	* @param $oldTitle - Alter Titel der Seite
+	* @param $newTitle - Neuer Titel der Seite
 	* @param - $bot (default: 0) - Botflag setzen?
 	* @param - $movetalk (default: 1) - Diskussionsseite mitverschieben?
 	* @param - $noredirect - (default: 1) - Weiterleitung erstellen?
 	* @param $reason - Grund der Verschiebung, der im Log vermerkt wird
 	* @returns Serialisierte Antwort der API-Parameter
 	*/
-	public function movePage($startLemma, $targetLemma, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
+	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
 		$data = 'action=move&format=json&assert=' . $this->assert .
-			'&from=' . urlencode($startLemma) .
-			'&to=' . urlencode($targetLemma) .
+			'&from=' . urlencode($oldTitle) .
+			'&to=' . urlencode($newTitle) .
 			'&reason=' . urlencode($reason) .
 			'&bot=' . $bot .
 			'&movetalk=' . $movetalk .
