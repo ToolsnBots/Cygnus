@@ -584,6 +584,21 @@ class Core extends Password {
 		} else
 			return 'success';
 	}
+
+	// User related functions
+	/** getUserEditcount
+	* returns the editcount of a user, false if the user does not exist
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs editcount as int if the user does exist, false if not
+	*/
+	public function getUserEditcount ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=editcount&ususers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "missing") !== false)
+			return false;
+		$result = json_decode($result, true);
+		return $result['query']['users'][0]['editcount'];
+	}
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)

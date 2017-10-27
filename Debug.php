@@ -253,6 +253,21 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			// User information functions
+			case 'getUserEditcount':
+				$required = array("username");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of getUserEditcount...');
+				$starttime = microtime(true);
+				try {
+					$ret = $this->getUserEditcount($Param[0]);
+					$endtime = microtime(true);
+					$this->processFunction($ret, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime(true);
+					$this->processError($e, $endtime);
+				}
+				break;
 			// Query functions
 			case 'getCatMembers':
 				$required = array("kat");
