@@ -594,10 +594,10 @@ class Core extends Password {
 	* @returs true if the user does exist, false if not
 	*/
 	public function checkUserExistence ($username) {
-		$result = $this->httpRequest('action=query&format=json&list=users&usprop=&ususers=' . urlencode($username));
-		if (strpos($result, "missing" !== false))
-			return true;
-		return false;
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=&ususers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "missing") !== false)
+			return false;
+		return true;
 	}
 	/** getUserEditcount
 	* returns the editcount of a user, false if the user does not exist
