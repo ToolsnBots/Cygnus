@@ -761,6 +761,21 @@ class Core extends Password {
 		}
 		return false;
 	}
+
+	// User related functions
+	/** getUserGroups
+	* returns the groups of a user, false if the user does not exist
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs the groups as array if the user does exist, false if not
+	*/
+	public function getUserGroups ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=editcount&ususers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "missing") !== false)
+			return false;
+		$result = json_decode($result, true);
+		return $result['query']['users'][0]['groups'];
+	}
 	/** getCatMembers
 	* reads out all category members of a category, including subcategories
 	* works till you have more than 5000 subcategories per category

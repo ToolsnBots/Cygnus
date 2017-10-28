@@ -333,6 +333,21 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			// User information functions
+			case 'getUserGroups':
+				$required = array("username");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of getUserGroups...');
+				$starttime = microtime(true);
+				try {
+					$ret = $this->getUserGroups($Param[0]);
+					$endtime = microtime(true);
+					$this->processFunction($ret, $endtime, true);
+				} catch (Exception $e) {
+					$endtime = microtime(true);
+					$this->processError($e, $endtime);
+				}
+				break;
 			// Query functions
 			case 'getCatMembers':
 				$required = array("kat");
@@ -673,13 +688,17 @@ class Debug extends Core {
 	/** processFunction
 	* Internal, used for successful calls
 	*/
-	private function processFunction($ret, $starttime, $endtime) {
+	private function processFunction($ret, $starttime, $endtime, $array = false) {
 		$total = $endtime - $starttime;
 		$this->echoSuccessful('Function call succeeded');
 		$this->echoNotice('Performance: ' . $total . ' seconds');
 		$answer = $this->askRequired('Display the result now? [y/N]');
-		if (strtolower($answer) !== 'n')
-			$this->echoOutput($ret);
+		if (strtolower($answer) !== 'n') {
+			if (!$array)
+				$this->echoOutput($ret);
+			else
+				var_dump($ret); // ToDo: Color output as well
+		}
 	}
 	/** processError
 	* Internal, used for errors
