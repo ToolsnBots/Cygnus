@@ -13,7 +13,10 @@ class Debug extends Core {
 		$this->setPassword($this->askRequired('Enter the password to use:'));
 		$this->initcurlArgs('Debug', true);
 		$this->login();
-		$this->debug($this->askRequired("Name of the function you want to debug:"));
+		do {
+			$this->debug($this->askRequired("Name of the function you want to debug:"));
+			$answer = $this->askRequired("Do you want to debug another function? [y/N]");
+		} while (strtolower($answer) !== 'n');
 	}
 	/** debug
 	* This is the debug engine, here you need to define all methods the script can use
