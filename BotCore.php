@@ -613,6 +613,20 @@ class Core extends Password {
 			return true;
 		return false;
 	}
+	/** checkUserMail
+	* checks if the user has the mail feature active
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs false if not or if the user does not exist, true otherwise
+	*/
+	public function checkUserMail ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=emailable&ususers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "missing") !== false)
+			return false;
+		if (strpos($result, "emailable") !== false)
+			return true;
+		return false;
+	}
 	/** getCatMembers
 	* reads out all category members of a category, including subcategories
 	* works till you have more than 5000 subcategories per category
