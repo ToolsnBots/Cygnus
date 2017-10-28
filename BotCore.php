@@ -584,6 +584,20 @@ class Core extends Password {
 		} else
 			return 'success';
 	}
+
+	// User related functions
+	/** checkUserBlock
+	* checks if a user is blocked
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs true if blocked, false if not
+	*/
+	public function checkUserBlock ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=blocks&bkusers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "reason") !== false)
+			return true;
+		return false;
+	}
 	/** getCatMembers
 	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
