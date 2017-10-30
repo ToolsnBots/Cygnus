@@ -25,7 +25,7 @@ class DBCore extends DBPassword {
 			$a++;
 		}
 		if (!$Found)
-			throw new Exception('Keine passenden DB-Anmeldeinformationen vorhanden.');
+			throw new Exception('No matching credentials available. (DB)');
 		$this->DB = new mysqli($this->LoginHost, $this->DBusername, $this->DBpassword, $Database);
 		if ($this->DB->connect_errno) {
 			echo "Error: Failed to make a MySQL connection, here is why: \n";
