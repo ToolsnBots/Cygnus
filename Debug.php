@@ -32,10 +32,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->readPage($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'readPageID':
@@ -46,10 +46,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->readPageID($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'readPageJs':
@@ -60,10 +60,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->readPageJs($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'readPageCss':
@@ -74,10 +74,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->readPageCss($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'readSection':
@@ -88,10 +88,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->readSection($Param[0], $Param[1]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getTableOfContents':
@@ -102,10 +102,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getTableOfContents($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			// editPage functions
@@ -119,10 +119,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editPage($Param[0], $Param[1], $Param[2], intval($Param[3]), boolval($Param[4]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'editPageMinor':
@@ -135,10 +135,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editPageMinor($Param[0], $Param[1], $Param[2], intval($Param[3]), boolval($Param[4]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'editPageD':
@@ -151,10 +151,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editPageD($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], intval($Param[5]), boolval($Param[6]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'editSection':
@@ -167,10 +167,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editSection($Param[0], $Param[1], $Param[2], $Param[3], intval($Param[4]), boolval($Param[5]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'editSectionMinor':
@@ -183,10 +183,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editSectionMinor($Param[0], $Param[1], $Param[2], $Param[3], intval($Param[4]), boolval($Param[5]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'editSectionD':
@@ -199,10 +199,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->editSectionD($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], $Param[5], intval($Param[6]), boolval($Param[7]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'movePage':
@@ -215,10 +215,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->movePage($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]), intval($Param[5]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'review':
@@ -229,12 +229,12 @@ class Debug extends Core {
 				$this->echoNotice('Starting the function call of review...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->review($Param[0], $Param[1], intval($Param[2]));
+					$ret = $this->review($Param[0], $Param[1], $Param[2], intval($Param[3]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			// Query functions
@@ -248,10 +248,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getCatMembers($Param[0], boolval($Param[1]), boolval($Param[2]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getPageCats':
@@ -262,10 +262,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getPageCats($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getAllEmbedings':
@@ -276,10 +276,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getAllEmbedings($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getAllPages':
@@ -290,10 +290,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getAllPages($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getPageID':
@@ -304,10 +304,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getPageID($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getLinks':
@@ -318,10 +318,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getLinks($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'getSectionTitle':
@@ -332,10 +332,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->getSectionTitle($Param[0]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			// Admin functions
@@ -347,10 +347,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->deletePage($Param[0], $Param[1]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'blockUser':
@@ -364,10 +364,10 @@ class Debug extends Core {
 					$ret = $this->blockUser($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]),
 						intval($Param[5]), intval($Param[6]), intval($Param[7]), intval($Param[8]), intval($Param[9]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'unblockUser':
@@ -378,10 +378,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->unblockUser($Param[0], $Param[1]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'protectPage':
@@ -392,10 +392,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->protectPage($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'stabilize':
@@ -406,10 +406,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->stabilize($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			default:
@@ -442,14 +442,14 @@ class Debug extends Core {
 	* Prints out the message in red
 	*/
 	private function echoCritical($msg) {
-		echo "\033[01;31m" . $msg . "\033[0m\n";
+		echo "\n\033[01;31m" . $msg . "\033[0m";
 	}
 	/** echoSuccessful
 	* Use this only when a task was successful
 	* Prints out the message in green
 	*/
 	private function echoSuccessful($msg) {
-		echo "\033[01;32m" . $msg . "\033[0m\n";
+		echo "\n\033[01;32m" . $msg . "\033[0m";
 	}
 	/** echoWarning
 	* Writes out a warning
@@ -457,7 +457,7 @@ class Debug extends Core {
 	* Prints the message out in yellow
 	*/
 	private function echoWarning($msg) {
-		echo "\033[01;33m" . $msg . "\033[0m\n";
+		echo "\n\033[01;33m" . $msg . "\033[0m";
 	}
 	/** echoNotice
 	* Writes out a notice
@@ -465,7 +465,7 @@ class Debug extends Core {
 	* Prints the message out in blue
 	*/
 	private function echoNotice($msg) {
-		echo "\033[01;34m" . $msg . "\033[0m\n";
+		echo "\n\033[01;34m" . $msg . "\033[0m";
 	}
 	/** echoOutput
 	* Writes out the output of a function
@@ -473,7 +473,7 @@ class Debug extends Core {
 	* Prints the message out in purple
 	*/
 	private function echoOutput($msg) {
-		echo "\033[01;35m" . $msg . "\033[0m\n";
+		echo "\n\033[01;35m" . $msg . "\033[0m";
 	}
 	/** askRequired
 	* Asks for something
@@ -481,7 +481,7 @@ class Debug extends Core {
 	* Prints the answer in yellow
 	*/
 	private function askRequired($msg) {
-		return $this->askOperator("\033[01;33m" . $msg . "\033[0m");
+		return $this->askOperator("\n\033[01;33m" . $msg . "\033[0m");
 	}
 	/** askOptional
 	* Asks for something
@@ -489,12 +489,12 @@ class Debug extends Core {
 	* Prints the answer in cyan
 	*/
 	private function askOptional($msg) {
-		return $this->askOperator("\033[01;36m" . $msg . "\033[0m");
+		return $this->askOperator("\n\033[01;36m" . $msg . "\033[0m");
 	}
 	/** processFunction
 	* Internal, used for successful calls
 	*/
-	private function processFunction($ret, $endtime) {
+	private function processFunction($ret, $starttime, $endtime) {
 		$total = $endtime - $starttime;
 		$this->echoSuccessful('Function call succeeded');
 		$this->echoNotice('Performance: ' . $total . ' seconds');
@@ -505,7 +505,7 @@ class Debug extends Core {
 	/** processError
 	* Internal, used for errors
 	*/
-	private function processError ($err, $endtime) {
+	private function processError ($err, $starttime, $endtime) {
 		$total = $endtime - $starttime;
 		$this->echoCritical('Function call failed after ' . $total . ' seconds');
 		$answer = $this->askRequired('Display the error now? [y/N]');
