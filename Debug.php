@@ -262,10 +262,10 @@ class Debug extends Core {
 				try {
 					$ret = $this->checkUserBlock($Param[0]);
 					$endtime = microtime(true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
-					$endtime = microtime(true);
-					$this->processError($e, $endtime);
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			// Query functions
