@@ -206,7 +206,7 @@ class Debug extends Core {
 				}
 				break;
 			case 'movePage':
-				$required = array("startLemma", "targetLemma", "reason");
+				$required = array("oldTitle", "newTitle", "reason");
 				$optional = array("bot", "movetalk", "noredirect");
 				$optvalues = array(0, 1, 1);
 				$Param = $this->getParams($required, $optional, $optvalues);
