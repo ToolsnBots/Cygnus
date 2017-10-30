@@ -58,9 +58,9 @@ class Core extends Password {
 	/** initcurlArgs
 	* Use this function instead of initcurl if you want to use args or console to tell the bot the password
 	* @author Luke081515
-	* @param $job - Name of the job; useful for saving the cookies
-	* @param $pUseHTTPS - [Optional: true] if false, http will be used
-	* @param $assert - [Optional: bot] if set to 'user' instead, you can use a bot without flag
+	* @param $job - name of the job; useful for saving the cookies
+	* @param $pUseHTTPS - [optional: true] if false, http will be used
+	* @param $assert - [optional: bot] if set to 'user' instead, you can use a bot without flag
 	*/
 	public function initcurlArgs($job, $pUseHTTPS = true, $assert = 'bot') {
 		if ($assert !== 'bot' && $assert !== 'user')
@@ -148,7 +148,7 @@ class Core extends Password {
 	/** requireToken
 	* query the api for the token
 	* @author Hgzh / MGChecker
-	* @param $type - [optional: csrf] - Typ of the token (see the api docs for details)
+	* @param $type - [optional: csrf] - type of the token (see the api docs for details)
 	* @returns requested token
 	*/
 	public function requireToken($type = 'csrf') {
@@ -275,7 +275,7 @@ class Core extends Password {
 	}
 	/** readPage
 	* Returns the content of a page
-	* @param $title - Name of the page including namespaces
+	* @param $title - name of the page including namespaces
 	* @author MGChecker
 	* @returns content of the page
 	*/
@@ -319,10 +319,10 @@ class Core extends Password {
 	}
 	/** readSection
 	* returns the content of a specified section
-	* @param $title - Name of the page
-	* @param $section Number of the section
+	* @param $title - name of the page
+	* @param $section - number of the section
 	* @author MGChecker
-	* @returns Text of the section
+	* @returns text of the section
 	*/
 	public function readSection($title, $section) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($section) .
@@ -334,8 +334,8 @@ class Core extends Password {
 	* @param $page - Title of the page
 	* @author Luke081515
 	* @returns two-dimensional array
-	* @returns First dimension: the section
-	* @retuns Second dimension:
+	* @returns first dimension: the section
+	* @retuns second dimension:
 	* 	[0] => level;
 	* 	[1] => title of the section
 	* 	[2] => section number at the table of contents (e.g. something like 7.5 as well);
@@ -358,7 +358,7 @@ class Core extends Password {
 	* internal method which does the edit. please use one of the following functions instead
 	* @param $title - name of the page
 	* @param $content - new content
-	* @param $summary - Summary
+	* @param $summary - summary
 	* @param $botflag - if true, the bot will use a botflag
 	* @param $minorflag - if true the edit will get marked as minor
 	* @param $noCreate - should the page get recreated in case that this is needed?
@@ -538,7 +538,7 @@ class Core extends Password {
 	}
 	/** watch
 	* Allows to put a page on your watchlist, or remove it
-	* @param $title - Title of the page
+	* @param $title - title of the page
 	* @param $unwatch - default 0 - if 1, the page will get removed from the list
 	* @returns mixed - true if successful, otherwise the API error code
 	*/
@@ -559,8 +559,8 @@ class Core extends Password {
 	}
 	/** review
 	* Marks the specified version as reviewed or not reviewed
-	* @param $revid - The revid of the revision to approve/unapprove
-	* @param $comment [optional: ''] - The comment to add for the log
+	* @param $revid - the revid of the revision to approve/unapprove
+	* @param $comment [optional: ''] - the comment to add for the log
 	* @param $unapprove [optional: 0] - if 1: mark the rev as unreviewed instead of reviewed
 	* @returns string - success if succesful, otherwise the API error-code
 	*/
@@ -898,7 +898,7 @@ class Core extends Password {
 	}
 	/** curlRequest
 	* sends a curl request to a website
-	* @author: Freddy2001 <freddy2001@wikipedia.de>
+	* @author: Freddy2001
 	* @param $url - URL of the page
 	* @param $https - true:use https, false: use http
 	*/
@@ -955,8 +955,8 @@ class Core extends Password {
 	* Deletes a page
 	* requires the "delete" right
 	* @author Luke081515
-	* @param $title - Page to delete
-	* @param $reason - The reason for the deletion, visible in the log
+	* @param $title - page to delete
+	* @param $reason - the reason for the deletion, visible in the log
 	* @returns - "success" if the deletion was successful, otherwise the error code of the api
 	*/
 	public function deletePage ($title, $reason) {
@@ -980,18 +980,18 @@ class Core extends Password {
 	/** blockUser
 	* Blocks a user or an IP
 	* @author Luke081515
-	* @param - $user - The user or IP to block
-	* @param - $reason - The reason for the block
-	* @param - $expiry - The expiry of the block
+	* @param - $user - the user or IP to block
+	* @param - $reason - the reason for the block
+	* @param - $expiry - the expiry of the block
 	* @param - $expiry - can be relative, like "5 months"
 	* @param - $expiry - or can be absolute, like 2014-09-18T12:34:56Z, or never
 	* @param - $anononly - if true, blocks only IPs, not logged in users
-	* @param - $nocreate - Disallows creation of accounts
-	* @param - $autoblock - Enables autoblock
-	* @param - $noemail - Blocks wikimail
-	* @param - $hidename - Hides the user
-	* @param - $allowusertalk - Allows the user to write on his own talkpage
-	* @param - $reblock - Overwrites existing blocks
+	* @param - $nocreate - disallows creation of accounts
+	* @param - $autoblock - enables autoblock
+	* @param - $noemail - blocks wikimail
+	* @param - $hidename - hides the user
+	* @param - $allowusertalk - allows the user to write on his own talkpage
+	* @param - $reblock - overwrites existing blocks
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function blockUser ($user, $reason, $expiry, $anononly = 1, $nocreate = 1, $autoblock = 1, $noemail = 0, $hidename = 0, $allowusertalk = 1, $reblock = 0) {
@@ -1023,8 +1023,8 @@ class Core extends Password {
 	/** unblockUser
 	* Unblocks a user or an IP
 	* @author Luke081515
-	* @param - $user - The user or IP to unblock
-	* @param - $reason - The reason for the unblock
+	* @param - $user - the user or IP to unblock
+	* @param - $reason - the reason for the unblock
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function unblockUser ($user, $reason) {
@@ -1048,19 +1048,19 @@ class Core extends Password {
 	/** protectPage
 	* Protects a page
 	* @author Luke081515
-	* @param - $title - The page to protect
-	* @param - $reason - The reason to set
-	* @param - $protections - Pipe-seperated protection. Mention all levels you want to change
-	* @param - $protections - To remove a protection, use all, e.g. "edit=all|move=sysop"
-	* @param - $expiry - Pipe-separated list of expiry timestamps in GNU timestamp format.
-	* @param - $expiry - The first timestamp applies to the first protection in protections, the second to the second, etc.
-	* @param - $expiry - The timestamps infinite, indefinite and never result in a protection that will never expire.
-	* @param - $expiry - Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
-	* @param - $expiry - The number of expiry timestamps must equal the number of protections, or you'll get an error message
-	* @param - $expiry - An exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
-	* @param - $expiry - Not setting this parameter is equivalent to setting it to infinite
-	* @param - $expiry - If you are using all, the param does not matter, but you need to set it
-	* @param - $cascade - Uses cascade protection
+	* @param - $title - the page to protect
+	* @param - $reason - the reason to set
+	* @param - $protections - pipe-seperated protection. Mention all levels you want to change
+	* @param - $protections - to remove a protection, use all, e.g. "edit=all|move=sysop"
+	* @param - $expiry - pipe-separated list of expiry timestamps in GNU timestamp format.
+	* @param - $expiry - the first timestamp applies to the first protection in protections, the second to the second, etc.
+	* @param - $expiry - the timestamps infinite, indefinite and never result in a protection that will never expire.
+	* @param - $expiry - timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param - $expiry - the number of expiry timestamps must equal the number of protections, or you'll get an error message
+	* @param - $expiry - an exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
+	* @param - $expiry - not setting this parameter is equivalent to setting it to infinite
+	* @param - $expiry - if you are using all, the param does not matter, but you need to set it
+	* @param - $cascade - uses cascade protection
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function protectPage ($title, $reason, $protections, $expiry, $cascade) {
@@ -1087,13 +1087,13 @@ class Core extends Password {
 	/** stabilize
 	* changes the settings who can review a page, and which version gets shown
 	* @author Luke081515
-	* @param $title - The page to change
+	* @param $title - the page to change
 	* @param $expiry - expiry timestamp in GNU timestamp format.
 	**	The timestamps infinite, indefinite and never result in a protection that will never expire.
 	**	Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
-	* @param $default - Which version should be shown? 'latest' or 'stable'?
-	* @param $autoreview - Who is allowed to review? 'all' or 'sysop'?
-	* @param $review - Review the current version? 0 or 1
+	* @param $default - which version should be shown? 'latest' or 'stable'?
+	* @param $autoreview - who is allowed to review? 'all' or 'sysop'?
+	* @param $review - review the current version? 0 or 1
 	* @returns string - success or the error code
 	*/
 	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
