@@ -439,14 +439,14 @@ class Debug extends Core {
 	* Prints out the message in red
 	*/
 	private function echoCritical($msg) {
-		echo "\033[01;31m" . $msg . "\033[0m\n";
+		echo "\n\033[01;31m" . $msg . "\033[0m";
 	}
 	/** echoSuccessful
 	* Use this only when a task was successful
 	* Prints out the message in green
 	*/
 	private function echoSuccessful($msg) {
-		echo "\033[01;32m" . $msg . "\033[0m\n";
+		echo "\n\033[01;32m" . $msg . "\033[0m";
 	}
 	/** echoWarning
 	* Writes out a warning
@@ -454,7 +454,7 @@ class Debug extends Core {
 	* Prints the message out in yellow
 	*/
 	private function echoWarning($msg) {
-		echo "\033[01;33m" . $msg . "\033[0m\n";
+		echo "\n\033[01;33m" . $msg . "\033[0m";
 	}
 	/** echoNotice
 	* Writes out a notice
@@ -462,7 +462,7 @@ class Debug extends Core {
 	* Prints the message out in blue
 	*/
 	private function echoNotice($msg) {
-		echo "\033[01;34m" . $msg . "\033[0m\n";
+		echo "\n\033[01;34m" . $msg . "\033[0m";
 	}
 	/** echoOutput
 	* Writes out the output of a function
@@ -470,7 +470,7 @@ class Debug extends Core {
 	* Prints the message out in purple
 	*/
 	private function echoOutput($msg) {
-		echo "\033[01;35m" . $msg . "\033[0m\n";
+		echo "\n\033[01;35m" . $msg . "\033[0m";
 	}
 	/** askRequired
 	* Asks for something
@@ -478,7 +478,7 @@ class Debug extends Core {
 	* Prints the answer in yellow
 	*/
 	private function askRequired($msg) {
-		return $this->askOperator("\033[01;33m" . $msg . "\033[0m");
+		return $this->askOperator("\n\033[01;33m" . $msg . "\033[0m");
 	}
 	/** askOptional
 	* Asks for something
@@ -486,7 +486,7 @@ class Debug extends Core {
 	* Prints the answer in cyan
 	*/
 	private function askOptional($msg) {
-		return $this->askOperator("\033[01;36m" . $msg . "\033[0m");
+		return $this->askOperator("\n\033[01;36m" . $msg . "\033[0m");
 	}
 	/** processFunction
 	* Internal, used for successful calls
