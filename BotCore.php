@@ -1,12 +1,11 @@
 <?php
 require_once __DIR__ . '/Password.php';
 /** BotCore.php
-* Zentrale Datei des Cygnus-Frameworks
-* Aus dieser Datei werden alle bereitgestellten Methoden des Frameworks geladen
+* Central file of the Cygnus-Framework
+* Most functions get loaded from this file.
 * @author Freddy2001 <freddy2001@wikipedia.de>, Hgzh, Luke081515 <luke081515@tools.wmflabs.org>, MGChecker <hgasuser@gmail.com>
 * @requires extensions: JSON
-* @version V2.1 beta
-* Vielen Dank an alle, die zu diesem Framework beigetragen haben
+* @version V2.1 alpha
 */
 class Core extends Password {
 	protected $username;
@@ -57,13 +56,11 @@ class Core extends Password {
 		$this->setMaxlag(5);
 	}
 	/** initcurlArgs
-	* Benutze diese Funktion anstatt initcurl, wenn du das Passwort des Bots via args mitgeben willst
-	* Ansonsten bitte initcurl benutzen
-	* Erstellt das Verbindungsobjekt und loggt den Bot ein
+	* Use this function instead of initcurl if you want to use args or console to tell the bot the password
 	* @author Luke081515
-	* @param $job - Name des Jobs; dient zur Internen Speicherung der Cookies
-	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
-	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
+	* @param $job - name of the job; useful for saving the cookies
+	* @param $pUseHTTPS - [optional: true] if false, http will be used
+	* @param $assert - [optional: bot] if set to 'user' instead, you can use a bot without flag
 	*/
 	public function initcurlArgs($job, $pUseHTTPS = true, $assert = 'bot') {
 		if ($assert !== 'bot' && $assert !== 'user')
@@ -89,14 +86,15 @@ class Core extends Password {
 		curl_close($this->curlHandle);
 	}
 	/** httpRequest
-	* führt http(s) request durch
-	* Wird meistens benutzt um die API anzusteuern
-	* @param $pArguments - API-Parameter die aufgerufen werden sollen (beginnt normalerweise mit action=)
-	* @param $job - Jobname, wird benutzt um die richtigen Cookies etc zu finden. Hier einfach $this->job benutzen.
-	* @param $pMethod - [optional: POST] Methode des Requests. Bei querys sollte stattdessen GET genommen werden
-	* @param $pTarget - [optional: w/api.php] Verwende diesen Parameter, wenn die API deines Wikis einen anderen Einstiegspfad hat. (Special:Version)
+	* does http(s) requests
+	* mostly used to communicate with the API
+	* @param $pArguments - API params you want to exectute (starts normally with action=)
+	* @param $job - used to find the right cookies. just use $this->job
+	* @param $pMethod - [optional: POST] Method of the request. For querys, you just use GET
+	* @param $pTarget - [optional: w/api.php] use this,
+		if Special:Version shows something different than w/api.php for using the api
 	* @author Hgzh
-	* @returns Antwort der API
+	* @returns answer of the API
 	*/
 	protected function httpRequest($arguments, $job, $method = 'POST', $target = 'w/api.php') {
 		$baseURL = $this->protocol . '://' .
@@ -148,9 +146,9 @@ class Core extends Password {
 			throw new Exception('Curl request definitively failed: ' . curl_error($this->curlHandle));
 	}
 	/** requireToken
-	* fordert das angegebene Token an
+	* query the api for the token
 	* @author Hgzh / Luke081515 / MGChecker
-	* @param $type - [optional: csrf] - Typ des Tokens (siehe API-Dokumentation)
+	* @param $type - [optional: csrf] - type of the token (see the api docs for details)
 	* @returns requested token
 	*/
 	public function requireToken($type = 'csrf') {
@@ -170,8 +168,8 @@ class Core extends Password {
 		return $token;
 	}
 	/** login
-	* loggt den Benutzer ein
-	* Nicht! verwenden. Diese Methode wird nur von initcurl/initcurlargs genutzt.
+	* used for login
+	* do not use this function, use initcurl/initcurlArgs instead
 	* @author Hgzh
 	*/
 	protected function login() {
@@ -189,7 +187,7 @@ class Core extends Password {
 			throw new Exception('Login failed with message: ' . $lgResult);
 	}
 	/** logout
-	* Loggt den Benutzer aus
+	* Does a logout
 	*/
 	public function logout() {
 		$this->httpRequest('action=logout', $this->job);
@@ -213,8 +211,8 @@ class Core extends Password {
 		$this->password = $password;
 	}
 	/** start
-	* Sucht Logindaten aus Password.php, führt anschließend Login durch
-	* Sollte im Normalfall nicht manuell angewendet werden, dies macht bereits initcurl
+	* Searches for the data from Password.php, does the login after that
+	* this function is used by initcurl, use initcurl instead
 	* @author Luke081515
 	*/
 	public function start($account) {
@@ -241,15 +239,14 @@ class Core extends Password {
 		}
 	}
 	/** checkResult
-	* Diese Methode ist fuer interne Verwendung bestimmt
-	* Sie steht daher auf private
-	* Sie wird aufgerufen, falls es einen Fehler gibt
-	* Je nach Fehler werden entsprechende Aktionen eingeleitet
+	* this is an internal method
+	* this method gets called if there is an error in executing an action
+	* depending on the code, it executes different actions
 	* @author Luke081515
-	* @param $result - Fehlercode der API
-	* @returns fail - Edit fehlgeschlagen, Fehlercode zeigt, das ein erneuter versuch nicht sinnvoll ist
-	* @returns retry - Ein erneuter Versuch kann das Problem beheben
-	* @returns conflict - Ein Bearbeitungskonflikt ist vorhanden
+	* @param $result - errorcode of the api
+	* @returns fail - edit failed, a retry would not be useful
+	* @returns retry - try it again, it may work
+	* @returns conflict - there is an edit conflict
 	*/
 	private function checkResult($result) {
 		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
@@ -269,10 +266,10 @@ class Core extends Password {
 		}
 	}
 	/** readPageEngine
-	* Interne Methode, um die Ergebnisse einer Anfrage zum Auslesen einer Seite zu bearbeiten
-	* @param $request - Die API-Abfrage, die den Seiteninhalt ausgibt
+	* for internal use only, used for readPage/readSection functions
+	* @param $request - the data for the api to get the content of the page
 	* @author Luke081515
-	* @returns Text der Seite
+	* @returns text of the page
 	*/
 	private function readPageEngine($request) {
 		$page = json_decode($this->httpRequest($request, $this->job, 'GET'), true);
@@ -280,10 +277,10 @@ class Core extends Password {
 		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
 	}
 	/** readPage
-	* Liest eine Seite aus
-	* @param $title - Titel der auszulesenden Seite
+	* Returns the content of a page
+	* @param $title - name of the page including namespaces
 	* @author MGChecker
-	* @returns Text der Seite
+	* @returns content of the page
 	*/
 	public function readPage($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&titles=' . urlencode($title) .
@@ -291,10 +288,10 @@ class Core extends Password {
 		return $this->readPageEngine($request);
 	}
 	/** readPageId
-	* Liest eine Seite aus
-	* @param $pageID - ID der auszulesenden Seite
+	* Returns the content of a page
+	* @param $pageID - ID of the page
 	* @author MGChecker
-	* @returns Text der Seite
+	* @returns content of the page
 	*/
 	public function readPageID($pageID) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=' . urlencode($pageID) .
@@ -302,10 +299,10 @@ class Core extends Password {
 		return $this->readPageEngine($request);
 	}
 	/** readPageJs
-	* Liest eine JavaScript-Seite aus
-	* @param $title - Titel der auszulesenden Seite
+	* Returns the content of a JS page
+	* @param $title - title of the page
 	* @author MGChecker
-	* @returns Text der Seite
+	* @returns text of the page
 	*/
 	public function readPageJs($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&titles=' . urlencode($title) .
@@ -313,10 +310,10 @@ class Core extends Password {
 		return $this->readPageEngine($request);
 	}
 	/** readPageCss
-	* Liest eine CSS-Seite aus
-	* @param $title - Titel der auszulesenden Seite
+	* Returns the content of a CSS page
+	* @param $title - title of the page
 	* @author MGChecker
-	* @returns Text der Seite
+	* @returns text of the page
 	*/
 	public function readPageCss($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&titles=' . urlencode($title) .
@@ -324,11 +321,11 @@ class Core extends Password {
 		return $this->readPageEngine($request);
 	}
 	/** readSection
-	* Liest einen Abschnitt einer Seite aus
-	* @param $title - Titel der Auszulesenden Seite
-	* @param $section Nummer des Abschnitts
+	* returns the content of a specified section
+	* @param $title - name of the page
+	* @param $section - number of the section
 	* @author MGChecker
-	* @returns Text des Abschnitts
+	* @returns text of the section
 	*/
 	public function readSection($title, $section) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($section) .
@@ -336,16 +333,16 @@ class Core extends Password {
 		return $this->readPageEngine($request);
 	}
 	/** getTableOfContents
-	* Gibt das Inhaltsverzeichnis einer Seite aus
-	* @param $title - Titel der Seite
+	* returns the Table of Contents of a page
+	* @param $page - Title of the page
 	* @author Luke081515
-	* @returns Zwei dimensionales Array
-	* @returns Erste Dimension: Der entsprechende Abschnitt
-	* @retuns Zweite Dimension:
+	* @returns two-dimensional array
+	* @returns first dimension: the section
+	* @retuns second dimension:
 	* 	[0] => level;
-	* 	[1] => Titel des Abschnitts;
-	* 	[2] => Abschnittsnummer im Inhaltsverzeichnis (z.B. auch 7.5);
-	* 	[3] => Abschnittsnummer, ohne Komma, reiner int;
+	* 	[1] => title of the section
+	* 	[2] => section number at the table of contents (e.g. something like 7.5 as well);
+	* 	[3] => section number as int;
 	*/
 	public function getTableOfContents($title) {
 		$result = $this->httpRequest('action=parse&format=json&maxlag=' . $this->maxlag . '&assert=' . $this->assert .
@@ -362,17 +359,17 @@ class Core extends Password {
 		return $ret;
 	}
 	/** editPageEngine
-	* Interne Methode, die die eigentliche Bearbeitung durchführt. Stattdessen eine der folgenden 6 Funktionen nutzen.
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $botflag - Falls true wird der Edit mit Botflag markiert
-	* @param $minorflag - Falls true wird der Edit als Klein markiert
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $sectionnumber - Welcher Abschnitt soll bearbeitet werden? (Standard => ganze Seite)
-	* @param $overrideNobots - Soll die NoBots Vorlage ignoriert werden?
+	* internal method which does the edit. please use one of the following functions instead
+	* @param $title - name of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $botflag - if true, the bot will use a botflag
+	* @param $minorflag - if true the edit will get marked as minor
+	* @param $noCreate - should the page get recreated in case that this is needed?
+	* @param $sectionnumber - which section should get edited? (default => the whole page)
+	* @param $overrideNobots - Should {{NoBots}} gets overriden?
 	* @author Hgzh / Luke081515 / MGChecker
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	private function editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $sectionnumber = -1, $overrideNobots = false) {
 		retry:
@@ -414,14 +411,14 @@ class Core extends Password {
 		}
 	}
 	/** editPage
-	* Bearbeitet eine Seite
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* edits a page
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editPage($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == 'bot')
@@ -431,14 +428,14 @@ class Core extends Password {
 		return $this->editPageEngine($title, $content, $summary, $botflag, false, $noCreate, -1, $overrideNobots);
 	}
 	/** editPageMinor
-	* Bearbeitet eine Seite als kleine Bearbeitung
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* edits a page and marks the edit as minor
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editPageMinor($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == 'bot')
@@ -448,30 +445,30 @@ class Core extends Password {
 		return $this->editPageEngine($title, $content, $summary, $botflag, true, $noCreate, -1, $overrideNobots);
 	}
 	/** editPageD
-	* Bearbeitet eine Seite
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $botflag - Falls true wird der Edit mit Botflag markiert
-	* @param $minorflag - Falls true wird der Edit als Klein markiert
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* edits a page
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $botflag - if true, the edit will get marked with a botflag
+	* @param $minorflag - if true, the edit will get marked as minor
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author MGChecker / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editPageD($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $overrideNobots = false) {
 		return $this->editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate, -1, $overrideNobots);
 	}
 	/** editSection
-	* Bearbeitet einen Abschnitt
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $sectionnumber - Nummer des Abschnitts
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	* edits a section
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $sectionnumber - number of the section
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / MGChecker / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editSection($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == 'bot')
@@ -482,16 +479,16 @@ class Core extends Password {
 			throw new Exception('You selected a invalid section number. To edit a whole page, use editPage().');
 		return $this->editPageEngine($title, $content, $summary, $botflag, false, $noCreate, $sectionnumber, $overrideNobots);
 	}
-	/** editSectionMinor
-	* Bearbeitet einen Abschnitt
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $sectionnumber - Nummer des Abschnitts
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	/** editSection
+	* edits a section, marks the edit as minor
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $sectionnumber - number of the section
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / MGChecker / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editSectionMinor($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == 'bot')
@@ -502,18 +499,18 @@ class Core extends Password {
 			throw new Exception('You selected a invalid section number. To edit a whole page, use editPageMinor().');
 		return $this->editPageEngine($title, $content, $summary, $botflag, true, $noCreate, $sectionnumber, $overrideNobots);
 	}
-	/** editSectionD
-	* Bearbeitet eine Seite (Auswahl weitere Parameter moeglich)
-	* @param $title - Seitenname
-	* @param $content - Neuer Seitentext
-	* @param $summary - Zusammenfassung
-	* @param $botflag - Falls true wird der Edit mit Botflag markiert
-	* @param $minorflag - Falls true wird der Edit als Klein markiert
-	* @param $sectionnumber - Nummer des Abschnitts
-	* @param $noCreate - Soll die Seite ggf neu angelegt werden? (Standard => nein)
-	* @param $overrideNobots - Soll trotz Verbot des Bots per Vorlage bearbeitet werden? (Standard => nein)
+	/** editPageD
+	* edits a page
+	* @param $title - title of the page
+	* @param $content - new content
+	* @param $summary - summary
+	* @param $botflag - if true, the edit will get marked with a botflag
+	* @param $minorflag - if true, the edit will get marked as minor
+	* @param $sectionnumber - number of the section
+	* @param $noCreate - should the page get recreated? default is no
+	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author MGChecker / Luke081515
-	* @returns Unserialisierte Antwort der API, falls der Edit erfolgreich war
+	* @returns unserialized answer of the api, if successful
 	*/
 	public function editSectionD($title, $content, $summary, $sectionnumber, $botflag, $minorflag, $noCreate = 1, $overrideNobots = false) {
 		if ($sectionnumber < 0)
@@ -521,14 +518,14 @@ class Core extends Password {
 		return $this->editPageEngine($title, $content, $summary, $botflag,  $minorflag, $noCreate, $sectionnumber, $overrideNobots);
 	}
 	/** movePage
-	* Verschiebt eine Seite
-	* @param $oldTitle - Alter Titel der Seite
-	* @param $newTitle - Neuer Titel der Seite
-	* @param - $bot (default: 0) - Botflag setzen?
-	* @param - $movetalk (default: 1) - Diskussionsseite mitverschieben?
-	* @param - $noredirect - (default: 1) - Weiterleitung erstellen?
-	* @param $reason - Grund der Verschiebung, der im Log vermerkt wird
-	* @returns Serialisierte Antwort der API-Parameter
+	* moves a page
+	* @param $oldTitle - old title of a page
+	* @param $newTitle - new title of a page
+	* @param $reason - reason for the action
+	* @param - $bot (default: 0) - use a botflag?
+	* @param - $movetalk (default: 1) - move the talk page as well?
+	* @param - $noredirect - (default: 1) - create a redirect?
+	* @returns serialized answer of the API
 	*/
 	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
@@ -545,7 +542,7 @@ class Core extends Password {
 	}
 	/** watch
 	* Allows to put a page on your watchlist, or remove it
-	* @param $title - Title of the page
+	* @param $title - title of the page
 	* @param $unwatch - default 0 - if 1, the page will get removed from the list
 	* @returns mixed - true if successful, otherwise the API error code
 	*/
@@ -566,8 +563,8 @@ class Core extends Password {
 	}
 	/** review
 	* Marks the specified version as reviewed or not reviewed
-	* @param $revid - The revid of the revision to approve/unapprove
-	* @param $comment [optional: ''] - The comment to add for the log
+	* @param $revid - the revid of the revision to approve/unapprove
+	* @param $comment [optional: ''] - the comment to add for the log
 	* @param $unapprove [optional: 0] - if 1: mark the rev as unreviewed instead of reviewed
 	* @returns string - success if succesful, otherwise the API error-code
 	*/
@@ -589,15 +586,28 @@ class Core extends Password {
 		} else
 			return 'success';
 	}
-	/** getCatMembers
-	* Liest alle Seiten der Kategorie aus, auch Seiten die in Unterkategorien der angegebenen Kategorie kategorisiert sind
-	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
-	* Erfordert Botflag, da Limit auf 5000 gesetzt, (geht zwar sonst auch, aber nur mit Warnung)
+
+	// User related functions
+	/** checkUserBlock
+	* checks if a user is blocked
 	* @author Luke081515
-	* @param $kat - Kategorie die analyisiert werden soll.
-	* @param $onlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
-	* @param $excludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
-	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
+	* @param $username - The username of the user
+	* @returs true if blocked, false if not
+	*/
+	public function checkUserBlock ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=blocks&bkusers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "reason") !== false)
+			return true;
+		return false;
+	}
+	/** getCatMembers
+	* reads out all category members of a category, including subcategories
+	* works till you have more than 5000 subcategories per category
+	* @author Luke081515
+	* @param $kat - category, which should get analyzed
+	* @param $onlySubCats - [optional: false] if true, only the subcategories will returned, not the pagetitles
+	* @param $excludeWls - [optional: false] if true, you won't get categories with redirects
+	* @returns false if the categories has no members, otherwise a serialized array with page titles
 	*/
 	public function getCatMembers($kat, $onlySubCats = false, $excludeWls = false) {
 		$b = 0;
@@ -712,12 +722,11 @@ class Core extends Password {
 			return serialize($page);
 	}
 	/** getPageCats
-	* Liest alle Kategorien einer Seite aus
-	* Funktioniert bis zu 500 Kategorien einer Seite
-	* Erfordert Botflag, da Limit auf 5000 gesetzt
+	* reads out all categories of a page
+	* works till the page has more than 500 categories
 	* @author Luke081515
-	* @param $title - Seite die analyisiert werden soll
-	* @returns Alle Kategorien als serialisiertes Array
+	* @param $page - page that should get analyzed
+	* @returns all categories as serialized array
 	*/
 	public function getPageCats($title) {
 		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($title) .
@@ -735,11 +744,10 @@ class Core extends Password {
 		return serialize($catResults);
 	}
 	/** getAllEmbedings
-	* Liest alle Einbindungen einer Vorlage aus
-	* Erfordert Botflag, da Limit auf 5000 gesetzt
+	* returns all embeddings of a page
 	* @author Luke081515
-	* @param Vorlage, deren Einbindungen aufgelistet werden sollen
-	* @returns false, falls keine Einbindungen vorhanden, ansonsten serialisiertes Array mit Seitentiteln
+	* @param name of the template
+	* @returns false if not embedded, otherwise serialized array with pagetitles
 	*/
 	public function getAllEmbedings($templ) {
 		$b = 0;
@@ -773,11 +781,10 @@ class Core extends Password {
 		return serialize($page);
 	}
 	/** getAllPages
-	* Liest alle Seiten eines Namensraumes aus
-	* Erfordert Botflag, da Limit auf 5000 gesetzt (geht zwar sonst auch, aber nur mit Warnung)
+	* returns all pages of namespace
 	* @author Luke081515
-	* @param Nummer des Namensraumes, von dem die Seiten ausgelesen werden
-	* @returns false, falls keine Seiten im Namensraum vorhanden, ansonsten serialisiertes Array mit Seitentiteln
+	* @param number of the namespace
+	* @returns false if the namespace is empty, otherwise serialized array with pagetitles
 	*/
 	public function getAllPages($namespace) {
 		$b = 0;
@@ -809,10 +816,10 @@ class Core extends Password {
 		return serialize($page);
 	}
 	/** getPageID
-	* Gibt zu der angegebenen Seite die ID an
+	* returns the ID of a page
 	* @author Luke081515
-	* @param $title - Name der Seite
-	* @returns int: PageID, bool: false falls Seite nicht vorhanden
+	* @param $page - name of the page
+	* @returns int: PageID, bool: false if the page does not exist
 	*/
 	public function getPageID($title) {
 		$data = 'action=query&format=json&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&prop=info&indexpageids=1&titles=' . urlencode($title);
@@ -823,10 +830,10 @@ class Core extends Password {
 		return $tree['query']['pageids'][0];
 	}
 	/** getLinks
-	* Gibt aus, welche Wikilinks sich auf einer Seite befinden, maximal 5000
+	* returns all links that are located at a page, maximum 5000
 	* @author Luke081515
-	* @param $title - Seite die analysiert wird
-	* @returns Array mit Ergebnissen
+	* @param $page - page that gets analyzed
+	* @returns array with page titles
 	*/
 	public function getLinks($title) {
 		$data = 'action=query&prop=links&format=json&assert=' . $this->assert .
@@ -840,11 +847,11 @@ class Core extends Password {
 		return false;
 	}
 	/** getSectionTitle
-	* Gibt Titel und Ebene eines Abschnittes zurück
+	* returns the title and the number of a section
 	* @author Freddy2001
-	* @param title - Titel der Seite
-	* @param section - Abschnitt der Seite
-	* @returns Titel und Überschriftenebene als Array
+	* @param title - name of the page
+	* @param section - number of the section
+	* @returns title and heading level as array
 	*/
 	public function getSectionTitle($title, $section) {
 		$content = $this->readSection($title, $section);
@@ -885,10 +892,10 @@ class Core extends Password {
 			throw new \Exception('The maxlag you specified is not a valid integer');
 	}
 	/** askOperator
-	* Stellt eine Frage an den Executor des Programms, und gibt seine Reaktion wieder
+	* asks a question on the console
 	* @author Luke081515
-	* @param $question - zu stellende Frage
-	* @returns Antwort des Ops als String
+	* @param $question - the question to display
+	* @returns the response to the question
 	*/
 	public function askOperator($question) {
 		echo $question;
@@ -897,28 +904,28 @@ class Core extends Password {
 		return trim($line);
 	}
 	/** addMail
-	* Fuegt $content in eine neue Zeile der Mail ein
+	* adds $content to a new line at the mail
 	* @author Luke081515
-	* @param $content - Inhalt der hinzugegeben wird
+	* @param $content - the content
 	*/
 	public function addMail($content) {
 		$this->mailcontent = $this->mailcontent . '\n' . $content;
 	}
 	/** sendMail
-	* Sendet die gespeicherte Mail
-	* Leert hinterher den Mail-Buffer
+	* sends the mail
+	* clears the mail buffer
 	* @author Luke081515
-	* @param $content - Inhalt der hinzugegeben wird
+	* @param $subject - subject of the mail
 	*/
 	public function sendMail($subject) {
 		mail($this->mail, $subject, $this->mailcontent);
 		$this->mailcontent = '';
 	}
 	/** curlRequest
-	* Sendet einen Curl-Request an eine beliebige Webseite
-	* @author: Freddy2001 <freddy2001@wikipedia.de>
-	* @param $url - URL der Seite
-	* @param $https - true:benutze https, false: benutze http
+	* sends a curl request to a website
+	* @author: Freddy2001
+	* @param $url - URL of the page
+	* @param $https - true:use https, false: use http
 	*/
 	protected function curlRequest($url, $https = true) {
 		if ($https == true) {
@@ -973,8 +980,8 @@ class Core extends Password {
 	* Deletes a page
 	* requires the "delete" right
 	* @author Luke081515
-	* @param $title - Page to delete
-	* @param $reason - The reason for the deletion, visible in the log
+	* @param $title - page to delete
+	* @param $reason - the reason for the deletion, visible in the log
 	* @returns - "success" if the deletion was successful, otherwise the error code of the api
 	*/
 	public function deletePage ($title, $reason) {
@@ -999,18 +1006,18 @@ class Core extends Password {
 	/** blockUser
 	* Blocks a user or an IP
 	* @author Luke081515
-	* @param - $user - The user or IP to block
-	* @param - $reason - The reason for the block
-	* @param - $expiry - The expiry of the block
+	* @param - $user - the user or IP to block
+	* @param - $reason - the reason for the block
+	* @param - $expiry - the expiry of the block
 	* @param - $expiry - can be relative, like "5 months"
 	* @param - $expiry - or can be absolute, like 2014-09-18T12:34:56Z, or never
 	* @param - $anononly - if true, blocks only IPs, not logged in users
-	* @param - $nocreate - Disallows creation of accounts
-	* @param - $autoblock - Enables autoblock
-	* @param - $noemail - Blocks wikimail
-	* @param - $hidename - Hides the user
-	* @param - $allowusertalk - Allows the user to write on his own talkpage
-	* @param - $reblock - Overwrites existing blocks
+	* @param - $nocreate - disallows creation of accounts
+	* @param - $autoblock - enables autoblock
+	* @param - $noemail - blocks wikimail
+	* @param - $hidename - hides the user
+	* @param - $allowusertalk - allows the user to write on his own talkpage
+	* @param - $reblock - overwrites existing blocks
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function blockUser ($user, $reason, $expiry, $anononly = 1, $nocreate = 1, $autoblock = 1, $noemail = 0, $hidename = 0, $allowusertalk = 1, $reblock = 0) {
@@ -1043,8 +1050,8 @@ class Core extends Password {
 	/** unblockUser
 	* Unblocks a user or an IP
 	* @author Luke081515
-	* @param - $user - The user or IP to unblock
-	* @param - $reason - The reason for the unblock
+	* @param - $user - the user or IP to unblock
+	* @param - $reason - the reason for the unblock
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function unblockUser ($user, $reason) {
@@ -1069,19 +1076,19 @@ class Core extends Password {
 	/** protectPage
 	* Protects a page
 	* @author Luke081515
-	* @param - $title - The page to protect
-	* @param - $reason - The reason to set
-	* @param - $protections - Pipe-seperated protection. Mention all levels you want to change
-	* @param - $protections - To remove a protection, use all, e.g. "edit=all|move=sysop"
-	* @param - $expiry - Pipe-separated list of expiry timestamps in GNU timestamp format.
-	* @param - $expiry - The first timestamp applies to the first protection in protections, the second to the second, etc.
-	* @param - $expiry - The timestamps infinite, indefinite and never result in a protection that will never expire.
-	* @param - $expiry - Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
-	* @param - $expiry - The number of expiry timestamps must equal the number of protections, or you'll get an error message
-	* @param - $expiry - An exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
-	* @param - $expiry - Not setting this parameter is equivalent to setting it to infinite
-	* @param - $expiry - If you are using all, the param does not matter, but you need to set it
-	* @param - $cascade - Uses cascade protection
+	* @param - $title - the page to protect
+	* @param - $reason - the reason to set
+	* @param - $protections - pipe-seperated protection. Mention all levels you want to change
+	* @param - $protections - to remove a protection, use all, e.g. "edit=all|move=sysop"
+	* @param - $expiry - pipe-separated list of expiry timestamps in GNU timestamp format.
+	* @param - $expiry - the first timestamp applies to the first protection in protections, the second to the second, etc.
+	* @param - $expiry - the timestamps infinite, indefinite and never result in a protection that will never expire.
+	* @param - $expiry - timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param - $expiry - the number of expiry timestamps must equal the number of protections, or you'll get an error message
+	* @param - $expiry - an exception to this rule is made for backwards compatibility: if you specify exactly one expiry timestamp, it'll apply to all protections
+	* @param - $expiry - not setting this parameter is equivalent to setting it to infinite
+	* @param - $expiry - if you are using all, the param does not matter, but you need to set it
+	* @param - $cascade - uses cascade protection
 	* @returns - "success" if successful, otherwise the API errorcode
 	*/
 	public function protectPage ($title, $reason, $protections, $expiry, $cascade) {
@@ -1109,13 +1116,13 @@ class Core extends Password {
 	/** stabilize
 	* changes the settings who can review a page, and which version gets shown
 	* @author Luke081515
-	* @param $title - The page to change
+	* @param $title - the page to change
 	* @param $expiry - expiry timestamp in GNU timestamp format.
 	**	The timestamps infinite, indefinite and never result in a protection that will never expire.
 	**	Timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
-	* @param $default - Which version should be shown? 'latest' or 'stable'?
-	* @param $autoreview - Who is allowed to review? 'all' or 'sysop'?
-	* @param $review - Review the current version? 0 or 1
+	* @param $default - which version should be shown? 'latest' or 'stable'?
+	* @param $autoreview - who is allowed to review? 'all' or 'sysop'?
+	* @param $review - review the current version? 0 or 1
 	* @returns string - success or the error code
 	*/
 	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
