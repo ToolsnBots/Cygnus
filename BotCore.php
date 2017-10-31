@@ -581,6 +581,20 @@ class Core extends Password {
 		} else
 			return 'success';
 	}
+
+	// User related functions
+	/** checkUserBlock
+	* checks if a user is blocked
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs true if blocked, false if not
+	*/
+	public function checkUserBlock ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=blocks&bkusers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "reason") !== false)
+			return true;
+		return false;
+	}
 	/** getCatMembers
 	* reads out all category members of a category, including subcategories
 	* works till you have more than 5000 subcategories per category
