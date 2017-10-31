@@ -147,12 +147,15 @@ class Core extends Password {
 	}
 	/** requireToken
 	* query the api for the token
-	* @author Hgzh / MGChecker
+	* @author Hgzh / Luke081515 / MGChecker
 	* @param $type - [optional: csrf] - type of the token (see the api docs for details)
 	* @returns requested token
 	*/
 	public function requireToken($type = 'csrf') {
-		$result = $this->httpRequest('action=query&format=json&meta=tokens&type=' . $type, $this->job, 'GET');
+		if ($type === "login")  // No assert on login
+			$result = $this->httpRequest('action=query&format=json&maxlag=' . $this->maxlag . '&meta=tokens&type=' . $type, $this->job, 'GET');
+		else
+			$result = $this->httpRequest('action=query&format=json&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&meta=tokens&type=' . $type, $this->job, 'GET');
 		$tree = json_decode($result, true);
 		$tokenname = $type . "token";
 		try {
@@ -172,7 +175,7 @@ class Core extends Password {
 	protected function login() {
 		$lgToken = $this->requireToken('login');
 		// perform login
-		$result = $this->httpRequest('action=login&format=json&lgname=' . urlencode($this->username) .
+		$result = $this->httpRequest('action=login&maxlag=' . $this->maxlag . '&format=json&lgname=' . urlencode($this->username) .
 			'&lgpassword=' . urlencode($this->password) .
 			'&lgtoken=' . urlencode($lgToken), $this->job);
 		$tree = json_decode($result, true);
@@ -281,7 +284,7 @@ class Core extends Password {
 	*/
 	public function readPage($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&titles=' . urlencode($title) .
-			'&rvdir=older&rawcontinue=&indexpageids=1';
+			'&rvdir=older&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readPageId
@@ -292,7 +295,7 @@ class Core extends Password {
 	*/
 	public function readPageID($pageID) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=' . urlencode($pageID) .
-			'&rvdir=older&rawcontinue=&indexpageids=1';
+			'&rvdir=older&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readPageJs
@@ -303,7 +306,7 @@ class Core extends Password {
 	*/
 	public function readPageJs($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&titles=' . urlencode($title) .
-			'&rvdir=older&rawcontinue=&indexpageids=1';
+			'&rvdir=older&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readPageCss
@@ -314,7 +317,7 @@ class Core extends Password {
 	*/
 	public function readPageCss($title) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&titles=' . urlencode($title) .
-			'&rvdir=older&rawcontinue=&indexpageids=1';
+			'&rvdir=older&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&rawcontinue=&indexpageids=1';
 		return $this->readPageEngine($request);
 	}
 	/** readSection
@@ -326,7 +329,7 @@ class Core extends Password {
 	*/
 	public function readSection($title, $section) {
 		$request = 'action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=' . urlencode($section) .
-			'&titles=' . urlencode($title);
+			'&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&titles=' . urlencode($title);
 		return $this->readPageEngine($request);
 	}
 	/** getTableOfContents
@@ -342,7 +345,8 @@ class Core extends Password {
 	* 	[3] => section number as int;
 	*/
 	public function getTableOfContents($title) {
-		$result = $this->httpRequest('action=parse&format=json&maxlag=5&page=' . urlencode($title) . '&prop=sections', $this->job, 'GET');
+		$result = $this->httpRequest('action=parse&format=json&maxlag=' . $this->maxlag . '&assert=' . $this->assert .
+			'&page=' . urlencode($title) . '&prop=sections', $this->job, 'GET');
 		$Data = json_decode($result, true);
 		$a = 0;
 		while (isset($Data['parse']['sections'][$a]['level'])) {
@@ -375,7 +379,7 @@ class Core extends Password {
 		}
 		$token = $this->requireToken();
 		// perform edit
-		$request = 'action=edit&assert=' . $this->assert . '&format=json&bot=&title=' . urlencode($title) .
+		$request = 'action=edit&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&format=json&bot=&title=' . urlencode($title) .
 			'&text=' . urlencode($content) .
 			'&token=' . urlencode($token) .
 			'&summary=' . urlencode($summary) .
@@ -525,7 +529,7 @@ class Core extends Password {
 	*/
 	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
-		$data = 'action=move&format=json&assert=' . $this->assert .
+		$data = 'action=move&format=json&assert=' . $this->assert . 'maxlag=' . $this->maxlag .
 			'&from=' . urlencode($oldTitle) .
 			'&to=' . urlencode($newTitle) .
 			'&reason=' . urlencode($reason) .
@@ -567,6 +571,7 @@ class Core extends Password {
 	public function review($revid, $comment = '', $unapprove = 0) {
 		$token = $this->requireToken();
 		$data = 'action=review&format=json&assert=' . $this->assert .
+			'&maxlag=' . $maxlag .
 			'&revid=' . urlencode($revid) .
 			'&unapprove=' . urlencode($unapprove) .
 			'&comment=' . urlencode($comment) .
@@ -608,7 +613,8 @@ class Core extends Password {
 		$b = 0;
 		$subCat[0] = $kat;
 		$result = $this->httpRequest('action=query&list=categorymembers&format=json&cmtitle=' . urlencode($kat) .
-			'&cmprop=title&cmtype=subcat&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
+			'&cmprop=title&cmtype=subcat&cmlimit=max&assert=' . $this->assert . '&maxlag=' . $this->maxlag .
+			'&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
 		$answer = json_decode($result, true);
 		$a = 0;
 		if (isset($answer['query']['categorymembers'][$a]['title'])) {
@@ -724,7 +730,8 @@ class Core extends Password {
 	*/
 	public function getPageCats($title) {
 		$cats = $this->httpRequest('action=query&prop=categories&format=json&cllimit=max&titles=' . urlencode($title) .
-			'&cldir=ascending&rawcontinue=&indexpageids=1', $this->job, 'GET');
+			'&cldir=ascending&rawcontinue=&assert=' . $this->assert . '&maxlag=' .
+			$this->maxlag . '&indexpageids=1', $this->job, 'GET');
 		$cats = json_decode($cats, true);
 		$pageID = $cats['query']['pageids'][0];
 		$a = 0;
@@ -749,9 +756,10 @@ class Core extends Password {
 			if (isset($Continue))
 				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) .
 					'&einamespace=0&eicontinue=' . urlencode($Continue) .
-					'&eidir=ascending&eilimit=max&rawcontinue=';
+					'&eidir=ascending&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&eilimit=max&rawcontinue=';
 			else
-				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . '&einamespace=0&eidir=ascending&eilimit=max&rawcontinue=';
+				$data = 'action=query&list=embeddedin&format=json&eititle=' . urlencode($templ) . '&einamespace=0&assert=' . $this->assert .
+					'&maxlag=' . $this->maxlag . '&eidir=ascending&eilimit=max&rawcontinue=';
 			$result = $this->httpRequest($data, $this->job, 'GET');
 			$answer = json_decode($result, true);
 			$a = 0;
@@ -783,9 +791,11 @@ class Core extends Password {
 		$Again = true;
 		while ($Again === true) {
 			if (isset($Continue))
-				$data = 'action=query&list=allpages&format=json&apcontinue=' . $Continue . '&apnamespace=' . $namespace . '&aplimit=max&apdir=ascending&rawcontinue=';
+				$data = 'action=query&list=allpages&format=json&apcontinue=' . $Continue . '&apnamespace=' . $namespace .
+					'&aplimit=max&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&apdir=ascending&rawcontinue=';
 			else
-				$data = 'action=query&list=allpages&format=json&apnamespace=' . $namespace . '&aplimit=max&apdir=ascending&rawcontinue=';
+				$data = 'action=query&list=allpages&format=json&apnamespace=' . $namespace .
+					'&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&aplimit=max&apdir=ascending&rawcontinue=';
 			$result = $this->httpRequest($data, $this->job, 'GET');
 			$answer = json_decode($result, true);
 			$a = 0;
@@ -812,7 +822,7 @@ class Core extends Password {
 	* @returns int: PageID, bool: false if the page does not exist
 	*/
 	public function getPageID($title) {
-		$data = 'action=query&format=json&maxlag=5&prop=info&indexpageids=1&titles=' . urlencode($title);
+		$data = 'action=query&format=json&assert=' . $this->assert . '&maxlag=' . $this->maxlag . '&prop=info&indexpageids=1&titles=' . urlencode($title);
 		$result = $this->httpRequest($data, $this->job, 'GET');
 		if (strpos ($result, 'missing') !== false)
 			return false;
@@ -826,7 +836,8 @@ class Core extends Password {
 	* @returns array with page titles
 	*/
 	public function getLinks($title) {
-		$data = 'action=query&prop=links&format=json&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
+		$data = 'action=query&prop=links&format=json&assert=' . $this->assert .
+			'&maxlag=' . $this->maxlag . '&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=' . urlencode($title);
 		$result = json_decode($this->httpRequest($data, $this->job, 'GET'), true);
 		while (isset($result['query']['pages'][$pageID]['links'][0]['title'])) {
 		$pageID = $result['query']['pageids'][0];
@@ -979,7 +990,8 @@ class Core extends Password {
 			'&title=' . urlencode($title) .
 			'&reason=' . $reason .
 			'&token=' . urlencode($token) .
-			'&maxlag=' . $this->maxlag;
+			'&maxlag=' . $this->maxlag .
+			'&assert=' . $this->assert;
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -1022,7 +1034,8 @@ class Core extends Password {
 			'&allowusertalk=' . urlencode($allowusertalk) .
 			'&reblock=' . urlencode($reblock) .
 			'&token=' . urlencode($token) .
-			'&maxlag=' . $this->maxlag;
+			'&maxlag=' . $this->maxlag .
+			'&assert=' . $this->assert;
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -1047,7 +1060,8 @@ class Core extends Password {
 			'&user=' . urlencode($user) .
 			'&reason=' . urlencode($reason) .
 			'&token=' . urlencode($token) .
-			'&maxlag=' . $this->maxlag;
+			'&maxlag=' . $this->maxlag .
+			'&assert=' . $this->assert;
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -1086,7 +1100,8 @@ class Core extends Password {
 			'&expiry=' . urlencode($expiry) .
 			'&cascade=' . urlencode($cascade) .
 			'&token=' . urlencode($token) .
-			'&maxlag=' . $this->maxlag;
+			'&maxlag=' . $this->maxlag .
+			'&assert=' . $this->assert;
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
@@ -1118,7 +1133,9 @@ class Core extends Password {
 			'&reason=' . urlencode($reason) .
 			'&title=' . urlencode($title) .
 			'&review=' . urlencode($review) .
-			'&token=' . urlencode($token);
+			'&token=' . urlencode($token) .
+			'&maxlag=' . $this->maxlag .
+			'&assert=' . $this->assert;
 		$result = $this->httpRequest($data, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists('error', $result))
