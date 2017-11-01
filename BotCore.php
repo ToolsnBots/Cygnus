@@ -593,9 +593,9 @@ class Core extends Password {
 	* @param $username - The username of the user
 	* @returs true if the user does exist, false if not
 	*/
-	public function checkUserExistence ($username) {
+	public function checkUserExistence($username) {
 		$result = $this->httpRequest('action=query&format=json&list=users&usprop=&ususers=' . urlencode($username), $this->job, 'GET');
-		if (strpos($result, "missing") !== false)
+		if (isset($result['query']['users'][0]['missing']))
 			return false;
 		return true;
 	}
