@@ -313,13 +313,13 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
-			case 'getAllEmbedings':
+			case 'getAllEmbeddings':
 				$required = array("templ");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getAllEmbedings...');
+				$this->echoNotice('Starting the function call of getAllEmbeddings...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->getAllEmbedings($Param[0]);
+					$ret = $this->getAllEmbeddings($Param[0]);
 					$endtime = microtime (true);
 					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {

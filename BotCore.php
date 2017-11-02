@@ -757,12 +757,22 @@ class Core extends Password {
 		return serialize($catResults);
 	}
 	/** getAllEmbedings
+	* Returns a note that the method should get renamed.
+	* Used Fatal instead of notice since renaming a method is not that difficult.
+	* @author Luke081515
+	* Should be removed at 2.2
+	*/
+	public function getAllEmbedings($templ) {
+		throw new Exception ("This method is misspelled, this was the fault of the programmers, and"
+			. "have now been fixed. Please rename your method to 'getAllEmbeddings', then it will work again.");
+	}
+	/** getAllEmbeddings
 	* returns all embeddings of a page
 	* @author Luke081515
 	* @param name of the template
 	* @returns false if not embedded, otherwise serialized array with pagetitles
 	*/
-	public function getAllEmbedings($templ) {
+	public function getAllEmbeddings($templ) {
 		$b = 0;
 		$Again = true;
 		while ($Again === true) {
