@@ -254,6 +254,20 @@ class Debug extends Core {
 				}
 				break;
 			// User information functions
+			case 'checkUserExistence':
+				$required = array("username");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of checkUserExistence...');
+				$starttime = microtime(true);
+				try {
+					$ret = $this->checkUserExistence($Param[0]);
+					$endtime = microtime(true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'getUserEditcount':
 				$required = array("username");
 				$Param = $this->getParams($required);

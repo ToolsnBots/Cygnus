@@ -586,8 +586,19 @@ class Core extends Password {
 		} else
 			return 'success';
 	}
-
 	// User related functions
+	/** checkUserExistence
+	* checks if a user exists
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs true if the user does exist, false if not
+	*/
+	public function checkUserExistence($username) {
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=&ususers=' . urlencode($username), $this->job, 'GET');
+		if (isset($result['query']['users'][0]['missing']))
+			return false;
+		return true;
+	}
 	/** getUserEditcount
 	* returns the editcount of a user, false if the user does not exist
 	* @author Luke081515
