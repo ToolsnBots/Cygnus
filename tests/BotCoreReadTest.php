@@ -25,6 +25,12 @@ final class BotCoreReadTest extends TestCase {
 		$actually = $Core->execute(array("readPage", "Hauptseite"));
 		$this->assertEquals($expected, $actually);
 	}
+	public function testReadPageMissing() {
+		$Core = $this->createLogin();
+		$expected = null;
+		$actually = $Core->execute(array("readPage", "Sfdfsdf"));
+		$this->assertEquals($expected, $actually);
+	}
 	public function testReadPageJsSuccessful() {
 		$Core = $this->createLogin();
 		$expected = "UTTest";
