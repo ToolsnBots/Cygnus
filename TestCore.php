@@ -1,11 +1,20 @@
 <?php
 require_once __DIR__ . '/BotCore.php';
-/** Debug.php
-* * @Author Luke081515 <luke081515@tools.wmflabs.org>
-* @Version 0.1
-* @Status Alpha
+/** TestCore.php
+* Allows using Cygnus for testing
+* @Author Luke081515 <luke081515@tools.wmflabs.org>
+* @Version 1.0
+* @Status Beta
 */
 class TestCore extends Core {
+	/** __construct
+	* @param $loginData (Array)
+	* $loginData[1] - the site to use
+	* $loginData[2] - the username to use
+	* $loginData[3] - the password to use
+	* $loginData[0] is ignored, since this program is mostly for args
+	** args[0] is the program name, so useless here
+	*/
 	public function __construct($loginData) {
 		$this->setSite($loginData[1]);
 		$this->setUsername($loginData[2]);
@@ -13,6 +22,14 @@ class TestCore extends Core {
 		$this->initcurlArgs('TestCore', true);
 		$this->login();
 	}
+	/** execute
+	* @param - $functionData Array
+	** $functionData[0] is the name of the function to execute
+	** $functionData - all following values are the params
+	** Takes up to 10 parameters
+	* @Author Luke081515
+	* @returns the return value of the Cygnus function
+	*/
 	public function execute($functionData) {
 		$functionName = $functionData[0];
 		switch(count($functionData)) {
