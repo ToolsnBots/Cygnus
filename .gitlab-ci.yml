@@ -1,12 +1,13 @@
 stages:
   - lint
   - codesniffer
+  - unit
 
 lint:lint-php5.4:
   stage: lint
   image: php:5.4
   before_script:
-    - bash ci/docker_install.sh > /dev/null
+    - bash ci/docker_install-lint.sh > /dev/null
   script:
     - bash ci/phplint.sh ./
 
@@ -14,7 +15,7 @@ lint:lint-php5.6:
   stage: lint
   image: php:5.6
   before_script:
-    - bash ci/docker_install.sh > /dev/null
+    - bash ci/docker_install-lint.sh > /dev/null
   script:
     - bash ci/phplint.sh ./
 
@@ -22,7 +23,15 @@ lint:lint-php7.0:
   stage: lint
   image: php:7.0
   before_script:
-    - bash ci/docker_install.sh > /dev/null
+    - bash ci/docker_install-lint.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
+lint:lint-php7.1:
+  stage: lint
+  image: php:7.1
+  before_script:
+    - bash ci/docker_install-lint.sh > /dev/null
   script:
     - bash ci/phplint.sh ./
 
@@ -30,7 +39,15 @@ codesniffer:
   stage: codesniffer
   image: php:5.6
   before_script:
-    - bash ci/docker_install.sh > /dev/null
+    - bash ci/docker_install-cs.sh > /dev/null
   script:
     - bash ci/phpcs.sh
   allow_failure: true
+
+unit:testRead:
+  stage: unit
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install-unit.sh > /dev/null
+  script:
+    - bash ci/phpunit.sh
