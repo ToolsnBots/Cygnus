@@ -79,6 +79,8 @@ class Core extends Password {
 			$this->curlHandle = $curl;
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		// change if you need more, default is 5
+		$this->setMaxlag(5);
 	}
 	public function __construct($account, $job, $pUseHTTPS = true) {
 	}
