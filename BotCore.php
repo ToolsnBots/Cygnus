@@ -35,22 +35,25 @@ class Core extends Password {
 	* @param $loadSettings - [optional: true] if the settings shall be loaded or another way will be used to login
 	*/
 	public function initcurl($account, $job, $pUseHTTPS = true, $assert = "bot") {
-		if ($assert !== "bot" && $assert !== "user")
+		if ($assert !== "bot" && $assert !== "user") {
 			throw new Exception("assert has to be 'bot' or 'user'");
+		}
 		$this->assert = $assert;
 		$this->setMaxlag(5);
 		$this->start($account);
 		$this->job = $job;
-		if ($pUseHTTPS === true)
+		if ($pUseHTTPS === true) {
 			$this->protocol = "https";
-		else
+		} else {
 			$this->protocol = "http";
+		}
 		// init curl
 		$curl = curl_init();
-		if ($curl === false)
+		if ($curl === false) {
 			throw new Exception("Curl initialization failed.");
-		else
+		} else {
 			$this->curlHandle = $curl;
+		}
 		$this->login();
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
@@ -64,27 +67,29 @@ class Core extends Password {
 	* @param $assert - [optional: bot] if set to "user" instead, you can use a bot without flag
 	*/
 	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot") {
-		if ($assert !== "bot" && $assert !== "user")
+		if ($assert !== "bot" && $assert !== "user") {
 			exit(1);
+		}
 		$this->assert = $assert;
 		$this->job = $job;
-		if ($pUseHTTPS === true)
+		if ($pUseHTTPS === true) {
 			$this->protocol = "https";
-		else
+		} else {
 			$this->protocol = "http";
+		}
 		// init curl
 		$curl = curl_init();
-		if ($curl === false)
+		if ($curl === false) {
 			throw new Exception("Curl initialization failed.");
-		else
+		} else {
 			$this->curlHandle = $curl;
+		}
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
-	public function __construct($account, $job, $pUseHTTPS = true) {
-	}
+	public function __construct($account, $job, $pUseHTTPS = true) {}
 	public function __destruct() {
 		curl_close($this->curlHandle);
 	}
@@ -111,11 +116,13 @@ class Core extends Password {
 			} else if ($method === "GET") {
 				$requestURL = $baseURL . "?" .
 							  $arguments;
-			} else
+			} else {
 				throw new Exception("Unknown http request method.");
+			}
 		}
-		if (!$requestURL)
+		if (!$requestURL) {
 			throw new Exception("No arguments for http request found.");
+		}
 		// set curl options
 		curl_setopt($this->curlHandle, CURLOPT_USERAGENT, $this->ua);
 		curl_setopt($this->curlHandle, CURLOPT_URL, $requestURL);
@@ -143,10 +150,11 @@ class Core extends Password {
 				sleep(10);
 			}
 		}
-		if ($success === true)
+		if ($success === true) {
 			return $rqResult;
-		else
+		} else {
 			throw new Exception("Curl request definitively failed: " . curl_error($this->curlHandle));
+		}
 	}
 	/** requireToken
 	* query the api for the token
@@ -155,10 +163,11 @@ class Core extends Password {
 	* @return requested token
 	*/
 	public function requireToken($type = "csrf") {
-		if ($type === "login")  // No assert on login
+		if ($type === "login") { // No assert on login
 			$result = $this->httpRequest("action=query&format=json&maxlag=" . $this->maxlag . "&meta=tokens&type=" . $type, $this->job, "GET");
-		else
+		} else {
 			$result = $this->httpRequest("action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&meta=tokens&type=" . $type, $this->job, "GET");
+		}
 		$tree = json_decode($result, true);
 		$tokenname = $type . "token";
 		try {
@@ -166,8 +175,9 @@ class Core extends Password {
 		} catch (Exception $e) {
 			throw new Excpetion("You filed an invalid token request." . $e->getMessage());
 		}
-		if ($token === "")
+		if ($token === "") {
 			throw new Exception("Could not receive login token.");
+		}
 		return $token;
 	}
 	/** login
@@ -184,10 +194,11 @@ class Core extends Password {
 		$tree = json_decode($result, true);
 		$lgResult = $tree["login"]["result"];
 		// manage result
-		if ($lgResult == "Success")
+		if ($lgResult == "Success") {
 			return true;
-		else
+		} else {
 			throw new Exception("Login failed with message: " . $lgResult);
+		}
 	}
 	/** logout
 	* Does a logout
@@ -413,8 +424,9 @@ class Core extends Password {
 	private function editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $sectionnumber = -1, $overrideNobots = false) {
 		retry:
 		if ($overrideNobots !== true) {
-			if ($this->allowBots($this->readPage($title)) === false)
+			if ($this->allowBots($this->readPage($title)) === false) {
 				return "nobots";
+			}
 		}
 		$token = $this->requireToken();
 		// perform edit
@@ -424,10 +436,12 @@ class Core extends Password {
 			"&summary=" . urlencode($summary) .
 			"&bot=" . urlencode($botflag) .
 			"&minor=" . urlencode($minorflag);
-		if ($noCreate === 1)
+		if ($noCreate === 1) {
 			$request .= "&minor=" . urlencode($minorflag);
-		if ($sectionnumber !== -1)
+		}
+		if ($sectionnumber !== -1) {
 			$request .= "&section=" . urlencode($sectionnumber);
+		}
 		$result = $this->httpRequest($request, $this->job);
 		$tree = json_decode($result, true);
 		$editres = $tree["edit"]["result"];
@@ -438,15 +452,15 @@ class Core extends Password {
 			} else {
 				return array($tree["edit"]["oldrevid"], $tree["edit"]["newrevid"]);
 			}
-		}
-		else {
+		} else {
 			$Code = $this->checkResult($editres);
-			if ($Code === "fail")
+			if ($Code === "fail") {
 				return "fail";
-			else if ($Code === "retry")
+			} else if ($Code === "retry") {
 				goto retry;
-			else if ($Code === "conflict")
+			} else if ($Code === "conflict") {
 				return "conflict";
+			}
 		}
 	}
 	/** editPage
@@ -460,10 +474,11 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	public function editPage($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == "bot") {
 			$botflag = true;
-		else
+		} else {
 			$botflag = false;
+		}
 		return $this->editPageEngine($title, $content, $summary, $botflag, false, $noCreate, -1, $overrideNobots);
 	}
 	/** editPageMinor
@@ -477,10 +492,11 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	public function editPageMinor($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == "bot") {
 			$botflag = true;
-		else
+		} else {
 			$botflag = false;
+		}
 		return $this->editPageEngine($title, $content, $summary, $botflag, true, $noCreate, -1, $overrideNobots);
 	}
 	/** editPageD
@@ -510,12 +526,14 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	public function editSection($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == "bot") {
 			$botflag = true;
-		else
+		} else {
 			$botflag = false;
-		if ($sectionnumber < 0)
+		}
+		if ($sectionnumber < 0) {
 			throw new Exception("You selected a invalid section number. To edit a whole page, use editPage().");
+		}
 		return $this->editPageEngine($title, $content, $summary, $botflag, false, $noCreate, $sectionnumber, $overrideNobots);
 	}
 	/** editSection
@@ -530,12 +548,14 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	public function editSectionMinor($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
-		if ($this->assert == "bot")
+		if ($this->assert == "bot") {
 			$botflag = true;
-		else
+		} else {
 			$botflag = false;
-		if ($sectionnumber < 0)
+		}
+		if ($sectionnumber < 0) {
 			throw new Exception("You selected a invalid section number. To edit a whole page, use editPageMinor().");
+		}
 		return $this->editPageEngine($title, $content, $summary, $botflag, true, $noCreate, $sectionnumber, $overrideNobots);
 	}
 	/** editPageD
@@ -552,8 +572,9 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	public function editSectionD($title, $content, $summary, $sectionnumber, $botflag, $minorflag, $noCreate = 1, $overrideNobots = false) {
-		if ($sectionnumber < 0)
+		if ($sectionnumber < 0) {
 			throw new Exception("You selected a invalid section number. To edit a whole page, use editPageD().");
+		}
 		return $this->editPageEngine($title, $content, $summary, $botflag,  $minorflag, $noCreate, $sectionnumber, $overrideNobots);
 	}
 	/** movePage
@@ -596,8 +617,9 @@ class Core extends Password {
 			. "&maxlag=" . $this->maxlag;
 		$result = $this->httpRequest($data, $this->job);
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
+		}
 		return true;
 	}
 	/** review
@@ -618,12 +640,14 @@ class Core extends Password {
 		$result = $this->httpRequest($data, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
-			if ($result["error"]["code"] === "notreviewable")
+			if ($result["error"]["code"] === "notreviewable") {
 				return $result["error"]["code"];
-			else
+			} else {
 				return $this->checkResult($result["error"]["code"]);
-		} else
+			}
+		} else {
 			return "success";
+		}
 	}
 	// User related functions
 	/** checkUserExistence
@@ -634,8 +658,9 @@ class Core extends Password {
 	*/
 	public function checkUserExistence($username) {
 		$result = $this->httpRequest('action=query&format=json&list=users&usprop=&ususers=' . urlencode($username), $this->job, 'GET');
-		if (isset($result['query']['users'][0]['missing']))
+		if (isset($result['query']['users'][0]['missing'])) {
 			return false;
+		}
 		return true;
 	}
 	/** getUserEditcount
@@ -646,8 +671,9 @@ class Core extends Password {
 	*/
 	public function getUserEditcount ($username) {
 		$result = $this->httpRequest("action=query&format=json&list=users&usprop=editcount&ususers=" . urlencode($username), $this->job, "GET");
-		if (isset($result['query']['users'][0]['missing']))
+		if (isset($result['query']['users'][0]['missing'])) {
 			return false;
+		}
 		$result = json_decode($result, true);
 		return $result["query"]["users"][0]["editcount"];
 	}
@@ -659,8 +685,9 @@ class Core extends Password {
 	*/
 	public function checkUserBlock ($username) {
 		$result = $this->httpRequest("action=query&format=json&list=blocks&bkusers=" . urlencode($username), $this->job, "GET");
-		if (strpos($result, "reason") !== false)
+		if (strpos($result, "reason") !== false) {
 			return true;
+		}
 		return false;
 	}
 	/** checkUserMail
@@ -671,10 +698,12 @@ class Core extends Password {
 	*/
 	public function checkUserMail ($username) {
 		$result = $this->httpRequest('action=query&format=json&list=users&usprop=emailable&ususers=' . urlencode($username), $this->job, 'GET');
-		if (isset($result['query']['users'][0]['missing']))
+		if (isset($result['query']['users'][0]['missing'])) {
 			return false;
-		if (strpos($result, "emailable") !== false)
+		}
+		if (strpos($result, "emailable") !== false) {
 			return true;
+		}
 		return false;
 	}
 	/** getCatMembers
@@ -704,8 +733,9 @@ class Core extends Password {
 		}
 		$b = 0;
 		$c = 0;
-		if ($onlySubCats === true)
+		if ($onlySubCats === true) {
 			return $subCat;
+		}
 		if ($excludeWls === false) {
 			while (isset($subCat[$b]))
 			{
@@ -733,8 +763,9 @@ class Core extends Password {
 					if (isset($answer["query-continue"]["categorymembers"]["cmcontinue"])) {
 						$Continue = $answer["query-continue"]["categorymembers"]["cmcontinue"];
 						$Cont = true;
-					} else
+					} else {
 						$Cont = false;
+					}
 				}
 				$a = 0;
 				if (isset($answer["query"]["categorymembers"][$a]["title"]) === true) {
@@ -779,8 +810,9 @@ class Core extends Password {
 					if (isset($answer["query-continue"]["pages"]["gcmcontinue"])) {
 						$Continue = $answer["query-continue"]["pages"]["gcmcontinue"];
 						$Cont = true;
-					} else
+					} else {
 						$Cont = false;
+					}
 				}
 				$a = 0;
 				if (isset($answer["query"]["pages"][$a]["title"])) {
@@ -793,10 +825,11 @@ class Core extends Password {
 				$b++;
 			}
 		}
-		if (!isset($page[0]))
+		if (!isset($page[0])) {
 				return false;
-		else
+		} else {
 			return serialize($page);
+		}
 	}
 	/** getPageCats
 	* reads out all categories of a page
@@ -816,8 +849,9 @@ class Core extends Password {
 			$catResults[$a] = $cats["query"]["pages"][$pageID]["categories"][$a];
 			$a++;
 		}
-		if (!isset($catResults[0]))
+		if (!isset($catResults[0])) {
 			return false;
+		}
 		return serialize($catResults);
 	}
 	/** getAllEmbedings
@@ -840,30 +874,32 @@ class Core extends Password {
 		$b = 0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset($Continue))
+			if (isset($Continue)) {
 				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) .
 					"&einamespace=0&eicontinue=" . urlencode($Continue) .
 					"&eidir=ascending&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&eilimit=max&rawcontinue=";
-			else
+			} else {
 				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&assert=" . $this->assert .
 					"&maxlag=" . $this->maxlag . "&eidir=ascending&eilimit=max&rawcontinue=";
+			}
 			$result = $this->httpRequest($data, $this->job, "GET");
 			$answer = json_decode($result, true);
 			$a = 0;
 			if (isset($answer["query-continue"]["embeddedin"]["eicontinue"])) {
 				$Continue = $answer["query-continue"]["embeddedin"]["eicontinue"];
 				$Again = true;
-			}
-			else
+			} else {
 				$Again = false;
+			}
 			if (isset($answer["query"]["embeddedin"][$a]["title"])) {
 				while (isset($answer["query"]["embeddedin"][$a]["title"])) {
 					$page[$b] = $answer["query"]["embeddedin"][$a]["title"];
 					$b++;
 					$a++;
 				}
-			} else
+			} else {
 				return false;
+			}
 		}
 		return serialize($page);
 	}
@@ -905,28 +941,31 @@ class Core extends Password {
 		$b = 0;
 		$Again = true;
 		while ($Again === true) {
-			if (isset($Continue))
+			if (isset($Continue)) {
 				$data = "action=query&list=allpages&format=json&apcontinue=" . $Continue . "&apnamespace=" . $namespace .
 					"&aplimit=max&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&apdir=ascending&rawcontinue=";
-			else
+			} else {
 				$data = "action=query&list=allpages&format=json&apnamespace=" . $namespace .
 					"&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&aplimit=max&apdir=ascending&rawcontinue=";
+			}
 			$result = $this->httpRequest($data, $this->job, "GET");
 			$answer = json_decode($result, true);
 			$a = 0;
 			if (isset($answer["query-continue"]["allpages"]["apcontinue"])) {
 				$Continue = $answer["query-continue"]["allpages"]["apcontinue"];
 				$Again = true;
-			} else
+			} else {
 				$Again = false;
+			}
 			if (isset($answer["query"]["allpages"][$a]["title"])) {
 				while (isset($answer["query"]["allpages"][$a]["title"])) {
 					$page[$b] = $answer["query"]["allpages"][$a]["title"];
 					$b++;
 					$a++;
 				}
-			} else
+			} else {
 				return false;
+			}
 		}
 		return serialize($page);
 	}
@@ -939,8 +978,9 @@ class Core extends Password {
 	public function getPageID($title) {
 		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&prop=info&indexpageids=1&titles=" . urlencode($title);
 		$result = $this->httpRequest($data, $this->job, "GET");
-		if (strpos ($result, "missing") !== false)
+		if (strpos ($result, "missing") !== false) {
 			return false;
+		}
 		$answer = json_decode($result, true);
 		return $tree["query"]["pageids"][0];
 	}
@@ -957,8 +997,9 @@ class Core extends Password {
 		while (isset($result["query"]["pages"][$pageID]["links"][0]["title"])) {
 		$pageID = $result["query"]["pageids"][0];
 		}
-		if (isset($links[0]))
+		if (isset($links[0])) {
 			return $links;
+		}
 		return false;
 	}
 	/** getSectionTitle
@@ -1001,10 +1042,11 @@ class Core extends Password {
 	* @param $maxlag - the maxlag to set
 	*/
 	final public function setMaxlag($maxlag) {
-		if (is_int($maxlag))
+		if (is_int($maxlag)) {
 			$this->maxlag = $maxlag;
-		else
+		} else {
 			throw new \Exception("The maxlag you specified is not a valid integer");
+		}
 	}
 	/** askOperator
 	* asks a question on the console
@@ -1049,13 +1091,12 @@ class Core extends Password {
 			$protocol = "http";
 		}
 		$baseURL = $protocol . "://" .
-				   $url;
+			$url;
 		$job = $baseURL;
-
 		$curl = curl_init();
-
-		if (!$baseURL)
+		if (!$baseURL) {
 			throw new Exception("no arguments for http request found.");
+		}
 		// set curl options
 		curl_setopt($curl, CURLOPT_USERAGENT, "Cygnus");
 		curl_setopt($curl, CURLOPT_URL, $baseURL);
@@ -1068,8 +1109,9 @@ class Core extends Password {
 
 		// perform request
 		$rqResult = curl_exec($curl);
-		if ($rqResult === false)
+		if ($rqResult === false) {
 			throw new Exception("curl request failed: " . curl_error($curl));
+		}
 		return $rqResult;
 	}
 	/** allowBots
@@ -1079,12 +1121,15 @@ class Core extends Password {
 	* @return false if bot is not allowed, otherwise true
 	*/
 	private function allowBots ($text) {
-		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->username,"/").".*?)\}\}/iS",$text))
+		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->username,"/").".*?)\}\}/iS",$text)) {
 			return false;
-		if (preg_match("/\{\{(bots\|allow=all|bots\|allow=.*?".preg_quote($this->username,"/").".*?)\}\}/iS", $text))
+		}
+		if (preg_match("/\{\{(bots\|allow=all|bots\|allow=.*?".preg_quote($this->username,"/").".*?)\}\}/iS", $text)) {
 			return true;
-		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text))
+		}
+		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -1113,10 +1158,11 @@ class Core extends Password {
 			throw $e;
 		}
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
-		else
+		} else {
 			return "success";
+		}
 	}
 	/** blockUser
 	* Blocks a user or an IP
@@ -1157,10 +1203,11 @@ class Core extends Password {
 			throw $e;
 		}
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
-		else
+		} else {
 			return "success";
+		}
 	}
 	/** unblockUser
 	* Unblocks a user or an IP
@@ -1183,10 +1230,11 @@ class Core extends Password {
 			throw $e;
 		}
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
-		else
+		} else {
 			return "success";
+		}
 	}
 	/** protectPage
 	* Protects a page
@@ -1223,10 +1271,11 @@ class Core extends Password {
 			throw $e;
 		}
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
-		else
+		} else {
 			return "success";
+		}
 	}
 	/** stabilize
 	* changes the settings who can review a page, and which version gets shown
@@ -1253,10 +1302,11 @@ class Core extends Password {
 			"&assert=" . $this->assert;
 		$result = $this->httpRequest($data, $this->job);
 		$result = json_decode($result, true);
-		if (array_key_exists("error", $result))
+		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
-		else
+		} else {
 			return "success";
+		}
 	}
 }
 ?>
