@@ -33,3 +33,4 @@ codesniffer:
     - bash ci/docker_install.sh > /dev/null
   script:
     - bash ci/phpcs.sh
+  allow_failure: true
