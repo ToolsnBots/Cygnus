@@ -37,6 +37,7 @@ class Core extends Password {
 		if ($assert !== "bot" && $assert !== "user")
 			throw new Exception("assert has to be 'bot' or 'user'");
 		$this->assert = $assert;
+		$this->setMaxlag(5);
 		$this->start($account);
 		$this->job = $job;
 		if ($pUseHTTPS === true)
@@ -53,7 +54,6 @@ class Core extends Password {
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
-		$this->setMaxlag(5);
 	}
 	/** initcurlArgs
 	* Use this function instead of initcurl if you want to use args or console to tell the bot the password
