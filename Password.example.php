@@ -34,6 +34,10 @@ class Password {
 			'hello@example.org',
 			'support@example.org',
 		);
+		$this->Target = array ( // Path to api.php. This can be obtained from Special:Version
+			'w/api.php',
+			'w/api.php',
+		);
 	}
 	protected function getLoginName() {
 		return serialize ($this->LoginName);
@@ -49,6 +53,9 @@ class Password {
 	}
 	protected function getMail() {
 		return serialize ($this->MailAddress);
+	}
+	protected function getApiPath() {
+		return serialize ($this->Target);
 	}
 }
 ?>

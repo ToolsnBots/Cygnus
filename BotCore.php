@@ -21,6 +21,7 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
+	private $target;
 	private $debugMode = false;
 	private $failedLoginCounter = 0;
 
@@ -128,9 +129,14 @@ class Core extends Password {
 	* @author Hgzh
 	* @return answer of the API
 	*/
-	protected function httpRequest($arguments, $job, $method = "POST", $target = "w/api.php") {
-		$baseURL = $this->protocol . "://" .
-				   $this->site . "/" .
+	protected function httpRequest($arguments, $job, $method = 'POST', $target = '') {
+		if($target == '') {
+			// Kept for legacy support
+			// ToDo: Remove in next major release
+			$target = $this->target;
+		}
+		$baseURL = $this->protocol . '://' .
+				   $this->site . '/' .
 				   $target;
 		$method = strtoupper($method);
 		if ($arguments != "") {
@@ -265,12 +271,14 @@ class Core extends Password {
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
+		$Target = unserialize($this->getApiPath());
 		for ($a = 0; isset($LoginName[$a]); $a++) {
 			if ($LoginName[$a] === $account) {
 				$this->site = $LoginHost[$a];
 				$this->username = $LoginAccount[$a];
 				$this->password = $LoginPassword[$a];
 				$this->mail = $Mail[$a];
+				$this->target = $Target[$a];
 				$Found = true;
 			}
 		}
