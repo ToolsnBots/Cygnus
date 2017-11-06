@@ -834,13 +834,13 @@ class Core extends Password {
 	* Returns missing links "redlinks" on a page
 	* @author Freddy2001
 	* @param $Site - Page with links that will be checked
-	* @returns Array with missing pages
+	* @returns Array with missing pages or false if there are no links
 	*/
 	public function getMissingLinks ($Site) {
 		$data = "action=query&format=php&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
 		try {
 			$website = $this->httpRequest($data, $this->job, 'GET');
-				$website = unserialize($website);
+			$website = unserialize($website);
 			$answer = $website['query']['pages'];
 			$result = array();
 			for ($i = 0; $i < count($answer); $i++) {
