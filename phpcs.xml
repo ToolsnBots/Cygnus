@@ -44,7 +44,6 @@
 <rule ref="Squiz.PHP.EmbeddedPhp"/>
 <rule ref="Squiz.PHP.Eval"/>
 <rule ref="Squiz.PHP.ForbiddenFunctions"/>
-<rule ref="Squiz.PHP.GlobalKeyword"/>
 <rule ref="Squiz.PHP.Heredoc"/>
 <rule ref="Squiz.PHP.InnerFunctions"/>
 <rule ref="Squiz.PHP.LowercasePHPFunctions"/>

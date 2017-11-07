@@ -7,5 +7,10 @@ set -xe
 
 # Install git (the php image doesn't have it) which is required by composer
 apt-get update -yqq
-apt-get install git -yqq
-pear install PHP_CodeSniffer
+apt-get install git wget -yqq
+
+# Install phpunit
+wget https://phar.phpunit.de/phpunit-5.7.phar
+chmod +x phpunit-5.7.phar
+mv phpunit-5.7.phar /usr/local/bin/phpunit
+phpunit --version
