@@ -837,10 +837,10 @@ class Core extends Password {
 	* @returns Array with missing pages or false if there are no links
 	*/
 	public function getMissingLinks ($Site) {
-		$data = "action=query&format=php&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
+		$data = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
 		try {
 			$website = $this->httpRequest($data, $this->job, 'GET');
-			$website = unserialize($website);
+			$website = json_decode($website, true);
 			$answer = $website['query']['pages'];
 			$result = array();
 			for ($i = 0; $i < count($answer); $i++) {
