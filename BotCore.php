@@ -830,6 +830,34 @@ class Core extends Password {
 		}
 		return serialize($page);
 	}
+	/** getMissingLinks
+	* Returns missing links "redlinks" on a page
+	* @author Freddy2001
+	* @param $Site - Page with links that will be checked
+	* @returns Array with missing pages or false if there are no links
+	*/
+	public function getMissingLinks ($Site) {
+		$data = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
+		try {
+			$website = $this->httpRequest($data, $this->job, 'GET');
+			$website = json_decode($website, true);
+			$answer = $website['query']['pages'];
+			$result = array();
+			for ($i = 0; $i < count($answer); $i++) {
+				if (isset($answer[$i]['missing'])) {
+					$result[] = $answer[$i]['title'];
+				}
+			}
+			if (count($result) < 1) {
+				return false;
+			} else {
+				return $result;
+			}
+		} catch (Exception $e) {
+			echo "Error: " . $e->getMessage() . "\n";
+			return false;
+		}
+	}
 	/** getAllPages
 	* returns all pages of namespace
 	* @author Luke081515
