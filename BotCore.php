@@ -67,7 +67,7 @@ class Core extends Password {
 	* @param $pUseHTTPS - [optional: true] if false, http will be used
 	* @param $assert - [optional: bot] if set to "user" instead, you can use a bot without flag
 	*/
-	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot", $debugMode = false) {
+	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot", $supress = false, $debugMode = false) {
 		if ($debugMode) {
 			$this->debugMode = true;
 		}
@@ -88,7 +88,9 @@ class Core extends Password {
 		} else {
 			$this->curlHandle = $curl;
 		}
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		if (!$supress) {
+			echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		}
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
@@ -276,10 +278,10 @@ class Core extends Password {
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception('You will not be able to execute writing actions soon. Reason: $result');
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
-			if($FailedLoginCounter > 5) {
+			if($failedLoginCounter > 5) {
 				throw new Exception("MaxLoginTrysExceeded"); // ToDo: Find a way to reset this on succesful actions without putting that into every function
 			}
-			$FailedLoginCounter++;
+			$failedLoginCounter++;
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {

@@ -18,7 +18,7 @@ class Debug extends Core {
 		} else {
 			$debug = false;
 		}
-		$this->initcurlArgs('Debug', true, $assert, $debug);
+		$this->initcurlArgs('Debug', true, $assert, false, $debug);
 		$this->login();
 		do {
 			$this->debug($this->askRequired("Name of the function you want to debug:"));
