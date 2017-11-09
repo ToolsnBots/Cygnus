@@ -240,23 +240,29 @@ class Core extends Password {
 		$this->httpRequest("action=logout", $this->job);
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setSite($site) {
 		$this->site = $site;
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setUsername($username) {
 		$this->username = $username;
 		$this->createCleanUsername();
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setPassword($password) {
 		$this->password = $password;
+	}
+	/** DO NOT USE this function
+	* in case you are not using initcurlArgs
+	*/
+	public function setTarget($target) {
+		$this->target = $target;
 	}
 	/** start
 	* Searches for the data from Password.php, does the login after that

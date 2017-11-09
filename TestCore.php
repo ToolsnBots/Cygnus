@@ -19,6 +19,7 @@ class TestCore extends Core {
 		$this->setSite($loginData[1]);
 		$this->setUsername($loginData[2]);
 		$this->setPassword($loginData[3]);
+		$this->setTarget("w/api.php");
 		$this->initcurlArgs('TestCore', true, "bot", true);
 		$this->login();
 	}
