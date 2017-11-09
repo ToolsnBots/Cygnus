@@ -20,6 +20,7 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
+	private $debugMode = false;
 	private $failedLoginCounter = 0;
 
 	/** initcurl
@@ -66,7 +67,10 @@ class Core extends Password {
 	* @param $pUseHTTPS - [optional: true] if false, http will be used
 	* @param $assert - [optional: bot] if set to "user" instead, you can use a bot without flag
 	*/
-	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot") {
+	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot", $debugMode = false) {
+		if ($debugMode) {
+			$this->debugMode = true;
+		}
 		if ($assert !== "bot" && $assert !== "user") {
 			exit(1);
 		}
@@ -151,6 +155,9 @@ class Core extends Password {
 			}
 		}
 		if ($success === true) {
+			if ($this->debugMode) {
+				echo "\nResult for " . $arguments . ":\n'" . $rqResult . "'";
+			}
 			return $rqResult;
 		} else {
 			throw new Exception("Curl request definitively failed: " . curl_error($this->curlHandle));
