@@ -360,6 +360,17 @@ class Core extends Password {
 		}
 		return $ret;
 	}
+	/** getEchoNotifications
+	 * gets Notifications
+	 * requires an installed echo extention in MediaWiki
+	 * @author Freddy2001
+	 * @returns Array with all notifications
+	 */
+	public function getEchoNotifications() {
+		$echo = $this->httpRequest("action=query&format=json&meta=notifications", $this->job, 'GET');
+		$echo = json_decode($echo, true);
+		return $echo['query']['notifications']['list'];
+	}
 	/** editPageEngine
 	* internal method which does the edit. please use one of the following functions instead
 	* @param $title - name of the page
