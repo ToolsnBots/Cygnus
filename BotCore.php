@@ -96,7 +96,7 @@ class Core extends Password {
 	* @param $pTarget - [optional: w/api.php] use this,
 		if Special:Version shows something different than w/api.php for using the api
 	* @author Hgzh
-	* @returns answer of the API
+	* @return answer of the API
 	*/
 	protected function httpRequest($arguments, $job, $method = "POST", $target = "w/api.php") {
 		$baseURL = $this->protocol . "://" .
@@ -151,7 +151,7 @@ class Core extends Password {
 	* query the api for the token
 	* @author Hgzh / Luke081515 / MGChecker
 	* @param $type - [optional: csrf] - type of the token (see the api docs for details)
-	* @returns requested token
+	* @return requested token
 	*/
 	public function requireToken($type = "csrf") {
 		if ($type === "login")  // No assert on login
@@ -246,9 +246,9 @@ class Core extends Password {
 	* depending on the code, it executes different actions
 	* @author Luke081515
 	* @param $result - errorcode of the api
-	* @returns fail - edit failed, a retry would not be useful
-	* @returns retry - try it again, it may work
-	* @returns conflict - there is an edit conflict
+	* @return fail - edit failed, a retry would not be useful
+	* @return retry - try it again, it may work
+	* @return conflict - there is an edit conflict
 	*/
 	private function checkResult($result) {
 		if ($result === "maxlag" || $result === "readonly" || $result === "unknownerror-nocode" || $result === "unknownerror" || $result === "ratelimited") {
@@ -271,7 +271,7 @@ class Core extends Password {
 	* for internal use only, used for readPage/readSection functions
 	* @param $request - the data for the api to get the content of the page
 	* @author Luke081515
-	* @returns text of the page
+	* @return text of the page
 	*/
 	private function readPageEngine($request) {
 		$page = json_decode($this->httpRequest($request, $this->job, "GET"), true);
@@ -282,7 +282,7 @@ class Core extends Password {
 	* Returns the content of a page
 	* @param $title - name of the page including namespaces
 	* @author MGChecker
-	* @returns content of the page
+	* @return content of the page
 	*/
 	public function readPage($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&titles=" . urlencode($title) .
@@ -293,7 +293,7 @@ class Core extends Password {
 	* Returns the content of a page
 	* @param $pageID - ID of the page
 	* @author MGChecker
-	* @returns content of the page
+	* @return content of the page
 	*/
 	public function readPageID($pageID) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=" . urlencode($pageID) .
@@ -304,7 +304,7 @@ class Core extends Password {
 	* Returns the content of a JS page
 	* @param $title - title of the page
 	* @author MGChecker
-	* @returns text of the page
+	* @return text of the page
 	*/
 	public function readPageJs($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&titles=" . urlencode($title) .
@@ -315,7 +315,7 @@ class Core extends Password {
 	* Returns the content of a CSS page
 	* @param $title - title of the page
 	* @author MGChecker
-	* @returns text of the page
+	* @return text of the page
 	*/
 	public function readPageCss($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&titles=" . urlencode($title) .
@@ -327,7 +327,7 @@ class Core extends Password {
 	* @param $title - name of the page
 	* @param $section - number of the section
 	* @author MGChecker
-	* @returns text of the section
+	* @return text of the section
 	*/
 	public function readSection($title, $section) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=" . urlencode($section) .
@@ -338,8 +338,8 @@ class Core extends Password {
 	* returns the Table of Contents of a page
 	* @param $page - Title of the page
 	* @author Luke081515
-	* @returns two-dimensional array
-	* @returns first dimension: the section
+	* @return two-dimensional array
+	* @return first dimension: the section
 	* @retuns second dimension:
 	* 	[0] => level;
 	* 	[1] => title of the section
@@ -371,7 +371,7 @@ class Core extends Password {
 	* @param $sectionnumber - which section should get edited? (default => the whole page)
 	* @param $overrideNobots - Should {{NoBots}} gets overriden?
 	* @author Hgzh / Luke081515 / MGChecker
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	private function editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $sectionnumber = -1, $overrideNobots = false) {
 		retry:
@@ -420,7 +420,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editPage($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == "bot")
@@ -437,7 +437,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editPageMinor($title, $content, $summary, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == "bot")
@@ -456,7 +456,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author MGChecker / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editPageD($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $overrideNobots = false) {
 		return $this->editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate, -1, $overrideNobots);
@@ -470,7 +470,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / MGChecker / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editSection($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == "bot")
@@ -490,7 +490,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author Freddy2001 / MGChecker / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editSectionMinor($title, $content, $summary, $sectionnumber, $noCreate = 1, $overrideNobots = false) {
 		if ($this->assert == "bot")
@@ -512,7 +512,7 @@ class Core extends Password {
 	* @param $noCreate - should the page get recreated? default is no
 	* @param $overrideNobots - should {{NoBots}} get overriden? default is no
 	* @author MGChecker / Luke081515
-	* @returns unserialized answer of the api, if successful
+	* @return unserialized answer of the api, if successful
 	*/
 	public function editSectionD($title, $content, $summary, $sectionnumber, $botflag, $minorflag, $noCreate = 1, $overrideNobots = false) {
 		if ($sectionnumber < 0)
@@ -527,7 +527,7 @@ class Core extends Password {
 	* @param - $bot (default: 0) - use a botflag?
 	* @param - $movetalk (default: 1) - move the talk page as well?
 	* @param - $noredirect - (default: 1) - create a redirect?
-	* @returns serialized answer of the API
+	* @return serialized answer of the API
 	*/
 	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
@@ -546,7 +546,7 @@ class Core extends Password {
 	* Allows to put a page on your watchlist, or remove it
 	* @param $title - title of the page
 	* @param $unwatch - default 0 - if 1, the page will get removed from the list
-	* @returns mixed - true if successful, otherwise the API error code
+	* @return mixed - true if successful, otherwise the API error code
 	*/
 	public function watch ($title, $unwatch = 0) {
 		$token = $this->requireToken("watch");
@@ -568,7 +568,7 @@ class Core extends Password {
 	* @param $revid - the revid of the revision to approve/unapprove
 	* @param $comment [optional: ""] - the comment to add for the log
 	* @param $unapprove [optional: 0] - if 1: mark the rev as unreviewed instead of reviewed
-	* @returns string - success if succesful, otherwise the API error-code
+	* @return string - success if succesful, otherwise the API error-code
 	*/
 	public function review($revid, $comment = "", $unapprove = 0) {
 		$token = $this->requireToken();
@@ -647,7 +647,7 @@ class Core extends Password {
 	* @param $kat - category, which should get analyzed
 	* @param $onlySubCats - [optional: false] if true, only the subcategories will returned, not the pagetitles
 	* @param $excludeWls - [optional: false] if true, you won"t get categories with redirects
-	* @returns false if the categories has no members, otherwise a serialized array with page titles
+	* @return false if the categories has no members, otherwise a serialized array with page titles
 	*/
 	public function getCatMembers($kat, $onlySubCats = false, $excludeWls = false) {
 		$b = 0;
@@ -766,7 +766,7 @@ class Core extends Password {
 	* works till the page has more than 500 categories
 	* @author Luke081515
 	* @param $page - page that should get analyzed
-	* @returns all categories as serialized array
+	* @return all categories as serialized array
 	*/
 	public function getPageCats($title) {
 		$cats = $this->httpRequest("action=query&prop=categories&format=json&cllimit=max&titles=" . urlencode($title) .
@@ -797,7 +797,7 @@ class Core extends Password {
 	* returns all embeddings of a page
 	* @author Luke081515
 	* @param name of the template
-	* @returns false if not embedded, otherwise serialized array with pagetitles
+	* @return false if not embedded, otherwise serialized array with pagetitles
 	*/
 	public function getAllEmbeddings($templ) {
 		$b = 0;
@@ -834,7 +834,7 @@ class Core extends Password {
 	* Returns missing links "redlinks" on a page
 	* @author Freddy2001
 	* @param $Site - Page with links that will be checked
-	* @returns Array with missing pages or false if there are no links
+	* @return Array with missing pages or false if there are no links
 	*/
 	public function getMissingLinks ($Site) {
 		$data = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
@@ -862,7 +862,7 @@ class Core extends Password {
 	* returns all pages of namespace
 	* @author Luke081515
 	* @param number of the namespace
-	* @returns false if the namespace is empty, otherwise serialized array with pagetitles
+	* @return false if the namespace is empty, otherwise serialized array with pagetitles
 	*/
 	public function getAllPages($namespace) {
 		$b = 0;
@@ -897,7 +897,7 @@ class Core extends Password {
 	* returns the ID of a page
 	* @author Luke081515
 	* @param $page - name of the page
-	* @returns int: PageID, bool: false if the page does not exist
+	* @return int: PageID, bool: false if the page does not exist
 	*/
 	public function getPageID($title) {
 		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&prop=info&indexpageids=1&titles=" . urlencode($title);
@@ -911,7 +911,7 @@ class Core extends Password {
 	* returns all links that are located at a page, maximum 5000
 	* @author Luke081515
 	* @param $page - page that gets analyzed
-	* @returns array with page titles
+	* @return array with page titles
 	*/
 	public function getLinks($title) {
 		$data = "action=query&prop=links&format=json&assert=" . $this->assert .
@@ -929,7 +929,7 @@ class Core extends Password {
 	* @author Freddy2001
 	* @param title - name of the page
 	* @param section - number of the section
-	* @returns title and heading level as array
+	* @return title and heading level as array
 	*/
 	public function getSectionTitle($title, $section) {
 		$content = $this->readSection($title, $section);
@@ -953,7 +953,7 @@ class Core extends Password {
 	}
 	/** getMaxlag
 	* @author Luke081515
-	* @returns $this->maxlag
+	* @return $this->maxlag
 	*/
 	final public function getMaxlag() {
 		return $this->maxlag;
@@ -973,7 +973,7 @@ class Core extends Password {
 	* asks a question on the console
 	* @author Luke081515
 	* @param $question - the question to display
-	* @returns the response to the question
+	* @return the response to the question
 	*/
 	public function askOperator($question) {
 		echo $question;
@@ -1039,7 +1039,7 @@ class Core extends Password {
 	* checks if bots are not allowed, via Template {{nobots}}
 	* adapted from https://en.wikipedia.org/wiki/Template:Bots#PHP
 	* @param $text - Content to check
-	* @returns false if bot is not allowed, otherwise true
+	* @return false if bot is not allowed, otherwise true
 	*/
 	private function allowBots ($text) {
 		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->username,"/").".*?)\}\}/iS",$text))
@@ -1060,7 +1060,7 @@ class Core extends Password {
 	* @author Luke081515
 	* @param $title - page to delete
 	* @param $reason - the reason for the deletion, visible in the log
-	* @returns - "success" if the deletion was successful, otherwise the error code of the api
+	* @return - "success" if the deletion was successful, otherwise the error code of the api
 	*/
 	public function deletePage ($title, $reason) {
 		$token = $this->requireToken();
@@ -1096,7 +1096,7 @@ class Core extends Password {
 	* @param - $hidename - hides the user
 	* @param - $allowusertalk - allows the user to write on his own talkpage
 	* @param - $reblock - overwrites existing blocks
-	* @returns - "success" if successful, otherwise the API errorcode
+	* @return - "success" if successful, otherwise the API errorcode
 	*/
 	public function blockUser ($user, $reason, $expiry, $anononly = 1, $nocreate = 1, $autoblock = 1, $noemail = 0, $hidename = 0, $allowusertalk = 1, $reblock = 0) {
 		$token = $this->requireToken();
@@ -1130,7 +1130,7 @@ class Core extends Password {
 	* @author Luke081515
 	* @param - $user - the user or IP to unblock
 	* @param - $reason - the reason for the unblock
-	* @returns - "success" if successful, otherwise the API errorcode
+	* @return - "success" if successful, otherwise the API errorcode
 	*/
 	public function unblockUser ($user, $reason) {
 		$token = $this->requireToken();
@@ -1167,7 +1167,7 @@ class Core extends Password {
 	* @param - $expiry - not setting this parameter is equivalent to setting it to infinite
 	* @param - $expiry - if you are using all, the param does not matter, but you need to set it
 	* @param - $cascade - uses cascade protection
-	* @returns - "success" if successful, otherwise the API errorcode
+	* @return - "success" if successful, otherwise the API errorcode
 	*/
 	public function protectPage ($title, $reason, $protections, $expiry, $cascade) {
 		$token = $this->requireToken();
@@ -1201,7 +1201,7 @@ class Core extends Password {
 	* @param $default - which version should be shown? "latest" or "stable"?
 	* @param $autoreview - who is allowed to review? "all" or "sysop"?
 	* @param $review - review the current version? 0 or 1
-	* @returns string - success or the error code
+	* @return string - success or the error code
 	*/
 	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
 		$token = $this->requireToken();
