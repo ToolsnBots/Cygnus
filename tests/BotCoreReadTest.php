@@ -11,9 +11,12 @@ final class BotCoreReadTest extends TestCase {
 
 	private function createLogin() {
 		global $argv;
-		$i = 0;
-		for ($j = 1; isset($argv[$j]); $j++) {
-			$params[$i] = $argv[$j];
+		$i = 1;
+		while ($argv[$j] === "CS") {
+			$i++;
+		}
+		while (isset($argv[$i])) {
+			$params[] = $argv[$i];
 			$i++;
 		}
 		return new TestCore($params);
