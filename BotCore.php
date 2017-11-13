@@ -20,6 +20,7 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
+	private $FailedLoginCounter = 0;
 
 	/** initcurl
 	* initializes curl
@@ -251,12 +252,16 @@ class Core extends Password {
 	* @return conflict - there is an edit conflict
 	*/
 	private function checkResult($result) {
-		if ($result === "maxlag" || $result === "readonly" || $result === "unknownerror-nocode" || $result === "unknownerror" || $result === "ratelimited") {
-			echo "\nEdit failed. Reason: $result. Please try again";
-			return "retry";
-		} else if ($result === "blocked" || $result === "confirmemail" || $result === "autoblocked") {
-			throw new Exception("You will not be able to edit soon. Reason: $result");
-		} else if ($result === "assertuserfailed" || $result === "assertbotfailed") {
+		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
+			echo '\Action failed. Reason: $result. Please try again';
+			return 'retry';
+		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
+			throw new Exception('You will not be able to execute writing actions soon. Reason: $result');
+		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
+			if($FailedLoginCounter > 5) {
+				throw new Exception("MaxLoginTrysExceeded"); // ToDo: Find a way to reset this on succesful actions without putting that into every function
+			}
+			$FailedLoginCounter++;
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {
@@ -274,15 +279,28 @@ class Core extends Password {
 	* @return text of the page
 	*/
 	private function readPageEngine($request) {
-		$page = json_decode($this->httpRequest($request, $this->job, "GET"), true);
-		$pageID = $page["query"]["pageids"][0];
-		return $page["query"]["pages"][$pageID]["revisions"][0]["*"];
+		do {
+			$page = json_decode($this->httpRequest($request, $this->job, 'GET'), true);
+			if (isset($page['error'])) {
+				$errorcode = $this->checkResult($page['error']['code']);
+				if($errorcode === "fail") {
+					return false;
+				}
+			}
+		} while ($errorcode === "retry");
+		$pageID = $page['query']['pageids'][0];
+		if ($pageID === -1) {
+			return null;
+		}
+		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
 	}
 	/** readPage
 	* Returns the content of a page
 	* @param $title - name of the page including namespaces
 	* @author MGChecker
 	* @return content of the page
+	** false if there is an unknown error
+	** null if the page does not exist
 	*/
 	public function readPage($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&titles=" . urlencode($title) .
@@ -294,6 +312,8 @@ class Core extends Password {
 	* @param $pageID - ID of the page
 	* @author MGChecker
 	* @return content of the page
+	** false if there is an unknown error
+	** null if the page does not exist
 	*/
 	public function readPageID($pageID) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&pageids=" . urlencode($pageID) .
@@ -305,6 +325,8 @@ class Core extends Password {
 	* @param $title - title of the page
 	* @author MGChecker
 	* @return text of the page
+	** false if there is an unknown error
+	** null if the page does not exist
 	*/
 	public function readPageJs($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fjavascript&titles=" . urlencode($title) .
@@ -316,6 +338,8 @@ class Core extends Password {
 	* @param $title - title of the page
 	* @author MGChecker
 	* @return text of the page
+	** false if there is an unknown error
+	** null if the page does not exist
 	*/
 	public function readPageCss($title) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fcss&titles=" . urlencode($title) .
@@ -328,6 +352,8 @@ class Core extends Password {
 	* @param $section - number of the section
 	* @author MGChecker
 	* @return text of the section
+	** false if there is an unknown error
+	** null if the page does not exist
 	*/
 	public function readSection($title, $section) {
 		$request = "action=query&prop=revisions&format=json&rvprop=content&rvlimit=1&rvcontentformat=text%2Fx-wiki&rvdir=older&indexpageids=1&rvsection=" . urlencode($section) .
