@@ -50,4 +50,12 @@ unit:testRead:
   before_script:
     - bash ci/docker_install-unit.sh > /dev/null
   script:
-    - bash ci/phpunit.sh
+    - bash ci/phpunit-read.sh
+
+unit:testRead-AssertFail:
+  stage: unit
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install-unit.sh > /dev/null
+  script:
+    - bash ci/phpunit-readAssert.sh
