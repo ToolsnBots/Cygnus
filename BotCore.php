@@ -20,7 +20,7 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
-	private $FailedLoginCounter = 0;
+	private $failedLoginCounter = 0;
 
 	/** initcurl
 	* initializes curl
