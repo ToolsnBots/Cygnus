@@ -60,7 +60,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadSection0Successful() {
 		$Core = $this->createLogin();
 		$expected = "text";
-		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest"));
+		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest", 0));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -69,7 +69,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadSection1Successful() {
 		$Core = $this->createLogin();
 		$expected = "== Section 1 ==\ntext 2";
-		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest"));
+		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest", 1));
 		$this->assertEquals($expected, $actually);
 	}
 }
