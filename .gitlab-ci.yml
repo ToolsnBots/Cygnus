@@ -44,18 +44,34 @@ codesniffer:
     - bash ci/phpcs.sh
   allow_failure: true
 
+unit:testBasic:
+  stage: unit
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install-unit.sh > /dev/null
+  script:
+    - bash ci/phpunitBasic.sh
+
 unit:testRead:
   stage: unit
   image: php:5.6
   before_script:
     - bash ci/docker_install-unit.sh > /dev/null
   script:
-    - bash ci/phpunit-read.sh
+    - bash ci/phpunitRead.sh
 
-unit:testRead-AssertFail:
+unit:testReadAssertFail:
   stage: unit
   image: php:5.6
   before_script:
     - bash ci/docker_install-unit.sh > /dev/null
   script:
-    - bash ci/phpunit-readAssert.sh
+    - bash ci/phpunitReadAssert.sh
+
+unit:testUserProperty:
+  stage: unit
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install-unit.sh > /dev/null
+  script:
+    - bash ci/phpunitUserProperty.sh

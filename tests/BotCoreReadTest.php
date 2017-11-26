@@ -23,8 +23,8 @@ final class BotCoreReadTest extends TestCase {
 	*/
 	public function testReadPageSuccessful() {
 		$Core = $this->createLogin();
-		$expected = "#WEITERLEITUNG [[Wikipedia:Hauptseite]]";
-		$actually = $Core->execute(array("readPage", "Hauptseite"));
+		$expected = "DummyContent";
+		$actually = $Core->execute(array("readPage", "DummyPage"));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -42,7 +42,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadPageJsSuccessful() {
 		$Core = $this->createLogin();
 		$expected = "UTTest";
-		$actually = $Core->execute(array("readPageJs", "Benutzer:Luke081515Bot/Testpage.js"));
+		$actually = $Core->execute(array("readPageJs", "User:Luke081515Bot/Testpage.js"));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -51,7 +51,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadPageCssSuccessful() {
 		$Core = $this->createLogin();
 		$expected = "UTTest";
-		$actually = $Core->execute(array("readPageCss", "Benutzer:Luke081515Bot/Testpage.css"));
+		$actually = $Core->execute(array("readPageCss", "User:Luke081515Bot/Testpage.css"));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -60,7 +60,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadSection0Successful() {
 		$Core = $this->createLogin();
 		$expected = "text";
-		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest", 0));
+		$actually = $Core->execute(array("readSection", "User:Luke081515Bot/SectionTest", 0));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -69,7 +69,7 @@ final class BotCoreReadTest extends TestCase {
 	public function testReadSection1Successful() {
 		$Core = $this->createLogin();
 		$expected = "== Section 1 ==\ntext 2";
-		$actually = $Core->execute(array("readSection", "Benutzer:Luke081515Bot/SectionTest", 1));
+		$actually = $Core->execute(array("readSection", "User:Luke081515Bot/SectionTest", 1));
 		$this->assertEquals($expected, $actually);
 	}
 }
