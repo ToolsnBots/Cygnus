@@ -42,7 +42,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	public function testUserEditcountSuccessful() {
 		$Core = $this->createLogin();
 		$expected = 1;
-		$actually = $Core->execute(array("getUserEditcount", "JoanuznropfzlbBolt"));
+		$actually = $Core->execute(array("getUserEditcount", "UTDummyUser"));
 		$this->assertEquals($expected, $actually);
 	}
 	/**
@@ -59,7 +59,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	*/
 	public function testUserBlockBlocked() {
 		$Core = $this->createLogin();
-		$actually = $Core->execute(array("checkUserBlock", "MonikaGoshorn79"));
+		$actually = $Core->execute(array("checkUserBlock", "ABlockedUser"));
 		$this->assertTrue($actually);
 	}
 	/**
@@ -83,7 +83,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	*/
 	public function testUserMailMissing() {
 		$Core = $this->createLogin();
-		$actually = $Core->execute(array("checkUserMail", "Luke081515.2"));
+		$actually = $Core->execute(array("checkUserMail", "UTDummyUser"));
 		$this->assertFalse($actually);
 	}
 	/**
