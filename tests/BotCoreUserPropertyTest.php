@@ -30,12 +30,11 @@ final class BotCoreUserPropertyTest extends TestCase {
 	/**
 	* @covers BotCore::checkUserExistence
 	*/
-	// Currently failing, see #26
-	/*public function testUserDoesNotExists() {
+	public function testUserDoesNotExists() {
 		$Core = $this->createLogin();
 		$actually = $Core->execute(array("checkUserExistence", "LukeO81515"));
 		$this->assertFalse($actually);
-	}*/
+	}
 	/**
 	* @covers BotCore::getUserEditcount
 	*/
