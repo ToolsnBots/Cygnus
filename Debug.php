@@ -546,7 +546,13 @@ class Debug extends Core {
 	* Prints the message out in purple
 	*/
 	private function echoOutput($msg) {
-		echo "\n\033[01;35m" . $msg . "\033[0m";
+		if ($msg === true) {
+			echo "\n\033[01;35mReturned value: true\033[0m";
+		} else if ($msg === false) {
+			echo "\n\033[01;35mReturned value: false\033[0m";
+		} else {
+			echo "\n\033[01;35m" . $msg . "\033[0m";
+		}
 	}
 	/** askRequired
 	* Asks for something
