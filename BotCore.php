@@ -1155,7 +1155,7 @@ class Core extends Password {
 		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS",$text)) {
 			return false;
 		}
-		if (preg_match("/\{\{(bots\|allow=all|bots\|allow=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS", $text)) {
+		if (preg_match("/\{\{(bots\|deny=none|allow=all|bots\|allow=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS", $text)) {
 			return true;
 		}
 		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text)) {
