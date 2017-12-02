@@ -1129,10 +1129,11 @@ class Core extends Password {
 	/** allowBots
 	* checks if bots are not allowed, via Template {{nobots}}
 	* adapted from https://en.wikipedia.org/wiki/Template:Bots#PHP
+	* Do not use this function directly, it's already used by edit methods
 	* @param $text - Content to check
 	* @return false if bot is not allowed, otherwise true
 	*/
-	private function allowBots ($text) {
+	public function allowBots ($text) {
 		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->username,"/").".*?)\}\}/iS",$text)) {
 			return false;
 		}
