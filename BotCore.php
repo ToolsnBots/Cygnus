@@ -9,6 +9,7 @@ require_once __DIR__ . "/Password.php";
 */
 class Core extends Password {
 	protected $username;
+	protected $cleanUsername;
 	protected $password;
 	protected $curlHandle;
 	protected $site;
@@ -56,8 +57,9 @@ class Core extends Password {
 			$this->curlHandle = $curl;
 		}
 		$this->login();
+		$this->createCleanUsername();
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
-		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		$this->ua = "User:" . $this->CleanUsername . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 	}
 	/** initcurlArgs
@@ -88,16 +90,31 @@ class Core extends Password {
 		} else {
 			$this->curlHandle = $curl;
 		}
+		$this->createCleanUsername();
 		if (!$supress) {
 			echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		}
-		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
+		$this->ua = "User:" . $this->CleanUsername . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
 	public function __construct($account, $job, $pUseHTTPS = true) {}
 	public function __destruct() {
 		curl_close($this->curlHandle);
+	}
+	/** createCleanUsername
+	* Looks up the username for a botpassword
+	* If username is a botpassword, the botpasswordname will get removed
+	* Otherwise $this->cleanUsername will get set to the same value
+	* @author Luke081515
+	*/
+	private function createCleanUsername() {
+		$cleanUsername = strstr($this->username, "@", true);
+		if ($cleanUsername === false) {
+			$this->cleanUsername = $this->username;
+		} else {
+			$this->cleanUsername = $cleanUsername;
+		}
 	}
 	/** httpRequest
 	* does http(s) requests
@@ -226,6 +243,7 @@ class Core extends Password {
 	*/
 	public function setUsername($username) {
 		$this->username = $username;
+		$this->createCleanUsername();
 	}
 	/** DO NOT USE this function
 	* This is for unit-tests only
@@ -1134,10 +1152,10 @@ class Core extends Password {
 	* @return false if bot is not allowed, otherwise true
 	*/
 	public function allowBots ($text) {
-		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->username,"/").".*?)\}\}/iS",$text)) {
+		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS",$text)) {
 			return false;
 		}
-		if (preg_match("/\{\{(bots\|allow=all|bots\|allow=.*?".preg_quote($this->username,"/").".*?)\}\}/iS", $text)) {
+		if (preg_match("/\{\{(bots\|allow=all|bots\|allow=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS", $text)) {
 			return true;
 		}
 		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text)) {
