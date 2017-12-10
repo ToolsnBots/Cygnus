@@ -59,7 +59,7 @@ class Core extends Password {
 		$this->login();
 		$this->createCleanUsername();
 		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
-		$this->ua = "User:" . $this->CleanUsername . " - " . $this->job . " - " . $this->version;
+		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 	}
 	/** initcurlArgs
@@ -92,9 +92,9 @@ class Core extends Password {
 		}
 		$this->createCleanUsername();
 		if (!$supress) {
-			echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
 		}
-		$this->ua = "User:" . $this->CleanUsername . " - " . $this->job . " - " . $this->version;
+		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
@@ -1152,10 +1152,10 @@ class Core extends Password {
 	* @return false if bot is not allowed, otherwise true
 	*/
 	public function allowBots ($text) {
-		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS",$text)) {
+		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->cleanUsername,"/").".*?)\}\}/iS",$text)) {
 			return false;
 		}
-		if (preg_match("/\{\{(bots\|deny=none|allow=all|bots\|allow=.*?".preg_quote($this->CleanUsername,"/").".*?)\}\}/iS", $text)) {
+		if (preg_match("/\{\{(bots\|deny=none|allow=all|bots\|allow=.*?".preg_quote($this->cleanUsername,"/").".*?)\}\}/iS", $text)) {
 			return true;
 		}
 		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text)) {
