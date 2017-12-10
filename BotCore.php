@@ -1152,11 +1152,11 @@ class Core extends Password {
 	* @return false if bot is not allowed, otherwise true
 	*/
 	public function allowBots ($text) {
+		if (preg_match("/\{\{(bots\|allow=all|deny=none|bots\|allow=.*?".preg_quote($this->cleanUsername,"/").".*?)\}\}/iS", $text)) {
+			return true;
+		}
 		if (preg_match("/\{\{(nobots|bots\|allow=none|bots\|deny=all|bots\|optout=all|bots\|deny=.*?".preg_quote($this->cleanUsername,"/").".*?)\}\}/iS",$text)) {
 			return false;
-		}
-		if (preg_match("/\{\{(bots\|deny=none|allow=all|bots\|allow=.*?".preg_quote($this->cleanUsername,"/").".*?)\}\}/iS", $text)) {
-			return true;
 		}
 		if (preg_match("/\{\{(bots\|allow=.*?)\}\}/iS", $text)) {
 			return false;
