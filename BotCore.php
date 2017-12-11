@@ -1237,6 +1237,54 @@ class Core extends Password {
 			return "success";
 		}
 	}
+	/** blockGlobal
+	* Blocks an IP global
+	* @author Luke081515
+	* @param - $user - the user or IP to block
+	* @param - $reason - the reason for the block
+	* @param - $expiry - the expiry of the block
+	* @param - $expiry - can be relative, like "5 months"
+	* @param - $expiry - or can be absolute, like 2014-09-18T12:34:56Z, or never
+	* @param - $unblock - lifts the block
+	* @param - $anononly - if true, blocks only IPs, not logged in users
+	* @param - $modify - overwrites existing blocks
+	* @return - "success" if successful, otherwise the API errorcode
+	*/
+	public function blockGlobal ($user, $reason, $expiry, $unblock = 0, $anononly = 1, $modify = 0) {
+		$token = $this->requireToken();
+		if ($unblock) {
+		$data = "action=globalblock&format=json" .
+			"&target=" . urlencode($user) .
+			"&reason=" . urlencode($reason) .
+			"&anononly=" . urlencode($anononly) .
+			"&unblock=" . urlencode($unblock) .
+			"&modify=" . urlencode($modify) .
+			"&token=" . urlencode($token) .
+			"&maxlag=" . $this->maxlag .
+			"&assert=" . $this->assert;
+		} else {
+			$data = "action=globalblock&format=json" .
+			"&target=" . urlencode($user) .
+			"&reason=" . urlencode($reason) .
+			"&expiry=" . urlencode($expiry) .
+			"&anononly=" . urlencode($anononly) .
+			"&modify=" . urlencode($modify) .
+			"&token=" . urlencode($token) .
+			"&maxlag=" . $this->maxlag .
+			"&assert=" . $this->assert;
+		}
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists("error", $result)) {
+			return $result["error"]["code"];
+		} else {
+			return "success";
+		}
+	}
 	/** protectPage
 	* Protects a page
 	* @author Luke081515

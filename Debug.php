@@ -457,6 +457,23 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'blockGlobal':
+				$required = array("user", "reason", "expiry");
+				$optional = array("unblock", "anononly", "modify");
+				$optvalues = array(0, 1, 0);
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of blockUser...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->blockGlobal($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]),
+						intval($Param[5]));
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'protectPage':
 				$required = array("title", "reason", "protections", "expiry", "cascade");
 				$Param = $this->getParams($required);
