@@ -1296,6 +1296,55 @@ class Core extends Password {
 			return "success";
 		}
 	}
+	/** lockGlobal
+	* Blocks an IP global
+	* @author Luke081515
+	* @param - $user - the username
+	* @param - $lock - 1 if the user should get locked, 0 if unlocked, -1 for no change
+	* @param - $suppress - 1 for hidden, 2 for suppressed, 0 if the user should get visible again, -1 for no change
+	* @param - $reason - the reason
+	* @return - "success" if successful, otherwise the API errorcode
+	*/
+	public function lockGlobal ($user, $lock, $suppress, $reason) {
+		$token = $this->requireToken();
+		$data = "action=setglobalaccountstatus&format=json&user=" . urlencode($user);
+		switch ($lock) {
+			case 1:
+				$data = $data . "&locked=lock";
+				break;
+			case 0:
+				$data = $data . "&locked=";
+				break;
+			case -1:
+				break;
+		}
+		switch ($suppress) {
+			case 1:
+				$data = $data . "&hidden=lists";
+				break;
+			case 2:
+				$data = $data . "&hidden=suppressed";
+				break;
+			case 0:
+				$data = $data . "&hidden=";
+				break;
+			case -1:
+				break;
+		}
+		$token = $this->requireToken("setglobalaccountstatus");
+		$data = $data . "&reason=" . urlencode($reason) . "&token=" . urlencode($token);
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists("error", $result)) {
+			return $result["error"]["code"];
+		} else {
+			return "success";
+		}
+	}
 	/** changeUserrights
 	* Changes the rights of a user
 	* @author Luke081515
