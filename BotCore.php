@@ -20,6 +20,7 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
+	private $debugMode = false;
 	private $failedLoginCounter = 0;
 
 	/** initcurl
@@ -66,7 +67,10 @@ class Core extends Password {
 	* @param $pUseHTTPS - [optional: true] if false, http will be used
 	* @param $assert - [optional: bot] if set to "user" instead, you can use a bot without flag
 	*/
-	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot") {
+	public function initcurlArgs($job, $pUseHTTPS = true, $assert = "bot", $supress = false, $debugMode = false) {
+		if ($debugMode) {
+			$this->debugMode = true;
+		}
 		if ($assert !== "bot" && $assert !== "user") {
 			exit(1);
 		}
@@ -84,7 +88,9 @@ class Core extends Password {
 		} else {
 			$this->curlHandle = $curl;
 		}
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		if (!$supress) {
+			echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		}
 		$this->ua = "User:" . $this->username . " - " . $this->job . " - " . $this->version;
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
@@ -151,6 +157,9 @@ class Core extends Password {
 			}
 		}
 		if ($success === true) {
+			if ($this->debugMode) {
+				echo "\nResult for " . $arguments . ":\n'" . $rqResult . "'";
+			}
 			return $rqResult;
 		} else {
 			throw new Exception("Curl request definitively failed: " . curl_error($this->curlHandle));
@@ -269,10 +278,10 @@ class Core extends Password {
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception('You will not be able to execute writing actions soon. Reason: $result');
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
-			if($FailedLoginCounter > 5) {
+			if($failedLoginCounter > 5) {
 				throw new Exception("MaxLoginTrysExceeded"); // ToDo: Find a way to reset this on succesful actions without putting that into every function
 			}
-			$FailedLoginCounter++;
+			$failedLoginCounter++;
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {
