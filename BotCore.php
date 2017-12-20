@@ -287,8 +287,10 @@ class Core extends Password {
 		} else if ($result === "editconflict") {
 			echo "\nEditconflict detected";
 			return "conflict";
+		} else if ($result === "nosuchsection") {
+			return "nosuchsection";
 		} else {
-			echo "Action failed. Error: " . $result;
+			echo "\nAction failed. Error: " . $result;
 			return "fail";
 		}
 	}
@@ -303,7 +305,7 @@ class Core extends Password {
 			$page = json_decode($this->httpRequest($request, $this->job, 'GET'), true);
 			if (isset($page['error'])) {
 				$errorcode = $this->checkResult($page['error']['code']);
-				if($errorcode === "fail") {
+				if($errorcode === "fail" || $errorcode === "nosuchsection") {
 					return false;
 				}
 			}
