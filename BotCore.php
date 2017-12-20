@@ -1357,5 +1357,15 @@ class Core extends Password {
 			return "success";
 		}
 	}
+	/** Append the text to a file
+	* @param $filename - Path to the file
+	* @param $text - The text to add
+	* This function adds amends text with a newline to a file.
+	* Useful with wikimedias ircecho to get output to IRC.
+	* @author Luke081515
+	*/
+	public function writeToFile ($filename, $text) {
+		file_put_contents($filename, "\n" . $text, FILE_APPEND);
+	}
 }
 ?>

@@ -502,6 +502,20 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'writeToFile':
+				$required = array("filename", "text");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of writeToFile...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->writeToFile($Param[0], $Param[1]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			default:
 				throw new Exception("This function does not exist, or is not configured.");
 		}
