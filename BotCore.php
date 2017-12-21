@@ -273,10 +273,10 @@ class Core extends Password {
 	*/
 	private function checkResult($result) {
 		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
-			echo '\Action failed. Reason: $result. Please try again';
+			echo "\nAction failed. Reason: " . $result . ". Please try again";
 			return 'retry';
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
-			throw new Exception('You will not be able to execute writing actions soon. Reason: $result');
+			throw new Exception("You will not be able to execute writing actions soon. Reason: " . $result);
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
 			if($failedLoginCounter > 5) {
 				throw new Exception("MaxLoginTrysExceeded"); // ToDo: Find a way to reset this on succesful actions without putting that into every function
