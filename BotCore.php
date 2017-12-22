@@ -134,6 +134,9 @@ class Core extends Password {
 			// Kept for legacy support
 			// ToDo: Remove in next major release
 			$target = $this->target;
+		} else {
+			echo ("\nThis way of setting the path has been deprecated. "
+				. "Please migrate it to Password.php. See release notes for details");
 		}
 		$baseURL = $this->protocol . '://' .
 				   $this->site . '/' .

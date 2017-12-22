@@ -55,6 +55,13 @@ class Password {
 		return serialize ($this->MailAddress);
 	}
 	protected function getApiPath() {
+		if (!isset($this->Target)) {
+			echo ("\nWARNING: No API path specified at Password.php. Using default one (w/api.php)");
+			for ($i = 0; isset($this->LoginName[$i]); $i++) {
+				$target[$i] = 'w/api.php';
+			}
+			return serialize ($target);
+		}
 		return serialize ($this->Target);
 	}
 }
