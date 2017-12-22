@@ -278,10 +278,10 @@ class Core extends Password {
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception("You will not be able to execute writing actions soon. Reason: " . $result);
 		} else if ($result === 'assertuserfailed' || $result === 'assertbotfailed') {
-			if($failedLoginCounter > 5) {
+			if($this->failedLoginCounter > 5) {
 				throw new Exception("MaxLoginTrysExceeded"); // ToDo: Find a way to reset this on succesful actions without putting that into every function
 			}
-			$failedLoginCounter++;
+			$this->failedLoginCounter++;
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {
