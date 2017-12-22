@@ -9,6 +9,7 @@ class Password {
 	private $LoginAccount;
 	private $LoginPassword;
 	private $MailAddress;
+	private $PasswordVersion = "2.1.0"; // Do not change this as user. As dev, change it, when you change that file.
 
 	public function __construct() {}
 
@@ -63,6 +64,9 @@ class Password {
 			return serialize ($target);
 		}
 		return serialize ($this->Target);
+	}
+	protected function getPasswordVersion () {
+		return $this->PasswordVersion;
 	}
 }
 ?>

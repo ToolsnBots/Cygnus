@@ -24,6 +24,7 @@ class Core extends Password {
 	private $target;
 	private $debugMode = false;
 	private $failedLoginCounter = 0;
+	private $passwordVersion = "2.1.0"; // Should be the same as in Password.php, when you are changing the file.
 
 	/** initcurl
 	* initializes curl
@@ -275,6 +276,14 @@ class Core extends Password {
 	public function start($account) {
 		$Found = false;
 		$this->init();
+		try { // For old version of Password.php, not including the version
+			$passwordVersion = $this->getPasswordVersion();
+		} catch (Exception $e) {
+			throw new Exception("You are using an old version of Password.php. Please upgrade.");
+		}
+		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
+			throw new Exception("You are using an old version of Password.php. Please upgrade.");
+		}
 		$LoginName = unserialize($this->getLoginName());
 		$LoginHost = unserialize($this->getLoginHost());
 		$LoginAccount = unserialize($this->getLoginAccount());
