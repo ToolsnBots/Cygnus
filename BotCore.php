@@ -1296,6 +1296,82 @@ class Core extends Password {
 			return "success";
 		}
 	}
+	/** changeUserrights
+	* Changes the rights of a user
+	* @author Luke081515
+	* @param - $username - the page to protect
+	* @param - $groupAdd - The groups you want to add to the user
+	* @param - $groupRemove - The groups you want to remove from the user
+	* @param - $reason - the reason for the right change
+	* @param - $expiry - pipe-separated list of expiry timestamps in GNU timestamp format.
+	* @param - $expiry - the first timestamp applies to the first right, the second to the second, etc.
+	* @param - $expiry - the timestamps infinite, indefinite and never result in a protection that will never expire.
+	* @param - $expiry - timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param - $expiry - the number of expiry timestamps must equal the number of userrights, or you"ll get an error message
+	* @param - $expiry - not setting this parameter is equivalent to setting it to infinite
+	* @return - "success" if successful, otherwise the API errorcode
+	*/
+	public function changeUserrights ($username, $groupAdd, $groupRemove, $reason, $expiry = "infinite") {
+		$token = $this->requireToken("userrights");
+		$data = "action=userrights&format=json" .
+			"&user=" . urlencode($username) .
+			"&reason=" . urlencode($reason) .
+			"&add=" . urlencode($groupAdd) .
+			"&expiry=" . urlencode($expiry) .
+			"&remove=" . urlencode($groupRemove) .
+			"&token=" . urlencode($token) .
+			"&maxlag=" . $this->maxlag .
+			"&assert=" . $this->assert;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists("error", $result)) {
+			return $result["error"]["code"];
+		} else {
+			return "success";
+		}
+	}
+	/** changeGlobalUserrights
+	* Changes the global rights of a user
+	* @author Luke081515
+	* @param - $username - the page to protect
+	* @param - $groupAdd - The groups you want to add to the user
+	* @param - $groupRemove - The groups you want to remove from the user
+	* @param - $reason - the reason for the right change
+	* @param - $expiry - pipe-separated list of expiry timestamps in GNU timestamp format.
+	* @param - $expiry - the first timestamp applies to the first right, the second to the second, etc.
+	* @param - $expiry - the timestamps infinite, indefinite and never result in a protection that will never expire.
+	* @param - $expiry - timestamps like next Monday 16:04:57 or 9:28 PM tomorrow are also allowed, see the GNU web site for details.
+	* @param - $expiry - the number of expiry timestamps must equal the number of userrights, or you"ll get an error message
+	* @param - $expiry - not setting this parameter is equivalent to setting it to infinite
+	* @return - "success" if successful, otherwise the API errorcode
+	*/
+	public function changeGlobalUserrights ($username, $groupAdd, $groupRemove, $reason, $expiry = "infinite") {
+		$token = $this->requireToken("userrights");
+		$data = "action=globaluserrights&format=json" .
+			"&user=" . urlencode($username) .
+			"&reason=" . urlencode($reason) .
+			"&add=" . urlencode($groupAdd) .
+			"&expiry=" . urlencode($expiry) .
+			"&remove=" . urlencode($groupRemove) .
+			"&token=" . urlencode($token) .
+			"&maxlag=" . $this->maxlag .
+			"&assert=" . $this->assert;
+		try {
+			$result = $this->httpRequest($data, $this->job);
+		} catch (Exception $e) {
+			throw $e;
+		}
+		$result = json_decode($result, true);
+		if (array_key_exists("error", $result)) {
+			return $result["error"]["code"];
+		} else {
+			return "success";
+		}
+	}
 	/** protectPage
 	* Protects a page
 	* @author Luke081515

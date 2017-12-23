@@ -481,6 +481,38 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'changeUserrights':
+				$required = array("username", "groupAdd", "groupRemove", "reason");
+				$optional = array("expiry");
+				$optvalues = array("infinite");
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of changeUserrights...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->changeUserrights($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
+			case 'changeGlobalUserrights':
+				$required = array("username", "groupAdd", "groupRemove", "reason");
+				$optional = array("expiry");
+				$optvalues = array("infinite");
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of changeGlobalUserrights...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->changeGlobalUserrights($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'protectPage':
 				$required = array("title", "reason", "protections", "expiry", "cascade");
 				$Param = $this->getParams($required);
