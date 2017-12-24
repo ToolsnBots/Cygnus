@@ -623,97 +623,126 @@ class Core extends password {
 	* Funktioniert bis zu 5000 Unterkategorien pro Katgorie (nicht 5000 Unterkategorien insgesamt)
 	* Erfordert Botflag, da Limit auf 5000 gesetzt, (geht zwar sonst auch, aber nur mit Warnung)
 	* @author Luke081515
-	* @param $Kat - Kategorie die analyisiert werden soll.
-	* @param $OnlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
-	* @param $ExcludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
+	* @param $kat - Kategorie die analyisiert werden soll.
+	* @param $onlySubCats - [optional: false] Falls true, werden nur die Unterkategorien, nicht die Titel der Seiten weitergegeben
+	* @param $excludeWls - [optional: false] Falls true, werden keine Kategorien mit Weiterleitungen weitergegeben
 	* @returns false, falls keine Seiten vorhanden, ansonsten serialisiertes Array mit Seitentiteln
 	*/
-	protected function getCatMembers ($Kat, $OnlySubCats = false, $ExcludeWls = false)
-	{
-		$b=0;
-		$SubCat [0] = $Kat;
-		try {
-			$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($Kat) . '&cmprop=title&cmtype=subcat&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
-		} catch (Exception $e) {
-			throw $e;
-		}
-		$answer = unserialize($result); 
-		$a=0;
-		if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
+	public function getCatMembers($kat, $onlySubCats = false, $excludeWls = false) {
+		$b = 0;
+		$subCat[0] = $kat;
+		$result = $this->httpRequest("action=query&list=categorymembers&format=json&cmtitle=" . urlencode($kat) .
+			"&cmprop=title&cmtype=subcat&cmlimit=max&assert=" . $this->assert .
+			"&cmsort=sortkey&cmdir=ascending&rawcontinue=", $this->job, "GET");
+		$answer = json_decode($result, true);
+		$a = 0;
+		if (isset($answer["query"]["categorymembers"][$a]["title"])) {
 			$Sub = true;
-			while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-				$SubCat [$b] = $answer["query"]['categorymembers'][$a]['title'];	
+			while (isset($answer["query"]["categorymembers"][$a]["title"])) {
+				$subCat[$b] = $answer["query"]["categorymembers"][$a]["title"];
 				$b++;
 				$a++;
 			}
 		}
-		else {}
-		$b=0;
-		$c=0;
-		if ($OnlySubCats === true)
-			return $SubCat;
-		while (isset($SubCat [$b]))
-		{
-			try {
-				$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmtitle=' . urlencode($SubCat [$b]) . '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
-			} catch (Exception $e) {
-				throw $e;
-			}
-			$answer = unserialize($result); 
-			$Cont = false;
-			if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-				$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
-				$Cont = true;
-			}
-			while ($Cont === true) {
-				$a=0;
-				if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-						$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
+		$b = 0;
+		$c = 0;
+		if ($onlySubCats === true) {
+			return $subCat;
+		}
+		if ($excludeWls === false) {
+			while (isset($subCat[$b]))
+			{
+				$result = $this->httpRequest("action=query&list=categorymembers&format=json&cmtitle=" . urlencode($subCat[$b]) .
+					"&cmprop=title&cmtype=page&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=", $this->job, "GET");
+				$answer = json_decode($result, true);
+				$Cont = false;
+				if (isset($answer["query-continue"]["categorymembers"]["cmcontinue"])) {
+					$Continue = $answer["query-continue"]["categorymembers"]["cmcontinue"];
+					$Cont = true;
+				}
+				while ($Cont === true) {
+					$a = 0;
+					if (isset($answer["query"]["categorymembers"][$a]["title"])) {
+						while (isset($answer["query"]["categorymembers"][$a]["title"])) {
+							$page[$c] = $answer["query"]["categorymembers"][$a]["title"];
+							$c++;
+							$a++;
+						}
+					}
+					$result = $this->httpRequest("action=query&list=categorymembers&format=json&cmcontinue=" . $Continue
+						. "&cmtitle=" . urlencode($subCat[$b])
+						. "&cmprop=title&cmtype=page&cmlimit=max&cmsort=sortkey&cmdir=ascending&rawcontinue=", $this->job, "GET");
+					$answer = json_decode($result, true);
+					if (isset($answer["query-continue"]["categorymembers"]["cmcontinue"])) {
+						$Continue = $answer["query-continue"]["categorymembers"]["cmcontinue"];
+						$Cont = true;
+					} else {
+						$Cont = false;
+					}
+				}
+				$a = 0;
+				if (isset($answer["query"]["categorymembers"][$a]["title"]) === true) {
+					while (isset($answer["query"]["categorymembers"][$a]["title"])) {
+						$page[$c] = $answer["query"]["categorymembers"][$a]["title"];
 						$c++;
 						$a++;
 					}
-				} else  {}
-				try {
-					$result = $this->httpRequest('action=query&list=categorymembers&format=php&cmcontinue=' . $Continue 
-					. '&cmtitle=' . urlencode($SubCat [$b]) 
-					. '&cmprop=title&cmtype=page&cmlimit=5000&cmsort=sortkey&cmdir=ascending&rawcontinue=', $this->job, 'GET');
-				} catch (Exception $e) {
-					throw $e;
 				}
-				$answer = unserialize($result); 
-				if (isset ($answer ["query-continue"]["categorymembers"]["cmcontinue"]) === true) {
-					$Continue = $answer ["query-continue"]["categorymembers"]["cmcontinue"];
+				$b++;
+			}
+		} else {
+			while (isset($subCat[$b])) {
+				$result = $this->httpRequest("action=query&format=json&generator=categorymembers&gcmtitle=" . urlencode($subCat[$b]) .
+					"&prop=info&gcmlimit=max&rawcontinue=&redirects", $this->job, "GET");
+				$answer = json_decode($result, true);
+				$Cont = false;
+				if (isset($answer["query-continue"]["categorymembers"]["gcmcontinue"])) {
+					$Continue = $answer["query-continue"]["categorymembers"]["gcmcontinue"];
 					$Cont = true;
-				} else
-					$Cont = false;
-			}
-			$a=0;
-			if (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-				while (isset ($answer["query"]['categorymembers'][$a]['title']) === true) {
-					$Site [$c] = $answer["query"]['categorymembers'][$a]['title'];	
-					$c++;
-					$a++;
 				}
-			} else {}
-			$b++;
-		}
-		if ($ExcludeWls === false) {
-			$a=0;
-			$b=0;
-			while (isset($Site[$a])) {
-				if (!$this->checkRedirect($Site[$a])) {
-					$Res[$b] = $Site[$a];
-					$b++;
+				while ($Cont === true) {
+					$a = 0;
+					if (isset($answer["query"]["pages"][$a]["title"])) {
+						while (isset($answer["query"]["pages"][$a]["title"])) {
+							$page[$c] = $answer["query"]["pages"][$a]["title"];
+							$c++;
+							$a++;
+						}
+					}
+					try {
+						$result = $this->httpRequest("action=query&format=json&generator=categorymembers&gcmtitle=" . urlencode($subCat[$b]) .
+							"&gmcontinue=" . $Continue .
+							"&prop=info&gcmlimit=max&rawcontinue=&redirects", $this->job, "GET");
+					} catch (Exception $e) {
+						throw $e;
+					}
+					$result = $this->httpRequest("action=query&format=json&generator=categorymembers&gcmtitle=" . urlencode($subCat[$b]) .
+						"&gmcontinue=" . $Continue .
+						"&prop=info&gcmlimit=max&rawcontinue=&redirects", $this->job, "GET");
+					$answer = json_decode($result, true);
+					if (isset($answer["query-continue"]["pages"]["gcmcontinue"])) {
+						$Continue = $answer["query-continue"]["pages"]["gcmcontinue"];
+						$Cont = true;
+					} else {
+						$Cont = false;
+					}
 				}
-				$a++;
+				$a = 0;
+				if (isset($answer["query"]["pages"][$a]["title"])) {
+					while (isset($answer["query"]["pages"][$a]["title"])) {
+						$page[$c] = $answer["query"]["pages"][$a]["title"];
+						$c++;
+						$a++;
+					}
+				}
+				$b++;
 			}
-			$Site = $Res;
 		}
-		if (isset ($Site [0]) === false)
-			return false;
-		else
-			return (serialize ($Site));
+		if (!isset($page[0])) {
+				return false;
+		} else {
+			return serialize($page);
+		}
 	}
 	/** checkRedirect
 	* checks if a page is a redirect
