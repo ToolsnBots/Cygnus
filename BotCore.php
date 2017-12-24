@@ -31,7 +31,7 @@ class Core extends password {
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'bot') {
+	public function initcurl($account, $job, $pUseHTTPS = true, $assert = 'user') {
 		$this->version = 'Cygnus-Framework V2.1 beta';
 		if ($assert !== 'bot' && $assert !== 'user')
 			throw new Exception('assert has to be \'bot\' or \'user\'');
@@ -61,7 +61,7 @@ class Core extends password {
 	* @param $pUseHTTPS - [Optional: true] falls auf false gesetzt, benutzt der Bot http statt https
 	* @param $assert - [Optional: bot] falls auf 'user' gesetzt, kann auch ohne Flag edits gemacht werden
 	*/
-	public function initcurlArgs($job, $pUseHTTPS = true, $assert = 'bot') {
+	public function initcurlArgs($job, $pUseHTTPS = true, $assert = 'user') {
 		if ($assert !== 'bot' && $assert !== 'user')
 			exit(1);
 		$this->assert = $assert;
@@ -260,7 +260,7 @@ class Core extends password {
 			throw $e;
 		}
 		$pageID = $page['query']['pageids'][0];
-		return $text['query']['pages'][$pageID]['revisions'][0]['*'];
+		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
 	}
 	/** readPage
 	* Liest eine Seite aus
