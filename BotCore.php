@@ -1300,8 +1300,8 @@ class Core extends Password {
 	* Blocks an IP global
 	* @author Luke081515
 	* @param - $user - the username
-	* @param - $lock - 1 if the user should get locked, 0 if unlocked, -1 for no change
-	* @param - $suppress - 1 for hidden, 2 for suppressed, 0 if the user should get visible again, -1 for no change
+	* @param - $lock - "lock" if the user should get locked, "unlock" if unlocked, "nochange" for no change to the status
+	* @param - $suppress - "lists" for hidden, "suppress" for suppressed, "visible" if the user should get visible again, "nochange" for no change
 	* @param - $reason - the reason
 	* @return - "success" if successful, otherwise the API errorcode
 	*/
@@ -1309,26 +1309,32 @@ class Core extends Password {
 		$token = $this->requireToken();
 		$data = "action=setglobalaccountstatus&format=json&user=" . urlencode($user);
 		switch ($lock) {
-			case 1:
+			case "lock":
 				$data = $data . "&locked=lock";
 				break;
-			case 0:
+			case "unlock":
 				$data = $data . "&locked=";
 				break;
-			case -1:
+			case "nochange":
+				break;
+			default:
+				throw new Exception("Invalid param for \$lock.");
 				break;
 		}
 		switch ($suppress) {
-			case 1:
+			case "lists":
 				$data = $data . "&hidden=lists";
 				break;
-			case 2:
+			case "suppress":
 				$data = $data . "&hidden=suppressed";
 				break;
-			case 0:
+			case "visible":
 				$data = $data . "&hidden=";
 				break;
-			case -1:
+			case "nochange":
+				break;
+			default:
+				throw new Exception("Invalid param for \$suppress.");
 				break;
 		}
 		$token = $this->requireToken("setglobalaccountstatus");

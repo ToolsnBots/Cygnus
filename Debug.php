@@ -487,7 +487,7 @@ class Debug extends Core {
 				$this->echoNotice('Starting the function call of lockGlobal...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->lockGlobal($Param[0], intval($Param[1]), intval($Param[2]), $Param[3], $Param[4]);
+					$ret = $this->lockGlobal($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
 					$endtime = microtime (true);
 					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
