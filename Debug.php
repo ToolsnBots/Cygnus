@@ -342,7 +342,7 @@ class Debug extends Core {
 				try {
 					$ret = $this->getUserGroups($Param[0]);
 					$endtime = microtime(true);
-					$this->processFunction($ret, $endtime, true);
+					$this->processFunction($ret, $starttime, $endtime, true);
 				} catch (Exception $e) {
 					$endtime = microtime(true);
 					$this->processError($e, $endtime);
@@ -694,10 +694,11 @@ class Debug extends Core {
 		$this->echoNotice('Performance: ' . $total . ' seconds');
 		$answer = $this->askRequired('Display the result now? [y/N]');
 		if (strtolower($answer) !== 'n') {
-			if (!$array)
+			if (!$array) {
 				$this->echoOutput($ret);
-			else
-				var_dump($ret); // ToDo: Color output as well
+			} else {
+				var_dump($ret);
+			}
 		}
 	}
 	/** processError

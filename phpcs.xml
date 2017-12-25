@@ -39,7 +39,6 @@
 <rule ref="PEAR.Functions.ValidDefaultValue"/>
 <rule ref="PEAR.NamingConventions.ValidClassName"/>
 <rule ref="Squiz.PHP.DisallowMultipleAssignments"/>
-<rule ref="Squiz.PHP.DiscouragedFunctions"/>
 <rule ref="Squiz.PHP.EmbeddedPhp"/>
 <rule ref="Squiz.PHP.Eval"/>
 <rule ref="Squiz.PHP.ForbiddenFunctions"/>

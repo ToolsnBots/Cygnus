@@ -770,7 +770,7 @@ class Core extends Password {
 	* @returs the groups as array if the user does exist, false if not
 	*/
 	public function getUserGroups ($username) {
-		$result = $this->httpRequest('action=query&format=json&list=users&usprop=editcount&ususers=' . urlencode($username), $this->job, 'GET');
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=groups&ususers=' . urlencode($username), $this->job, 'GET');
 		if (strpos($result, "missing") !== false)
 			return false;
 		$result = json_decode($result, true);
