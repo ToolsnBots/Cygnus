@@ -651,6 +651,31 @@ class Core extends Password {
 		}
 		return true;
 	}
+	/** purge
+	* Allows to put a page on your watchlist, or remove it
+	* @author Luke081515
+	* @param $title - title of the page
+	* @param $forcelinkupdate - default 0 - if 1, updates the links tables.
+	* @param $forcerecursivelinkupdate - default 0 - if 1, updates the links table,
+	* @param $forcerecursivelinkupdate - and update the links tables for any page that uses this page as a template.
+	* @return boolean - true if successful, false if page was not found
+	*/
+	public function purge ($title, $forcelinkupdate = 0, $forcerecursivelinkupdate = 0) {
+		$data = "action=purge"
+			. "&format=json"
+			. "&forcelinkupdate=" . $forcelinkupdate
+			. "&forcerecursivelinkupdate=" . $forcerecursivelinkupdate
+			. "&titles=" . urlencode($title)
+			. "&assert=" . $this->assert
+			. "&maxlag=" . $this->maxlag;
+		$result = $this->httpRequest($data, $this->job);
+		$result = json_decode($result, true);
+		//
+		if (isset($result['purge'][0]['missing'])) {
+			return false;
+		}
+		return true;
+	}
 	/** review
 	* Marks the specified version as reviewed or not reviewed
 	* @param $revid - the revid of the revision to approve/unapprove
