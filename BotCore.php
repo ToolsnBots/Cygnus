@@ -260,7 +260,7 @@ class Core extends password {
 			throw $e;
 		}
 		$pageID = $page['query']['pageids'][0];
-		return $text['query']['pages'][$pageID]['revisions'][0]['*'];
+		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
 	}
 	/** readPage
 	* Liest eine Seite aus
