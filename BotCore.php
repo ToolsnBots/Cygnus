@@ -1363,7 +1363,6 @@ class Core extends Password {
 				break;
 			default:
 				throw new Exception("Invalid param for \$lock.");
-				break;
 		}
 		switch ($suppress) {
 			case "lists":
@@ -1379,7 +1378,6 @@ class Core extends Password {
 				break;
 			default:
 				throw new Exception("Invalid param for \$suppress.");
-				break;
 		}
 		$token = $this->requireToken("setglobalaccountstatus");
 		$data = $data . "&reason=" . urlencode($reason) . "&token=" . urlencode($token);
