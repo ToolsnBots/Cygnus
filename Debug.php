@@ -236,12 +236,12 @@ class Debug extends Core {
 				$this->echoNotice('Starting the function call of watch...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->watch($Param[0], intval($Param[2]));
+					$ret = $this->watch($Param[0], intval($Param[1]));
 					$endtime = microtime (true);
-					$this->processFunction($ret, $endtime);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime (true);
-					$this->processError($e, $endtime);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			case 'review':
