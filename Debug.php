@@ -244,6 +244,22 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'purge':
+				$required = array("title");
+				$optional = array("forcelinkupdate", "forcerecursivelinkupdate");
+				$optvalues = array(0, 0);
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of purge...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->purge($Param[0], intval($Param[1]), intval($Param[2]));
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'review':
 				$required = array("revid", "comment", "reason");
 				$optional = array("unapprove");
