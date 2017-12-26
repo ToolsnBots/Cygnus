@@ -5,38 +5,39 @@ require_once __DIR__ . "/DBPassword.php";
 * @author Freddy2001 <freddy2001@wikipedia.de>, Luke081515 <luke081515@tools.wmflabs.org>, MGChecker <hgasuser@gmail.com>
 */
 class DBCore extends DBPassword {
-	protected $DBusername;
-	protected $DBpassword;
+	protected $dbUsername;
+	protected $dbPassword;
 	protected $database;
-	protected $DB;
+	protected $db;
+	protected $loginHost;
 
 	/** __construct
 	* Initializes the database connection
 	* @author Luke081515
-	* @param $Accountdata - name of the accounts in DBPassword.php
-	* @param $Database - name of the database that should get used
+	* @param $accountdata - name of the accounts in dbPassword.php
+	* @param $database - name of the database that should get used
 	*/
-	public function __construct($Accountdata, $Database) {
+	public function __construct($accountdata, $database) {
 		$a = 0;
-		$Found = false;
+		$found = false;
 		$this->init();
-		$LoginName = unserialize($this->getLoginName ());
-		$LoginAccount = unserialize($this->getLoginAccount());
-		$LoginDBpassword = unserialize($this->getLoginDBpassword());
-		$LoginHost = unserialize($this->getLoginHost());
-		while (isset($LoginName [$a]) === true) {
-			if ($LoginName [$a] === $Accountdata) {
-				$this->DBusername = $LoginAccount [$a];
-				$this->DBpassword = $LoginDBpassword [$a];
-				$this->LoginHost = $LoginHost [$a];
-				$Found = true;
+		$loginName = unserialize($this->getLoginName ());
+		$loginAccount = unserialize($this->getLoginAccount());
+		$loginDbPassword = unserialize($this->getLogindbPassword());
+		$loginHost = unserialize($this->getLoginHost());
+		while (isset($loginName [$a]) === true) {
+			if ($loginName [$a] === $accountdata) {
+				$this->dbUsername = $loginAccount [$a];
+				$this->dbPassword = $loginDbPassword [$a];
+				$this->loginHost = $loginHost [$a];
+				$found = true;
 			}
 			$a++;
 		}
-		if (!$Found)
+		if (!$found)
 			throw new Exception('No matching credentials available. (DB)');
-		$this->DB = new mysqli($this->LoginHost, $this->DBusername, $this->DBpassword, $Database);
-		if ($this->DB->connect_errno) {
+		$this->db = new mysqli($this->loginHost, $this->dbUsername, $this->dbPassword, $database);
+		if ($this->db->connect_errno) {
 			echo "Error: Failed to make a MySQL connection, here is why: \n";
 			echo "Errno: " . $mysqli->connect_errno . "\n";
 			echo "Error: " . $mysqli->connect_error . "\n";
@@ -48,15 +49,17 @@ class DBCore extends DBPassword {
 	* @author Luke081515
 	* @param $sql - the query statement
 	* @param $sensitive - default: false. if false, the function will throw an exception in case that there is an error
+	* @return Returns the result, or 0 if you fetched an empty set.
 	*/
 	public function query($sql, $sensitive = false) {
-		$result = $this->DB->query($sql);
+		$result = $this->db->query($sql);
 		if(!$result) {
-			$err = $this->DB->error;
-			if ($sensitive === false)
-				die('There was an error running the query [' . $err . ']');
-			else
-				echo ('\nThere was an error running the query [' . $err . ']');
+			$err = $this->db->error;
+			if ($sensitive === false) {
+				die("There was an error running the query [" . $err . "]");
+			} else {
+				echo ("\nThere was an error running the query [" . $err . "]");
+			}
 		} else if ($result->num_rows === 0) {
 			return 0;
 		} else {
@@ -68,36 +71,39 @@ class DBCore extends DBPassword {
 	* @author Luke081515
 	* @param $sql - the query statement
 	* @param $sensitive - default: false. if false, the function will throw an exception in case that there is an error
+	* @return Returns the result of the exeuction statement.
 	*/
 	public function modify ($sql, $sensitive = false) {
-		$result = $this->DB->query($sql);
+		$result = $this->db->query($sql);
 		if (!$result) {
-			$err = $this->DB->error;
-			if ($sensitive === false)
-				die('There was an error running the command [' . $err . ']');
-			else
-				echo ('\nThere was an error running the command [' . $err . ']');
-		} else
+			$err = $this->db->error;
+			if ($sensitive === false) {
+				die("There was an error running the command [" . $err . "]");
+			} else {
+				echo ("\nThere was an error running the command [" . $err . "]");
+			}
+		} else {
 			return $result;
+		}
 	}
 	/** escape
 	* Espaces and SQL string, used to make sure that there are no injections
 	* @author MGChecker
 	*/
 	public function escape($string) {
-		return $this->DB->real_escape_string($string);
+		return $this->db->real_escape_string($string);
 	}
 	/** close
 	* Closes the connection
 	*/
 	public function close() {
-		mysqli_close($this->DB);
+		mysqli_close($this->db);
 	}
 	/** __destruct
 	* Closes the connection
 	*/
 	public function __destruct() {
-		mysqli_close($this->DB);
+		$this->close();
 	}
 }
 ?>
