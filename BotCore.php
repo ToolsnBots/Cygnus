@@ -758,20 +758,20 @@ class Core extends Password {
 		}
 		return false;
 	}
-    /** checkUserGender
+	/** checkUserGender
 	* returns the gender a user has set in the settings
 	* @author KPFC
 	* @param $username – The username of the user
 	* @return the gender as string ('female', 'male' or 'unknown')
 	*/
 	public function getUserGender ($username) {
-                $result = $this->httpRequest('action=query&format=json&list=users&usprop=gender&ususers=' . urlencode($username), $this->job, 'GET');
-                $result = json_decode($result, true);
-                if (isset($result['query']['users'][0]['missing'])) {
-                        return false;
-                }
-                return $result['query']['users'][0]['gender'];
-        }
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=gender&ususers=' . urlencode($username), $this->job, 'GET');
+		$result = json_decode($result, true);
+		if (isset($result['query']['users'][0]['missing'])) {
+			return false;
+		}
+		return $result['query']['users'][0]['gender'];
+	}
 	/** getUserGroups
 	* returns the groups of a user, false if the user does not exist
 	* @author Luke081515
