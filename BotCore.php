@@ -758,6 +758,19 @@ class Core extends Password {
 		}
 		return false;
 	}
+	/** getUserGroups
+	* returns the groups of a user, false if the user does not exist
+	* @author Luke081515
+	* @param $username - The username of the user
+	* @returs the groups as array if the user does exist, false if not
+	*/
+	public function getUserGroups ($username) {
+		$result = $this->httpRequest('action=query&format=json&list=users&usprop=groups&ususers=' . urlencode($username), $this->job, 'GET');
+		if (strpos($result, "missing") !== false)
+			return false;
+		$result = json_decode($result, true);
+		return $result['query']['users'][0]['groups'];
+	}
 	/** checkUserGender
 	* returns the gender a user has set in the settings
 	* @author KPFC
@@ -771,19 +784,6 @@ class Core extends Password {
 			return false;
 		}
 		return $result['query']['users'][0]['gender'];
-	}
-	/** getUserGroups
-	* returns the groups of a user, false if the user does not exist
-	* @author Luke081515
-	* @param $username - The username of the user
-	* @returs the groups as array if the user does exist, false if not
-	*/
-	public function getUserGroups ($username) {
-		$result = $this->httpRequest('action=query&format=json&list=users&usprop=groups&ususers=' . urlencode($username), $this->job, 'GET');
-		if (strpos($result, "missing") !== false)
-			return false;
-		$result = json_decode($result, true);
-		return $result['query']['users'][0]['groups'];
 	}
 	/** getCatMembers
 	* reads out all category members of a category, including subcategories
