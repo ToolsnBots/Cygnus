@@ -92,5 +92,40 @@ final class BotCoreUserPropertyTest extends TestCase {
 		$actually = $Core->execute(array("checkUserMail", "LukeO81515"));
 		$this->assertFalse($actually);
 	}
+	/**
+	* @covers BotCore::getUserGender
+	*/	
+	public function testcheckUserGenderMale() {
+		$Core = $this->createLogin();
+		$expected = "male";
+		$actually = $Core->execute(array("getUserGender", "Luke081515"));
+		$this->assertEquals($expected, $actually);
+	}
+	/**
+	* @covers BotCore::getUserGender
+	*/	
+	public function testcheckUserGenderFemale() {
+		$Core = $this->createLogin();
+		$expected = "female";
+		$actually = $Core->execute(array("getUserGender", "Freddy2001"));
+		$this->assertEquals($expected, $actually);
+	}
+	/**
+	* @covers BotCore::getUserGender
+	*/	
+	public function testcheckUserGenderUnknown() {
+		$Core = $this->createLogin();
+		$expected = "unknown";
+		$actually = $Core->execute(array("getUserGender", "UTAccount"));
+		$this->assertEquals($expected, $actually);
+	}
+	/**
+	* @covers BotCore::getUserGender
+	*/	
+	public function testcheckUserGenderNoSuchUser() {
+		$Core = $this->createLogin();
+		$actually = $Core->execute(array("getUserGender", "NonExistantUser"));
+		$this->assertFalse($actually);
+	}
 }
 ?>
