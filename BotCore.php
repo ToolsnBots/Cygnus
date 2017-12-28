@@ -753,9 +753,6 @@ class Core extends Password {
 	*/
 	public function checkUserMail ($username) {
 		$result = $this->httpRequest('action=query&format=json&list=users&usprop=emailable&ususers=' . urlencode($username), $this->job, 'GET');
-		if (isset($result['query']['users'][0]['missing'])) {
-			return false;
-		}
 		if (strpos($result, "emailable") !== false) {
 			return true;
 		}
