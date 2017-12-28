@@ -771,7 +771,7 @@ class Core extends Password {
 		$result = json_decode($result, true);
 		return $result['query']['users'][0]['groups'];
 	}
-	/** checkUserGender
+	/** getUserGender
 	* returns the gender a user has set in the settings
 	* @author KPFC
 	* @param $username – The username of the user

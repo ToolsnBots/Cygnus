@@ -94,7 +94,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	}
 	/**
 	* @covers BotCore::getUserGender
-	*/	
+	*/
 	public function testcheckUserGenderMale() {
 		$Core = $this->createLogin();
 		$expected = "male";
@@ -103,7 +103,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	}
 	/**
 	* @covers BotCore::getUserGender
-	*/	
+	*/
 	public function testcheckUserGenderFemale() {
 		$Core = $this->createLogin();
 		$expected = "female";
@@ -112,7 +112,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	}
 	/**
 	* @covers BotCore::getUserGender
-	*/	
+	*/
 	public function testcheckUserGenderUnknown() {
 		$Core = $this->createLogin();
 		$expected = "unknown";
@@ -121,7 +121,7 @@ final class BotCoreUserPropertyTest extends TestCase {
 	}
 	/**
 	* @covers BotCore::getUserGender
-	*/	
+	*/
 	public function testcheckUserGenderNoSuchUser() {
 		$Core = $this->createLogin();
 		$actually = $Core->execute(array("getUserGender", "NonExistantUser"));
