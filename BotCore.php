@@ -630,6 +630,45 @@ class Core extends Password {
 		$result = $this->httpRequest($data, $this->job);
 		return serialize(json_decode($result, true));
 	}
+	/** rollback
+	* rollbacks an edit
+	* @author Luke081515
+	* @param $title - name of the page
+	* @param $user - author of the revision that should get rollbacked
+	* @param $summary - [optional: Defined summary of mediawiki] custom summary
+	* @param $markbot - [optional: 0] - if true, the rollbacked edit and the rollback will be marked as bot
+	* @return true - if rollback was successful
+	* @return fail - if the rollback failed
+	* @return conflict - if there was a conflict when doing a rollback
+	*/
+	public function rollback($title, $user, $summary = "", $markbot = 0) {
+		while (true) {
+			$token = $this->requireToken("rollback");
+			$request = "action=rollback&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
+				"&title=" . urlencode($title) .
+				"&user=" . urlencode($user) .
+				"&markbot=" . urlencode($markbot) .
+				"&watchlist=nochange" .
+				"&token=" . urlencode($token);
+			if ($summary !== "") {
+				$request = $request . "&summary=" . urlencode($summary);
+			}
+			$result = $this->httpRequest($request, $this->job);
+			$res = json_decode($result, true);
+			if (array_key_exists("error", $res)) {
+				$code = $this->checkResult($res["error"]["code"]);
+				if ($code === "fail") {
+					return "fail";
+				} else if ($code === "retry") {
+					sleep(5);
+				} else if ($code === "conflict") {
+					return "conflict";
+				}
+			} else {
+				return true;
+			}
+		}
+	}
 	/** watch
 	* Allows to put a page on your watchlist, or remove it
 	* @param $title - title of the page
