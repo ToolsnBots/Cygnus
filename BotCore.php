@@ -58,9 +58,9 @@ class Core extends Password {
 		}
 		$this->login();
 		$this->createCleanUsername();
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
-		// change if you need more, default is 5
+		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
 	}
 	/** initcurlArgs
 	* Use this function instead of initcurl if you want to use args or console to tell the bot the password
@@ -92,9 +92,10 @@ class Core extends Password {
 		}
 		$this->createCleanUsername();
 		if (!$supress) {
-		echo "\n***** Starting up....\nVersion: " . $this->version . "\n*****";
+		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
 		}
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
+		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
