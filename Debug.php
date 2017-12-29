@@ -333,7 +333,6 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
-			// User information functions
 			case 'getUserGroups':
 				$required = array("username");
 				$Param = $this->getParams($required);
@@ -346,6 +345,20 @@ class Debug extends Core {
 				} catch (Exception $e) {
 					$endtime = microtime(true);
 					$this->processError($e, $endtime);
+				}
+				break;
+			case 'getUserGender':
+				$required = array("username");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of getUserGender...');
+				$starttime = microtime(true);
+				try {
+					$ret = $this->getUserGender($Param[0]);
+					$endtime = microtime(true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
 				}
 				break;
 			// Query functions
