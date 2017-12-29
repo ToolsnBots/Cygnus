@@ -456,44 +456,38 @@ class Core extends Password {
 	* @return unserialized answer of the api, if successful
 	*/
 	private function editPageEngine($title, $content, $summary, $botflag, $minorflag, $noCreate = 1, $sectionnumber = -1, $overrideNobots = false) {
-		retry:
-		if ($overrideNobots !== true) {
-			if ($this->allowBots($this->readPage($title)) === false) {
-				return "nobots";
+		while (true) {
+			if ($overrideNobots !== true) {
+				if ($this->allowBots($this->readPage($title)) === false) {
+					return "nobots";
+				}
 			}
-		}
-		$token = $this->requireToken();
-		// perform edit
-		$request = "action=edit&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&format=json&bot=&title=" . urlencode($title) .
-			"&text=" . urlencode($content) .
-			"&token=" . urlencode($token) .
-			"&summary=" . urlencode($summary) .
-			"&bot=" . urlencode($botflag) .
-			"&minor=" . urlencode($minorflag);
-		if ($noCreate === 1) {
-			$request .= "&minor=" . urlencode($minorflag);
-		}
-		if ($sectionnumber !== -1) {
-			$request .= "&section=" . urlencode($sectionnumber);
-		}
-		$result = $this->httpRequest($request, $this->job);
-		$result = json_decode($result, true);
-		$editres = $result["edit"]["result"];
-		// manage result
-		if ($editres == "Success") {
-			if (array_key_exists("nochange", $result["edit"])) {
-				return array("nochange");
+			$token = $this->requireToken();
+			// perform edit
+			$request = "action=edit&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&format=json&bot=&title=" . urlencode($title) .
+				"&text=" . urlencode($content) .
+				"&token=" . urlencode($token) .
+				"&summary=" . urlencode($summary) .
+				"&bot=" . urlencode($botflag) .
+				"&minor=" . urlencode($minorflag);
+			if ($noCreate === 1) {
+				$request .= "&minor=" . urlencode($minorflag);
+			}
+			if ($sectionnumber !== -1) {
+				$request .= "&section=" . urlencode($sectionnumber);
+			}
+			$result = $this->httpRequest($request, $this->job);
+			$result = json_decode($result, true);
+			$editres = $result["edit"]["result"];
+			// manage result
+			if ($editres == "Success") {
+				if (array_key_exists("nochange", $result["edit"])) {
+					return array("nochange");
+				} else {
+					return array($result["edit"]["oldrevid"], $result["edit"]["newrevid"]);
+				}
 			} else {
 				return array($result["edit"]["oldrevid"], $result["edit"]["newrevid"]);
-			}
-		} else {
-			$Code = $this->checkResult($editres);
-			if ($Code === "fail") {
-				return "fail";
-			} else if ($Code === "retry") {
-				goto retry;
-			} else if ($Code === "conflict") {
-				return "conflict";
 			}
 		}
 	}
