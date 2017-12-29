@@ -1062,7 +1062,7 @@ class Core extends Password {
 			return false;
 		}
 		$answer = json_decode($result, true);
-		return $tree["query"]["pageids"][0];
+		return $answer["query"]["pageids"][0];
 	}
 	/** getLinks
 	* returns all links that are located at a page, maximum 5000
