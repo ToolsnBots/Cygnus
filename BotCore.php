@@ -677,6 +677,34 @@ class Core extends Password {
 		}
 		return true;
 	}
+	/** patrol
+	* Marks the specified version as reviewed or not reviewed
+	* @author Luke081515
+	* @param $id - the revid or rcid to patrol
+	* @param $revid [optional: true] - if true, you use a revid, otherwise a rcid
+	* @return string - success if successful, otherwise the API error-code
+	*/
+	public function patrol($id, $revid = true) {
+		$token = $this->requireToken("patrol");
+		$data = "action=patrol&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
+			"&token=" . urlencode($token);
+		if ($revid) {
+			$data = $data . "&revid=" . urlencode($id);
+		} else {
+			$data = $data . "&rcid=" . urlencode($id);
+		}
+		$result = $this->httpRequest($data, $this->job);
+		$result = json_decode($result, true);
+		if (array_key_exists("error", $result)) {
+			if ($result["error"]["code"] === "patroldisabled" || $result["error"]["code"] === "nosuchrcid" || $result["error"]["code"] === "noautopatrol") {
+				return $result["error"]["code"];
+			} else {
+				return $this->checkResult($result["error"]["code"]);
+			}
+		} else {
+			return "success";
+		}
+	}
 	/** review
 	* Marks the specified version as reviewed or not reviewed
 	* @param $revid - the revid of the revision to approve/unapprove
