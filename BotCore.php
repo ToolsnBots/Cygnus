@@ -619,7 +619,7 @@ class Core extends Password {
 	*/
 	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
-		$data = "action=move&format=json&assert=" . $this->assert . "maxlag=" . $this->maxlag .
+		$data = "action=move&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
 			"&from=" . urlencode($oldTitle) .
 			"&to=" . urlencode($newTitle) .
 			"&reason=" . urlencode($reason) .
