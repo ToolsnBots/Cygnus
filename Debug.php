@@ -630,8 +630,11 @@ class Debug extends Core {
 		$b = 0;
 		while (isset($ParamOptList[$b])) {
 			$res = $this->askOptional('Enter the value for the optional param ' . $ParamOptList[$b] . ' (Leave blank to use default):');
-			if ($res === "")
+			if ($res === "") {
 				$Param[$a] = $ParamOptDefault[$b];
+			} else {
+				$Param[$a] = $res;
+			}
 			$a++;
 			$b++;
 		}
