@@ -276,9 +276,9 @@ class Core extends Password {
 	public function start($account) {
 		$Found = false;
 		$this->init();
-		try { // For old version of Password.php, not including the version
+		if (method_exists($this, 'getPasswordVersion')) {
 			$passwordVersion = $this->getPasswordVersion();
-		} catch (Exception $e) {
+		} else {
 			throw new Exception("You are using an old version of Password.php. Please upgrade.");
 		}
 		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
