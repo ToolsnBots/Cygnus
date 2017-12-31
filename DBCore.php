@@ -22,12 +22,12 @@ class DBCore extends DBPassword {
 		$a = 0;
 		$found = false;
 		$this->init();
-		try { // For old versions of DBPassword.php, not including the version
-			$dbPasswordVersion = $this->getDBPasswordVersion();
-		} catch (Exception $e) {
+		if (method_exists($this, 'getDBPasswordVersion')) {
+			$passwordVersion = $this->getDBPasswordVersion();
+		} else {
 			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
 		}
-		if ($this->dbPasswordVersion !== $dbPasswordVersion) { // Ensuring no old version is used
+		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
 			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
 		}
 		$loginName = unserialize($this->getLoginName ());
