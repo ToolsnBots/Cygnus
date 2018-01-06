@@ -330,7 +330,7 @@ class Core extends Password {
 			}
 		} while (isset($errorcode) && $errorcode === "retry");
 		$pageID = $page['query']['pageids'][0];
-		if ($pageID === -1) {
+		if ($pageID == -1) {
 			return null;
 		}
 		return $page['query']['pages'][$pageID]['revisions'][0]['*'];
