@@ -228,6 +228,22 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'rollback':
+				$required = array("title", "user");
+				$optional = array("summary", "markbot");
+				$optvalues = array("", 0);
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of rollback...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->rollback($Param[0], $Param[1], $Param[2], intval($Param[3]));
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'watch':
 				$required = array("title");
 				$optional = array("unwatch");
