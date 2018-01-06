@@ -75,5 +75,22 @@ final class BotCoreReadTest extends TestCase {
 		$actually = $Core->execute(array("readSection", "User:Luke081515Bot/SectionTest", 1));
 		$this->assertEquals($expected, $actually);
 	}
+	/**
+	* @covers BotCore::getPageID
+	*/
+	public function testgetPageIDSuccessful() {
+		$Core = $this->createLogin();
+		$expected = "9";
+		$actually = $Core->execute(array("getPageID", "DummyPage"));
+		$this->assertEquals($expected, $actually);
+	}
+	/**
+	* @covers BotCore::getPageID
+	*/
+	public function testgetPageIDMissing() {
+		$Core = $this->createLogin();
+		$actually = $Core->execute(array("getPageID", "Sfdfsdf"));
+		$this->assertFalse($actually);
+	}
 }
 ?>
