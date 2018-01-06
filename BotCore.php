@@ -1141,8 +1141,11 @@ class Core extends Password {
 		$data = "action=query&prop=links&format=json&assert=" . $this->assert .
 			"&maxlag=" . $this->maxlag . "&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=" . urlencode($title);
 		$result = json_decode($this->httpRequest($data, $this->job, "GET"), true);
-		while (isset($result["query"]["pages"][$pageID]["links"][0]["title"])) {
 		$pageID = $result["query"]["pageids"][0];
+		$count = 0;
+		while (isset($result["query"]["pages"][$pageID]["links"][$count]["title"])) {
+			$links[] = $result["query"]["pages"][$pageID]["links"][$count]["title"];
+			$count++;
 		}
 		if (isset($links[0])) {
 			return $links;
