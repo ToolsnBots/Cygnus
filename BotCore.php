@@ -258,7 +258,6 @@ class Core extends Password {
 	* @author Luke081515
 	*/
 	public function start($account) {
-		$a = 0;
 		$Found = false;
 		$this->init();
 		$LoginName = unserialize($this->getLoginName());
@@ -266,7 +265,7 @@ class Core extends Password {
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
-		while (isset($LoginName[$a])) {
+		for ($a = 0; isset($LoginName[$a]); $a++) {
 			if ($LoginName[$a] === $account) {
 				$this->site = $LoginHost[$a];
 				$this->username = $LoginAccount[$a];
@@ -274,7 +273,6 @@ class Core extends Password {
 				$this->mail = $Mail[$a];
 				$Found = true;
 			}
-			$a++;
 		}
 		if (!$Found) {
 			throw new Exception("No matching credentials available.");
@@ -417,13 +415,11 @@ class Core extends Password {
 		$result = $this->httpRequest("action=parse&format=json&maxlag=" . $this->maxlag . "&assert=" . $this->assert .
 			"&page=" . urlencode($title) . "&prop=sections", $this->job, "GET");
 		$Data = json_decode($result, true);
-		$a = 0;
-		while (isset($Data["parse"]["sections"][$a]["level"])) {
+		for ($a = 0; isset($Data["parse"]["sections"][$a]["level"]); $a++) {
 			$ret[$a][0] = $Data["parse"]["sections"][$a]["level"];
 			$ret[$a][1] = $Data["parse"]["sections"][$a]["line"];
 			$ret[$a][2] = $Data["parse"]["sections"][$a]["number"];
 			$ret[$a][3] = $Data["parse"]["sections"][$a]["index"];
-			$a++;
 		}
 		return $ret;
 	}
@@ -991,10 +987,8 @@ class Core extends Password {
 			$this->maxlag . "&indexpageids=1", $this->job, "GET");
 		$cats = json_decode($cats, true);
 		$pageID = $cats["query"]["pageids"][0];
-		$a = 0;
-		while (isset($cats["query"]["pages"][$pageID]["categories"][$a])) {
+		for ($a = 0; isset($cats["query"]["pages"][$pageID]["categories"][$a]); $a++) {
 			$catResults[$a] = $cats["query"]["pages"][$pageID]["categories"][$a];
-			$a++;
 		}
 		if (!isset($catResults[0])) {
 			return false;
@@ -1161,17 +1155,14 @@ class Core extends Password {
 	*/
 	public function getSectionTitle($title, $section) {
 		$content = $this->readSection($title, $section);
-		$sectionlevel = 5;
-		while($sectionlevel > 1) {
+		for ($sectionlevel = 5; $sectionlevel > 1; $sectionlevel--) {
 			$searchnum = 1;
 			$search = "=";
 			while($searchnum < $sectionlevel) {
 				$search = $search . "=";
 				$searchnum++;
 			}
-			if (strpos(substr($content, strpos($content, "="), 5), $search) === false) {
-				$sectionlevel--;
-			} else {
+			if (strpos(substr($content, strpos($content, "="), 5), $search) !== false) {
 				break;
 			}
 		}
