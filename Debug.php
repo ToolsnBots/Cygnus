@@ -534,7 +534,7 @@ class Debug extends Core {
 				$this->echoNotice('Starting the function call of search...');
 				$starttime = microtime (true);
 				try {
-					$ret = $this->search($Param[0], $Param[1], $Param[2], $Param[4], $Param[5]);
+					$ret = $this->search($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], $Param[5]);
 					$endtime = microtime (true);
 					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
