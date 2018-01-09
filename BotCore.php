@@ -1234,9 +1234,8 @@ class Core extends Password {
 	* @return result - array with the results
 	*/
 	public function search($pattern, $ns=0, $prop="size|wordcount|timestamp|snippet", $limit=50, $offset=0, $what="text") {
-		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&list=search&srsearch=" . $pattern . "&srnamespace=" . $ns . "&srprop=" . $prop . "srlimit=" . $limit . "&sroffset=" . $offset . "&srwhat=" . $what;
-		$result = json_decode($this->httpRequest($data, $this->job, "GET"), true);
-		return $result;
+		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&list=search&srsearch=" . $pattern . "&srnamespace=" . $ns . "&srprop=" . $prop . "&srlimit=" . $limit . "&sroffset=" . $offset . "&srwhat=" . $what;
+		return json_decode($this->httpRequest($data, $this->job, "GET"), true);
 	}
 	/** getMaxlag
 	* @author Luke081515
