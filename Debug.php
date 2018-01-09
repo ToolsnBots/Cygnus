@@ -394,6 +394,20 @@ class Debug extends Core {
 				}
 				break;
 			// Query functions
+			case 'checkTemplate':
+				$required = array("page", "template");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of checkTemplate...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->checkTemplate($Param[0], $Param[1]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'getCatMembers':
 				$required = array("kat");
 				$optional = array("onlySubCats", "excludeWls");

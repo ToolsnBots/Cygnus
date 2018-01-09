@@ -849,6 +849,24 @@ class Core extends Password {
 		}
 		return $result['query']['users'][0]['gender'];
 	}
+	/** checkTemplate
+	* checks if a template is used at a page (transcluded)
+	* @author Luke081515
+	* @param $page - the page to check
+	* @param $templat - the name of the template, including the prefix (e.g. Template:Test)
+	* @return true if template is transcluded, false if not, or if the page does not exist
+	*/
+	public function checkTemplate($page, $template) {
+		$page = str_replace(" ", "_", $page);
+		$data = "action=query&format=json&prop=templates&tllimit=1&assert=" . $this->assert . "&maxlag=" . $this->maxlag
+			. "&titles=" . urlencode($page)
+			. "&tltemplates=" . urlencode($template);
+		$result = $this->httpRequest($data, $this->job, "GET");
+		if (strpos($result, ",\"templates\":[{\"ns\":") === false) {
+			return false;
+		}
+		return true;
+	}
 	/** getCatMembers
 	* reads out all category members of a category, including subcategories
 	* works till you have more than 5000 subcategories per category
