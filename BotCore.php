@@ -425,7 +425,7 @@ class Core extends Password {
 	}
 	/** getEchoNotifications
 	 * gets Notifications
-	 * requires an installed echo extention in MediaWiki
+	 * requires an installed echo extension in MediaWiki
 	 * @author Freddy2001
 	 * @returns Array with all notifications
 	 */
