@@ -623,7 +623,7 @@ class Core extends Password {
 	*/
 	public function movePage($oldTitle, $newTitle, $reason, $bot = 0, $movetalk = 1, $noredirect = 1) {
 		$token = $this->requireToken();
-		$data = "action=move&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
+		$request = "action=move&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
 			"&from=" . urlencode($oldTitle) .
 			"&to=" . urlencode($newTitle) .
 			"&reason=" . urlencode($reason) .
@@ -631,7 +631,7 @@ class Core extends Password {
 			"&movetalk=" . $movetalk .
 			"&noredirect=" . $noredirect .
 			"&token=" . urlencode($token);
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		return serialize(json_decode($result, true));
 	}
 	/** rollback
@@ -681,14 +681,14 @@ class Core extends Password {
 	*/
 	public function watch ($title, $unwatch = 0) {
 		$token = $this->requireToken("watch");
-		$data = "action=watch"
+		$request = "action=watch"
 			. "&format=json"
 			. "&unwatch=" . $unwatch
 			. "&titles=" . urlencode($title)
 			. "&token=" . urlencode($token)
 			. "&assert=" . $this->assert
 			. "&maxlag=" . $this->maxlag;
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
@@ -705,14 +705,14 @@ class Core extends Password {
 	* @return boolean - true if successful, false if page was not found
 	*/
 	public function purge ($title, $forcelinkupdate = 0, $forcerecursivelinkupdate = 0) {
-		$data = "action=purge"
+		$request = "action=purge"
 			. "&format=json"
 			. "&forcelinkupdate=" . $forcelinkupdate
 			. "&forcerecursivelinkupdate=" . $forcerecursivelinkupdate
 			. "&titles=" . urlencode($title)
 			. "&assert=" . $this->assert
 			. "&maxlag=" . $this->maxlag;
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		//
 		if (isset($result['purge'][0]['missing'])) {
@@ -729,14 +729,14 @@ class Core extends Password {
 	*/
 	public function patrol($id, $revid = true) {
 		$token = $this->requireToken("patrol");
-		$data = "action=patrol&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
+		$request = "action=patrol&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag .
 			"&token=" . urlencode($token);
 		if ($revid) {
-			$data = $data . "&revid=" . urlencode($id);
+			$request = $request . "&revid=" . urlencode($id);
 		} else {
-			$data = $data . "&rcid=" . urlencode($id);
+			$request = $request . "&rcid=" . urlencode($id);
 		}
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
 			if ($result["error"]["code"] === "patroldisabled" || $result["error"]["code"] === "nosuchrcid" || $result["error"]["code"] === "noautopatrol") {
@@ -757,13 +757,13 @@ class Core extends Password {
 	*/
 	public function review($revid, $comment = "", $unapprove = 0) {
 		$token = $this->requireToken();
-		$data = "action=review&format=json&assert=" . $this->assert .
+		$request = "action=review&format=json&assert=" . $this->assert .
 			"&maxlag=" . $maxlag .
 			"&revid=" . urlencode($revid) .
 			"&unapprove=" . urlencode($unapprove) .
 			"&comment=" . urlencode($comment) .
 			"&token=" . urlencode($token);
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
 			if ($result["error"]["code"] === "notreviewable") {
@@ -1042,11 +1042,11 @@ class Core extends Password {
 		$Again = true;
 		while ($Again === true) {
 			if (isset($Continue)) {
-				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) .
+				$request = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) .
 					"&einamespace=0&eicontinue=" . urlencode($Continue) .
 					"&eidir=ascending&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&eilimit=max&rawcontinue=";
 			} else {
-				$data = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&assert=" . $this->assert .
+				$request = "action=query&list=embeddedin&format=json&eititle=" . urlencode($templ) . "&einamespace=0&assert=" . $this->assert .
 					"&maxlag=" . $this->maxlag . "&eidir=ascending&eilimit=max&rawcontinue=";
 			}
 			$result = $this->httpRequest($data, $this->job, "GET");
@@ -1077,7 +1077,7 @@ class Core extends Password {
 	* @return Array with missing pages or false if there are no links
 	*/
 	public function getMissingLinks ($Site) {
-		$data = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
+		$request = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
 		try {
 			$result = $this->httpRequest($data, $this->job, 'GET');
 			$result = json_decode($result, true);
@@ -1109,10 +1109,10 @@ class Core extends Password {
 		$Again = true;
 		while ($Again === true) {
 			if (isset($Continue)) {
-				$data = "action=query&list=allpages&format=json&apcontinue=" . $Continue . "&apnamespace=" . $namespace .
+				$request = "action=query&list=allpages&format=json&apcontinue=" . $Continue . "&apnamespace=" . $namespace .
 					"&aplimit=max&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&apdir=ascending&rawcontinue=";
 			} else {
-				$data = "action=query&list=allpages&format=json&apnamespace=" . $namespace .
+				$request = "action=query&list=allpages&format=json&apnamespace=" . $namespace .
 					"&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&aplimit=max&apdir=ascending&rawcontinue=";
 			}
 			$result = $this->httpRequest($data, $this->job, "GET");
@@ -1143,8 +1143,8 @@ class Core extends Password {
 	* @return int: PageID, bool: false if the page does not exist
 	*/
 	public function getPageID($title) {
-		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&prop=info&indexpageids=1&titles=" . urlencode($title);
-		$result = $this->httpRequest($data, $this->job, "GET");
+		$request = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&prop=info&indexpageids=1&titles=" . urlencode($title);
+		$result = $this->httpRequest($request, $this->job, "GET");
 		if (strpos ($result, "missing") !== false) {
 			return false;
 		}
@@ -1158,9 +1158,9 @@ class Core extends Password {
 	* @return array with page titles
 	*/
 	public function getLinks($title) {
-		$data = "action=query&prop=links&format=json&assert=" . $this->assert .
+		$request = "action=query&prop=links&format=json&assert=" . $this->assert .
 			"&maxlag=" . $this->maxlag . "&pllimit=max&pldir=ascending&plnamespace=0&rawcontinue=&indexpageids=1&titles=" . urlencode($title);
-		$result = json_decode($this->httpRequest($data, $this->job, "GET"), true);
+		$result = json_decode($this->httpRequest($request, $this->job, "GET"), true);
 		$pageID = $result["query"]["pageids"][0];
 		$count = 0;
 		while (isset($result["query"]["pages"][$pageID]["links"][$count]["title"])) {
@@ -1314,14 +1314,14 @@ class Core extends Password {
 	*/
 	public function deletePage ($title, $reason) {
 		$token = $this->requireToken();
-		$data = "action=delete&format=json" .
+		$request = "action=delete&format=json" .
 			"&title=" . urlencode($title) .
 			"&reason=" . $reason .
 			"&token=" . urlencode($token) .
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1351,7 +1351,7 @@ class Core extends Password {
 	*/
 	public function blockUser ($user, $reason, $expiry, $anononly = 1, $nocreate = 1, $autoblock = 1, $noemail = 0, $hidename = 0, $allowusertalk = 1, $reblock = 0) {
 		$token = $this->requireToken();
-		$data = "action=block&format=json" .
+		$request = "action=block&format=json" .
 			"&user=" . urlencode($user) .
 			"&reason=" . urlencode($reason) .
 			"&expiry=" . urlencode($expiry) .
@@ -1370,7 +1370,7 @@ class Core extends Password {
 			$data = $data . "&hidename=1";
 		}
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1390,14 +1390,14 @@ class Core extends Password {
 	*/
 	public function unblockUser ($user, $reason) {
 		$token = $this->requireToken();
-		$data = "action=unblock&format=json" .
+		$request = "action=unblock&format=json" .
 			"&user=" . urlencode($user) .
 			"&reason=" . urlencode($reason) .
 			"&token=" . urlencode($token) .
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1424,7 +1424,7 @@ class Core extends Password {
 	public function blockGlobal ($user, $reason, $expiry, $unblock = 0, $anononly = 1, $modify = 0) {
 		$token = $this->requireToken();
 		if ($unblock) {
-		$data = "action=globalblock&format=json" .
+		$request = "action=globalblock&format=json" .
 			"&target=" . urlencode($user) .
 			"&reason=" . urlencode($reason) .
 			"&anononly=" . urlencode($anononly) .
@@ -1434,7 +1434,7 @@ class Core extends Password {
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		} else {
-			$data = "action=globalblock&format=json" .
+			$request = "action=globalblock&format=json" .
 			"&target=" . urlencode($user) .
 			"&reason=" . urlencode($reason) .
 			"&expiry=" . urlencode($expiry) .
@@ -1445,7 +1445,7 @@ class Core extends Password {
 			"&assert=" . $this->assert;
 		}
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1467,13 +1467,13 @@ class Core extends Password {
 	*/
 	public function lockGlobal ($user, $lock, $suppress, $reason) {
 		$token = $this->requireToken();
-		$data = "action=setglobalaccountstatus&format=json&user=" . urlencode($user);
+		$request = "action=setglobalaccountstatus&format=json&user=" . urlencode($user);
 		switch ($lock) {
 			case "lock":
-				$data = $data . "&locked=lock";
+				$request = $request . "&locked=lock";
 				break;
 			case "unlock":
-				$data = $data . "&locked=";
+				$request = $request . "&locked=";
 				break;
 			case "nochange":
 				break;
@@ -1482,13 +1482,13 @@ class Core extends Password {
 		}
 		switch ($suppress) {
 			case "lists":
-				$data = $data . "&hidden=lists";
+				$request = $request . "&hidden=lists";
 				break;
 			case "suppress":
-				$data = $data . "&hidden=suppressed";
+				$request = $request . "&hidden=suppressed";
 				break;
 			case "visible":
-				$data = $data . "&hidden=";
+				$request = $request . "&hidden=";
 				break;
 			case "nochange":
 				break;
@@ -1496,9 +1496,9 @@ class Core extends Password {
 				throw new Exception("Invalid param for \$suppress.");
 		}
 		$token = $this->requireToken("setglobalaccountstatus");
-		$data = $data . "&reason=" . urlencode($reason) . "&token=" . urlencode($token);
+		$request = $request . "&reason=" . urlencode($reason) . "&token=" . urlencode($token);
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1526,7 +1526,7 @@ class Core extends Password {
 	*/
 	public function changeUserrights ($username, $groupAdd, $groupRemove, $reason, $expiry = "infinite") {
 		$token = $this->requireToken("userrights");
-		$data = "action=userrights&format=json" .
+		$request = "action=userrights&format=json" .
 			"&user=" . urlencode($username) .
 			"&reason=" . urlencode($reason) .
 			"&add=" . urlencode($groupAdd) .
@@ -1536,7 +1536,7 @@ class Core extends Password {
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1564,7 +1564,7 @@ class Core extends Password {
 	*/
 	public function changeGlobalUserrights ($username, $groupAdd, $groupRemove, $reason, $expiry = "infinite") {
 		$token = $this->requireToken("userrights");
-		$data = "action=globaluserrights&format=json" .
+		$request = "action=globaluserrights&format=json" .
 			"&user=" . urlencode($username) .
 			"&reason=" . urlencode($reason) .
 			"&add=" . urlencode($groupAdd) .
@@ -1574,7 +1574,7 @@ class Core extends Password {
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1605,7 +1605,7 @@ class Core extends Password {
 	*/
 	public function protectPage ($title, $reason, $protections, $expiry, $cascade) {
 		$token = $this->requireToken();
-		$data = "action=protect&format=json" .
+		$request = "action=protect&format=json" .
 			"&page=" . urlencode($title) .
 			"&reason=" . urlencode($reason) .
 			"&protections=" . urlencode($protections) .
@@ -1615,7 +1615,7 @@ class Core extends Password {
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
 		try {
-			$result = $this->httpRequest($data, $this->job);
+			$result = $this->httpRequest($request, $this->job);
 		} catch (Exception $e) {
 			throw $e;
 		}
@@ -1640,7 +1640,7 @@ class Core extends Password {
 	*/
 	public function stabilize($title, $expiry, $reason, $default, $autoreview, $review) {
 		$token = $this->requireToken();
-		$data = "action=stabilize&format=json&maxlag=5&default=" . urlencode($default) .
+		$request = "action=stabilize&format=json&maxlag=5&default=" . urlencode($default) .
 			"&autoreview=" . urlencode($autoreview) .
 			"&expiry=" . urlencode($expiry) .
 			"&reason=" . urlencode($reason) .
@@ -1649,7 +1649,7 @@ class Core extends Password {
 			"&token=" . urlencode($token) .
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
-		$result = $this->httpRequest($data, $this->job);
+		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
 			return $result["error"]["code"];
