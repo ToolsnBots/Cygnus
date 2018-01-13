@@ -1435,7 +1435,7 @@ class Core extends Password {
 	* @param - $reason - the reason
 	* @return - "success" if successful, otherwise the API errorcode
 	*/
-	public function lockGlobal ($user, $lock, $suppress, $reason) {
+	public function lockGlobal ($user, $reason, $lock = "lock", $suppress = "nochange") {
 		$token = $this->requireToken();
 		$data = "action=setglobalaccountstatus&format=json&user=" . urlencode($user);
 		switch ($lock) {
