@@ -61,6 +61,10 @@ class Core extends Password {
 		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+		if ($this->cleanUsername === $this->username) {
+			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ";
+			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+		}
 	}
 	/** initcurlArgs
 	* Use this function instead of initcurl if you want to use args or console to tell the bot the password
@@ -96,6 +100,10 @@ class Core extends Password {
 		}
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+		if ($this->cleanUsername === $this->username) {
+			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning.";
+			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+		}
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
 	}
