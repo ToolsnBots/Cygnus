@@ -1332,13 +1332,17 @@ class Core extends Password {
 			"&anononly=" . urlencode($anononly) .
 			"&nocreate=" . urlencode($nocreate) .
 			"&autoblock=" . urlencode($autoblock) .
-			"&noemail=" . urlencode($noemail) .
-			"&hidename=" . urlencode($hidename) .
 			"&allowusertalk=" . urlencode($allowusertalk) .
 			"&reblock=" . urlencode($reblock) .
 			"&token=" . urlencode($token) .
 			"&maxlag=" . $this->maxlag .
 			"&assert=" . $this->assert;
+		if ($noemail === 1) {
+			$data = $data . "&noemail=1";
+		}
+		if ($hidename === 1) {
+			$data = $data . "&hidename=1";
+		}
 		try {
 			$result = $this->httpRequest($data, $this->job);
 		} catch (Exception $e) {
