@@ -35,6 +35,14 @@ lint:lint-php7.1:
   script:
     - bash ci/phplint.sh ./
 
+lint:lint-php7.2:
+  stage: lint
+  image: php:7.2
+  before_script:
+    - bash ci/docker_install-lint.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
 codesniffer:
   stage: codesniffer
   image: php:5.6
