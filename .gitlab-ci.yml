@@ -76,6 +76,14 @@ unit:testReadAssertFail:
   script:
     - bash ci/phpunitReadAssert.sh
 
+unit:testPageProperty:
+  stage: unit
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install-unit.sh > /dev/null
+  script:
+    - bash ci/phpunitPageProperty.sh	
+
 unit:testUserProperty:
   stage: unit
   image: php:5.6

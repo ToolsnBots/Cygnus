@@ -31,5 +31,20 @@ final class BotCorePagePropertyTest extends TestCase {
 		$actually = $Core->execute(array("getLinks", "Benutzer:Luke081515Bot/NoLink"));
 		$this->assertEquals($expected, $actually);
 	}
+	public function testTranscluded() {
+		$Core = $this->createLogin();
+		$actually = $Core->execute(array("checkTemplate", "TranscludeTest1", "Template:Test"));
+		$this->assertTrue($actually);
+	}
+	public function testNotTranscluded() {
+		$Core = $this->createLogin();
+		$actually = $Core->execute(array("checkTemplate", "TranscludeTest1", "Template:SecondTest"));
+		$this->assertFalse($actually);
+	}
+	public function testNotTranscludedNoSuchPage() {
+		$Core = $this->createLogin();
+		$actually = $Core->execute(array("checkTemplate", "TranscludeTest2", "Template:Test"));
+		$this->assertFalse($actually);
+	}
 }
 ?>
