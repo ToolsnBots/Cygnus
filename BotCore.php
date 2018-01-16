@@ -1433,7 +1433,7 @@ class Core extends Password {
 		}
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
-			return $result["error"]["code"];
+			return $result["error"]["globalblock"][0]["code"];
 		} else {
 			return "success";
 		}
