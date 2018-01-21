@@ -1,0 +1,42 @@
+stages:
+  - lint
+
+lint:lint-php5.4:
+  stage: lint
+  image: php:5.4
+  before_script:
+    - bash ci/docker_install.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
+lint:lint-php5.6:
+  stage: lint
+  image: php:5.6
+  before_script:
+    - bash ci/docker_install.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
+lint:lint-php7.0:
+  stage: lint
+  image: php:7.0
+  before_script:
+    - bash ci/docker_install.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
+lint:lint-php7.1:
+  stage: lint
+  image: php:7.1
+  before_script:
+    - bash ci/docker_install.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
+
+lint:lint-php7.2:
+  stage: lint
+  image: php:7.2
+  before_script:
+    - bash ci/docker_install.sh > /dev/null
+  script:
+    - bash ci/phplint.sh ./
