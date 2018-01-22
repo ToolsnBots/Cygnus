@@ -1732,6 +1732,7 @@ class Core extends Password {
 	** success - prints a green msg, used for successfully executed things
 	** warning - prints a yellow msg, used for warnings
 	** notice - prints a blue msg, used for notices
+	** output - prints a purple msg, used for output. Highlights the values false, true and null
 	** none - prints a normal msg, used if none of the above matches
 	* A new line gets automatically added before $msg
 	*/
