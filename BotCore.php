@@ -60,12 +60,12 @@ class Core extends Password {
 		}
 		$this->login();
 		$this->createCleanUsername();
-		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
+		$this->echoMsg("***** Starting up....\nVersion: " . $this->version . " *****", "notice");
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
-		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+		$this->echoMsg("Used UserAgent: '" . $this->ua . "'\n", "notice");
 		if ($this->cleanUsername === $this->username) {
-			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ";
-			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+			$this->echoMsg("Warning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ", "warning");
+			$this->echoMsg("To continue login with \"action=login\", see [[Special:BotPasswords]].", "warning");
 		}
 	}
 	/** initcurlArgs
@@ -99,12 +99,12 @@ class Core extends Password {
 		$this->createCleanUsername();
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		if (!$supress) {
-			echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
-			echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+			$this->echoMsg("***** Starting up....\nVersion: " . $this->version . " *****", "notice");
+			$this->echoMsg("Used UserAgent: '" . $this->ua . "'\n", "notice");
 		}
 		if ($this->cleanUsername === $this->username) {
-			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning.";
-			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+			$this->echoMsg("Warning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ", "warning");
+			$this->echoMsg("To continue login with \"action=login\", see [[Special:BotPasswords]].", "warning");
 		}
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
@@ -188,13 +188,13 @@ class Core extends Password {
 				$success = true;
 				break 1;
 			} else {
-				echo "\nCurl request with arguments \"" . $arguments . "\" to " . $this->site . " failed ($i/20): " . curl_error($this->curlHandle);
+				$this->echoMsg("Curl request with arguments \"" . $arguments . "\" to " . $this->site . " failed ($i/20): " . curl_error($this->curlHandle), "error");
 				sleep(10);
 			}
 		}
 		if ($success === true) {
 			if ($this->debugMode) {
-				echo "\nResult for " . $arguments . ":\n'" . $rqResult . "'";
+				$this->echoMsg("Result for '" . $arguments . "':\n'" . $rqResult . "'", "none");
 			}
 			return $rqResult;
 		} else {
@@ -324,7 +324,7 @@ class Core extends Password {
 	*/
 	private function checkResult($result) {
 		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
-			echo "\nAction failed. Reason: " . $result . ". Please try again";
+			$this->echoMsg("Action failed. Reason: " . $result . ". Please try again", "error");
 			return 'retry';
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception("You will not be able to execute writing actions soon. Reason: " . $result);
@@ -336,12 +336,12 @@ class Core extends Password {
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {
-			echo "\nEditconflict detected";
+			$this->echoMsg("Editconflict detected", "error");
 			return "conflict";
 		} else if ($result === "nosuchsection") {
 			return "nosuchsection";
 		} else {
-			echo "\nAction failed. Error: " . $result;
+			$this->echoMsg("Action failed. Error: " . $result, "error");
 			return "fail";
 		}
 	}
@@ -1120,7 +1120,7 @@ class Core extends Password {
 				return $result;
 			}
 		} catch (Exception $e) {
-			echo "Error: " . $e->getMessage() . "\n";
+			$this->echoMsg("Error: " . $e->getMessage() . "\n", "critical");
 			return false;
 		}
 	}
