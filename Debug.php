@@ -40,7 +40,7 @@ class Debug extends Core {
 			case 'readPage':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of readPage...');
+				$this->echoMsg("Starting the function call of readPage...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->readPage($Param[0]);
@@ -54,7 +54,7 @@ class Debug extends Core {
 			case 'readPageID':
 				$required = array("pageID");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of readPageID...');
+				$this->echoMsg("Starting the function call of readPageID...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->readPageID($Param[0]);
@@ -68,7 +68,7 @@ class Debug extends Core {
 			case 'readPageJs':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of readPageJs...');
+				$this->echoMsg("Starting the function call of readPageJs...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->readPageJs($Param[0]);
@@ -82,7 +82,7 @@ class Debug extends Core {
 			case 'readPageCss':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of readPageCss...');
+				$this->echoMsg("Starting the function call of readPageCss...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->readPageCss($Param[0]);
@@ -96,7 +96,7 @@ class Debug extends Core {
 			case 'readSection':
 				$required = array("title", "section");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of readSection...');
+				$this->echoMsg("Starting the function call of readSection...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->readSection($Param[0], $Param[1]);
@@ -110,7 +110,7 @@ class Debug extends Core {
 			case 'getTableOfContents':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getTableOfContents...');
+				$this->echoMsg("Starting the function call of getTableOfContents...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getTableOfContents($Param[0]);
@@ -127,7 +127,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editPage...');
+				$this->echoMsg("Starting the function call of editPage...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editPage($Param[0], $Param[1], $Param[2], intval($Param[3]), boolval($Param[4]));
@@ -143,7 +143,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editPageMinor...');
+				$this->echoMsg("Starting the function call of editPageMinor...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editPageMinor($Param[0], $Param[1], $Param[2], intval($Param[3]), boolval($Param[4]));
@@ -159,7 +159,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editPageD...');
+				$this->echoMsg("Starting the function call of editPageD...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editPageD($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], intval($Param[5]), boolval($Param[6]));
@@ -175,7 +175,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editSection...');
+				$this->echoMsg("Starting the function call of editSection...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editSection($Param[0], $Param[1], $Param[2], $Param[3], intval($Param[4]), boolval($Param[5]));
@@ -191,7 +191,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editSectionMinor...');
+				$this->echoMsg("Starting the function call of editSectionMinor...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editSectionMinor($Param[0], $Param[1], $Param[2], $Param[3], intval($Param[4]), boolval($Param[5]));
@@ -207,7 +207,7 @@ class Debug extends Core {
 				$optional = array("noCreate", "overrideNobots");
 				$optvalues = array(1, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of editSectionD...');
+				$this->echoMsg("Starting the function call of editSectionD...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->editSectionD($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], $Param[5], intval($Param[6]), boolval($Param[7]));
@@ -223,7 +223,7 @@ class Debug extends Core {
 				$optional = array("bot", "movetalk", "noredirect");
 				$optvalues = array(0, 1, 1);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of movePage...');
+				$this->echoMsg("Starting the function call of movePage...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->movePage($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]), intval($Param[5]));
@@ -239,7 +239,7 @@ class Debug extends Core {
 				$optional = array("summary", "markbot");
 				$optvalues = array("", 0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of rollback...');
+				$this->echoMsg("Starting the function call of rollback...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->rollback($Param[0], $Param[1], $Param[2], intval($Param[3]));
@@ -255,7 +255,7 @@ class Debug extends Core {
 				$optional = array("unwatch");
 				$optvalues = array(0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of watch...');
+				$this->echoMsg("Starting the function call of watch...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->watch($Param[0], intval($Param[1]));
@@ -271,7 +271,7 @@ class Debug extends Core {
 				$optional = array("forcelinkupdate", "forcerecursivelinkupdate");
 				$optvalues = array(0, 0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of purge...');
+				$this->echoMsg("Starting the function call of purge...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->purge($Param[0], intval($Param[1]), intval($Param[2]));
@@ -287,7 +287,7 @@ class Debug extends Core {
 				$optional = array("revid");
 				$optvalues = array(true);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of patrol...');
+				$this->echoMsg("Starting the function call of patrol...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->patrol($Param[0], boolval($Param[1]));
@@ -303,7 +303,7 @@ class Debug extends Core {
 				$optional = array("unapprove");
 				$optvalues = array(0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of review...');
+				$this->echoMsg("Starting the function call of review...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->review($Param[0], $Param[1], $Param[2], intval($Param[3]));
@@ -318,7 +318,7 @@ class Debug extends Core {
 			case 'checkUserExistence':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of checkUserExistence...');
+				$this->echoMsg("Starting the function call of checkUserExistence...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->checkUserExistence($Param[0]);
@@ -332,7 +332,7 @@ class Debug extends Core {
 			case 'getUserEditcount':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getUserEditcount...');
+				$this->echoMsg("Starting the function call of getUserEditcount...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->getUserEditcount($Param[0]);
@@ -346,7 +346,7 @@ class Debug extends Core {
 			case 'checkUserBlock':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of checkUserBlock...');
+				$this->echoMsg("Starting the function call of checkUserBlock...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->checkUserBlock($Param[0]);
@@ -360,7 +360,7 @@ class Debug extends Core {
 			case 'checkUserMail':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of checkUserMail...');
+				$this->echoMsg("Starting the function call of checkUserMail...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->checkUserMail($Param[0]);
@@ -374,7 +374,7 @@ class Debug extends Core {
 			case 'getUserGroups':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getUserGroups...');
+				$this->echoMsg("Starting the function call of getUserGroups...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->getUserGroups($Param[0]);
@@ -388,7 +388,7 @@ class Debug extends Core {
 			case 'getUserGender':
 				$required = array("username");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getUserGender...');
+				$this->echoMsg("Starting the function call of getUserGender...", "notice");
 				$starttime = microtime(true);
 				try {
 					$ret = $this->getUserGender($Param[0]);
@@ -403,7 +403,7 @@ class Debug extends Core {
 			case 'checkTemplate':
 				$required = array("page", "template");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of checkTemplate...');
+				$this->echoMsg("Starting the function call of checkTemplate...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->checkTemplate($Param[0], $Param[1]);
@@ -419,7 +419,7 @@ class Debug extends Core {
 				$optional = array("onlySubCats", "excludeWls");
 				$optvalues = array(false, false);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of getCatMembers...');
+				$this->echoMsg("Starting the function call of getCatMembers...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getCatMembers($Param[0], boolval($Param[1]), boolval($Param[2]));
@@ -433,7 +433,7 @@ class Debug extends Core {
 			case 'getPageCats':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getPageCats...');
+				$this->echoMsg("Starting the function call of getPageCats...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getPageCats($Param[0]);
@@ -447,7 +447,7 @@ class Debug extends Core {
 			case 'getAllEmbeddings':
 				$required = array("templ");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getAllEmbeddings...');
+				$this->echoMsg("Starting the function call of getAllEmbeddings...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getAllEmbeddings($Param[0]);
@@ -475,7 +475,7 @@ class Debug extends Core {
 			case 'getAllPages':
 				$required = array("namespace");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getAllPages...');
+				$this->echoMsg("Starting the function call of getAllPages...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getAllPages($Param[0]);
@@ -489,7 +489,7 @@ class Debug extends Core {
 			case 'getPageID':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getPageID...');
+				$this->echoMsg("Starting the function call of getPageID...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getPageID($Param[0]);
@@ -503,7 +503,7 @@ class Debug extends Core {
 			case 'getLinks':
 				$required = array("title");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getLinks...');
+				$this->echoMsg("Starting the function call of getLinks...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getLinks($Param[0]);
@@ -517,7 +517,7 @@ class Debug extends Core {
 			case 'getSectionTitle':
 				$required = array("title", "section");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of getSectionTitle...');
+				$this->echoMsg("Starting the function call of getSectionTitle...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->getSectionTitle($Param[0]);
@@ -548,7 +548,7 @@ class Debug extends Core {
 			case 'deletePage':
 				$required = array("title", "reason");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of deletePage...');
+				$this->echoMsg("Starting the function call of deletePage...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->deletePage($Param[0], $Param[1]);
@@ -564,7 +564,7 @@ class Debug extends Core {
 				$optional = array("anononly", "nocreate", "autoblock", "noemail", "hidename", "allowusertalk", "reblock");
 				$optvalues = array(1, 1, 1, 0, 0, 1, 0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of blockUser...');
+				$this->echoMsg("Starting the function call of blockUser...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->blockUser($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]),
@@ -579,7 +579,7 @@ class Debug extends Core {
 			case 'unblockUser':
 				$required = array("user", "reason");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of unblockUser...');
+				$this->echoMsg("Starting the function call of unblockUser...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->unblockUser($Param[0], $Param[1]);
@@ -595,7 +595,7 @@ class Debug extends Core {
 				$optional = array("unblock", "anononly", "modify");
 				$optvalues = array(0, 1, 0);
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of blockGlobal...');
+				$this->echoMsg("Starting the function call of blockGlobal...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->blockGlobal($Param[0], $Param[1], $Param[2], intval($Param[3]), intval($Param[4]),
@@ -610,7 +610,7 @@ class Debug extends Core {
 			case 'lockGlobal':
 				$required = array("user", "lock", "suppress", "reason");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of lockGlobal...');
+				$this->echoMsg("Starting the function call of lockGlobal...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->lockGlobal($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
@@ -626,7 +626,7 @@ class Debug extends Core {
 				$optional = array("expiry");
 				$optvalues = array("infinite");
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of changeUserrights...');
+				$this->echoMsg("Starting the function call of changeUserrights...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->changeUserrights($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
@@ -642,7 +642,7 @@ class Debug extends Core {
 				$optional = array("expiry");
 				$optvalues = array("infinite");
 				$Param = $this->getParams($required, $optional, $optvalues);
-				$this->echoNotice('Starting the function call of changeGlobalUserrights...');
+				$this->echoMsg("Starting the function call of changeGlobalUserrights...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->changeGlobalUserrights($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
@@ -656,7 +656,7 @@ class Debug extends Core {
 			case 'protectPage':
 				$required = array("title", "reason", "protections", "expiry", "cascade");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of protectPage...');
+				$this->echoMsg("Starting the function call of protectPage...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->protectPage($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
@@ -670,7 +670,7 @@ class Debug extends Core {
 			case 'stabilize':
 				$required = array("title", "expiry", "reason", "default", "autoreview", "review");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of stabilize...');
+				$this->echoMsg("Starting the function call of stabilize...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->stabilize($Param[0], $Param[1], $Param[2], $Param[3], $Param[4]);
@@ -684,7 +684,7 @@ class Debug extends Core {
 			case 'writeToFile':
 				$required = array("filename", "text");
 				$Param = $this->getParams($required);
-				$this->echoNotice('Starting the function call of writeToFile...');
+				$this->echoMsg("Starting the function call of writeToFile...", "notice");
 				$starttime = microtime (true);
 				try {
 					$ret = $this->writeToFile($Param[0], $Param[1]);
@@ -706,12 +706,12 @@ class Debug extends Core {
 	private function getParams($ParamList, $ParamOptList = null, $ParamOptDefault = null) {
 		$a = 0;
 		while (isset($ParamList[$a])) {
-			$Param[$a] = $this->askRequired('Enter the value for the param ' . $ParamList[$a] . ' to use:');
+			$Param[$a] = $this->ask("Enter the value for the param " . $ParamList[$a] . " to use:", "required");
 			$a++;
 		}
 		$b = 0;
 		while (isset($ParamOptList[$b])) {
-			$res = $this->askOptional('Enter the value for the optional param ' . $ParamOptList[$b] . ' (Leave blank to use default):');
+			$res = $this->ask("Enter the value for the optional param " . $ParamOptList[$b] . " (Leave blank to use default):", "optional");
 			if ($res === "") {
 				$Param[$a] = $ParamOptDefault[$b];
 			} else {
@@ -722,82 +722,19 @@ class Debug extends Core {
 		}
 		return $Param;
 	}
-	/** echoCritical
-	* Writes out a critical message
-	* Use this only for critical messages
-	* Prints out the message in red
-	*/
-	private function echoCritical($msg) {
-		echo "\n\033[01;31m" . $msg . "\033[0m";
-	}
-	/** echoSuccessful
-	* Use this only when a task was successful
-	* Prints out the message in green
-	*/
-	private function echoSuccessful($msg) {
-		echo "\n\033[01;32m" . $msg . "\033[0m";
-	}
-	/** echoWarning
-	* Writes out a warning
-	* Use this only for non-critical warnings
-	* Prints the message out in yellow
-	*/
-	private function echoWarning($msg) {
-		echo "\n\033[01;33m" . $msg . "\033[0m";
-	}
-	/** echoNotice
-	* Writes out a notice
-	* Use this only for notices, no output, no warnings/errors
-	* Prints the message out in blue
-	*/
-	private function echoNotice($msg) {
-		echo "\n\033[01;34m" . $msg . "\033[0m";
-	}
-	/** echoOutput
-	* Writes out the output of a function
-	* Use this only for function output
-	* Prints the message out in purple
-	*/
-	private function echoOutput($msg) {
-		if ($msg === true) {
-			echo "\n\033[01;35mReturned value: true\033[0m";
-		} else if ($msg === false) {
-			echo "\n\033[01;35mReturned value: false\033[0m";
-		} else if ($msg === null) {
-			echo "\n\033[01;35mReturned value: NULL\033[0m";
-		} else {
-			echo "\n\033[01;35m" . $msg . "\033[0m";
-		}
-	}
-	/** askRequired
-	* Asks for something
-	* Use this only if the answer is required
-	* Prints the answer in yellow
-	*/
-	private function askRequired($msg) {
-		return $this->askOperator("\n\033[01;33m" . $msg . "\033[0m");
-	}
-	/** askOptional
-	* Asks for something
-	* Use this only if the answer is optional (additional param for example)
-	* Prints the answer in cyan
-	*/
-	private function askOptional($msg) {
-		return $this->askOperator("\n\033[01;36m" . $msg . "\033[0m");
-	}
 	/** processFunction
 	* Internal, used for successful calls
 	*/
 	private function processFunction($ret, $starttime, $endtime) {
 		$total = $endtime - $starttime;
-		$this->echoSuccessful('Function call succeeded');
-		$this->echoNotice('Performance: ' . $total . ' seconds');
-		$answer = $this->askRequired('Display the result now? [y/N]');
+		$this->echoMsg("Function call succeeded", "success");
+		$this->echoMsg("Performance: " . $total . " seconds", "notice");
+		$answer = $this->ask("Display the result now? [y/N]", "required");
 		if (strtolower($answer) !== 'n') {
 			if (is_array($ret)) {
 				var_dump($ret);
 			} else {
-				$this->echoOutput($ret);
+				$this->echoMsg($ret, "output");
 			}
 		}
 	}
@@ -806,10 +743,11 @@ class Debug extends Core {
 	*/
 	private function processError ($err, $starttime, $endtime) {
 		$total = $endtime - $starttime;
-		$this->echoCritical('Function call failed after ' . $total . ' seconds');
-		$answer = $this->askRequired('Display the error now? [y/N]');
-		if (strtolower($answer) !== 'n')
-			$this->echoWarning($err);
+		$this->echoMsg("Function call failed after " . $total . " seconds", "error");
+		$answer = $this->ask("Display the error now? [y/N]", "required");
+		if (strtolower($answer) !== 'n') {
+			$this->echoMsg($err, "warning");
+		}
 	}
 }
 $Bot = new Debug();
