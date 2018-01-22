@@ -1262,11 +1262,23 @@ class Core extends Password {
 	}
 	/** askOperator
 	* asks a question on the console
+	* DEPRECATED, replaced with "ask"
+	* To be removed in V2.2
 	* @author Luke081515
 	* @param $question - the question to display
 	* @return the response to the question
 	*/
 	public function askOperator($question) {
+		$this->echoMsg("This function is deprecated, please use \$this->ask instead. The function will get removed soon.", "warning")
+		return $this->askQuestion($question);
+	}
+	/** askQuestion
+	* asks a question on the console
+	* @author Luke081515
+	* @param $question - the question to display
+	* @return the response to the question
+	*/
+	private function askQuestion($question) {
 		echo $question;
 		$handle = fopen ("php://stdin","r");
 		$line = fgets($handle);
@@ -1765,14 +1777,14 @@ class Core extends Password {
 	public function ask($msg, $type = "none") {
 		switch($type) {
 			case 'required':
-				return $this->askOperator("\n\033[01;33m" . $msg . "\033[0m");
+				return $this->askQuestion("\n\033[01;33m" . $msg . "\033[0m");
 				break;
 			case 'optional':
-				return $this->askOperator("\n\033[01;36m" . $msg . "\033[0m");
+				return $this->askQuestion("\n\033[01;36m" . $msg . "\033[0m");
 				break;
 			case 'none':
 			default:
-				return $this->askOperator("\n" . $msg);
+				return $this->askQuestion("\n" . $msg);
 		}
 	}
 	
