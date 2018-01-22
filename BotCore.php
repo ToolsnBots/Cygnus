@@ -1269,7 +1269,7 @@ class Core extends Password {
 	* @return the response to the question
 	*/
 	public function askOperator($question) {
-		$this->echoMsg("This function is deprecated, please use \$this->ask instead. The function will get removed soon.", "warning")
+		$this->echoMsg("This function is deprecated, please use \$this->ask instead. The function will get removed soon.", "warning");
 		return $this->askQuestion($question);
 	}
 	/** askQuestion
@@ -1779,15 +1779,12 @@ class Core extends Password {
 		switch($type) {
 			case 'required':
 				return $this->askQuestion("\n\033[01;33m" . $msg . "\033[0m");
-				break;
 			case 'optional':
 				return $this->askQuestion("\n\033[01;36m" . $msg . "\033[0m");
-				break;
 			case 'none':
 			default:
 				return $this->askQuestion("\n" . $msg);
 		}
 	}
-	
 }
 ?>
