@@ -1712,5 +1712,69 @@ class Core extends Password {
 	public function writeToFile ($filename, $text) {
 		file_put_contents($filename, "\n" . $text, FILE_APPEND);
 	}
+	/** echoMsg
+	* Writes out a message
+	* @param $msg - the message to echo
+	* @param $type - the style type of the output
+	** error - prints a red msg, used for errors
+	** success - prints a green msg, used for successfully executed things
+	** warning - prints a yellow msg, used for warnings
+	** notice - prints a blue msg, used for notices
+	** none - prints a normal msg, used if none of the above matches
+	* A new line gets automatically added before $msg
+	*/
+	public function echoMsg($msg, $type = "none") {
+		switch($type) {
+			case 'error':
+				echo "\n\033[01;31m" . $msg . "\033[0m";
+				break;
+			case 'success':
+				echo "\n\033[01;32m" . $msg . "\033[0m";
+				break;
+			case 'warning':
+				echo "\n\033[01;33m" . $msg . "\033[0m";
+				break;
+			case 'notice':
+				echo "\n\033[01;34m" . $msg . "\033[0m";
+				break;
+			case 'output':
+				if ($msg === true) {
+					echo "\n\033[01;35mReturned value: true\033[0m";
+				} else if ($msg === false) {
+					echo "\n\033[01;35mReturned value: false\033[0m";
+				} else if ($msg === null) {
+					echo "\n\033[01;35mReturned value: NULL\033[0m";
+				} else {
+					echo "\n\033[01;35m" . $msg . "\033[0m";
+				}
+				break;
+			case 'none':
+			default:
+				echo "\n" . $msg;
+		}
+	}
+	/** echoMsg
+	* Asks for something
+	* @param $msg - the question to ask
+	* @param $type - the style type of the output
+	** required - prints a yellow question, used for questions where the answer is needed
+	** optional - prints a cyan question, used for question where the answer can be empty
+	** none - prints a normal question, used if none of the above matches
+	* A new line gets automatically added before $msg
+	*/
+	public function ask($msg, $type = "none") {
+		switch($type) {
+			case 'required':
+				return $this->askOperator("\n\033[01;33m" . $msg . "\033[0m");
+				break;
+			case 'optional':
+				return $this->askOperator("\n\033[01;36m" . $msg . "\033[0m");
+				break;
+			case 'none':
+			default:
+				return $this->askOperator("\n" . $msg);
+		}
+	}
+	
 }
 ?>
