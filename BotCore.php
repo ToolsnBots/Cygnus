@@ -780,11 +780,13 @@ class Core extends Password {
 	public function review($revid, $comment = "", $unapprove = 0) {
 		$token = $this->requireToken();
 		$request = "action=review&format=json&assert=" . $this->assert .
-			"&maxlag=" . $maxlag .
+			"&maxlag=" . $this->maxlag .
 			"&revid=" . urlencode($revid) .
-			"&unapprove=" . urlencode($unapprove) .
 			"&comment=" . urlencode($comment) .
 			"&token=" . urlencode($token);
+		if ($unapprove) {
+			$request = $request . "&unapprove=1";
+		}
 		$result = $this->httpRequest($request, $this->job);
 		$result = json_decode($result, true);
 		if (array_key_exists("error", $result)) {
