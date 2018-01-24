@@ -172,13 +172,13 @@ class Core extends Password {
 		}
 		// perform request
 		$success = false;
-		for ($i = 1; $i <= 18; $i++) {
+		for ($i = 1; $i <= 20; $i++) {
 			$rqResult = curl_exec($this->curlHandle);
 			if ($rqResult !== false) {
 				$success = true;
 				break 1;
 			} else {
-				echo "\nCurl request with arguments \"" . $arguments . "\" to " . $this->site . " failed (try: $i out of 18)" . curl_error($this->curlHandle);
+				echo "\nCurl request with arguments \"" . $arguments . "\" to " . $this->site . " failed ($i/20): " . curl_error($this->curlHandle);
 				sleep(10);
 			}
 		}
