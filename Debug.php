@@ -660,7 +660,7 @@ class Debug extends Core {
 				}
 				break;
 			default:
-				throw new Exception("This function does not exist, or is not configured.");
+				echo "This function does not exist, or is not configured.";
 		}
 	}
 	/** getParams
