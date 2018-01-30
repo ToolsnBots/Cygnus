@@ -670,8 +670,8 @@ class Core extends Password {
 	* @param $summary - [optional: Defined summary of mediawiki] custom summary
 	* @param $markbot - [optional: 0] - if true, the rollbacked edit and the rollback will be marked as bot
 	* @return true - if rollback was successful
-	* @return fail - if the rollback failed
-	* @return conflict - if there was a conflict when doing a rollback
+	* @return false - if the rollback failed
+	* @return null - if there was a conflict when doing a rollback
 	*/
 	public function rollback($title, $user, $summary = "", $markbot = 0) {
 		while (true) {
@@ -690,11 +690,11 @@ class Core extends Password {
 			if (array_key_exists("error", $result)) {
 				$code = $this->checkResult($result["error"]["code"]);
 				if ($code === "fail") {
-					return "fail";
+					return false;
 				} else if ($code === "retry") {
 					sleep(5);
 				} else if ($code === "conflict") {
-					return "conflict";
+					return null;
 				}
 			} else {
 				return true;
@@ -753,7 +753,7 @@ class Core extends Password {
 	* @author Luke081515
 	* @param $id - the revid or rcid to patrol
 	* @param $revid [optional: true] - if true, you use a revid, otherwise a rcid
-	* @return string - success if successful, otherwise the API error-code
+	* @return string / bool - true if successful, otherwise the API error-code
 	*/
 	public function patrol($id, $revid = true) {
 		$token = $this->requireToken("patrol");
@@ -773,7 +773,7 @@ class Core extends Password {
 				return $this->checkResult($result["error"]["code"]);
 			}
 		} else {
-			return "success";
+			return true;
 		}
 	}
 	/** review
