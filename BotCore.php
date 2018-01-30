@@ -97,8 +97,10 @@ class Core extends Password {
 			$this->curlHandle = $curl;
 		}
 		$this->createCleanUsername();
+		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		if (!$supress) {
-		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
+			echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
+			echo "\nUsed UserAgent: '" . $this->ua . "'\n";
 		}
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
