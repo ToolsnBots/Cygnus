@@ -10,6 +10,7 @@ class DBCore extends DBPassword {
 	protected $database;
 	protected $db;
 	protected $loginHost;
+	private $dbPasswordVersion = "2.1.0"; // Should be the same as in DBPassword.php, when you are changing the file.
 
 	/** __construct
 	* Initializes the database connection
@@ -21,6 +22,14 @@ class DBCore extends DBPassword {
 		$a = 0;
 		$found = false;
 		$this->init();
+		if (method_exists($this, 'getDBPasswordVersion')) {
+			$passwordVersion = $this->getDBPasswordVersion();
+		} else {
+			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
+		}
+		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
+			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
+		}
 		$loginName = unserialize($this->getLoginName ());
 		$loginAccount = unserialize($this->getLoginAccount());
 		$loginDbPassword = unserialize($this->getLogindbPassword());

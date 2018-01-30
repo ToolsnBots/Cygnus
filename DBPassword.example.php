@@ -3,39 +3,43 @@ class DBpassword {
 	/** This is only an example
 	* You need to modify the data to make the program work!
 	*/
-	private $LoginName;
-	private $LoginHost;
-	private $LoginAccount;
-	private $LoginPassword;
+	private $loginName;
+	private $loginHost;
+	private $loginAccount;
+	private $loginPassword;
+	private $dbPasswordVersion = "2.1.0"; // Do not change this as user. As dev, change it, when you change that file.
 
 	public function __construct() {}
 
 	protected function init() {
-		$this->LoginName = array( // Recommended: Username@wiki
+		$this->loginName = array( // Recommended: Username@wiki
 			'root@localhost',
 		);
 		// NOTE: Accounts need to follow the same order as at loginname
-		$this->LoginHost = array( // Domain
+		$this->loginHost = array( // Domain
 			'127.0.0.1',
 		);
-		$this->LoginAccount = array( // Name of the account
+		$this->loginAccount = array( // Name of the account
 			'root',
 		);
-		$this->LoginPassword = array( // Password of the account
+		$this->loginPassword = array( // Password of the account
 			'Password',
 		);
 	}
 	protected function getLoginName() {
-		return serialize ($this->LoginName);
+		return serialize ($this->loginName);
 	}
 	protected function getLoginHost() {
-		return serialize ($this->LoginHost);
+		return serialize ($this->loginHost);
 	}
 	protected function getLoginAccount() {
-		return serialize ($this->LoginAccount);
+		return serialize ($this->loginAccount);
 	}
 	protected function getLoginDBpassword() {
-		return serialize ($this->LoginPassword);
+		return serialize ($this->loginPassword);
+	}
+	protected function getDBPasswordVersion () {
+		return $this->dbPasswordVersion;
 	}
 }
 ?>
