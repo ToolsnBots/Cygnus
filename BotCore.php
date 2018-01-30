@@ -21,8 +21,10 @@ class Core extends Password {
 	private $version = "Cygnus-Framework V2.1 alpha";
 	private $ua;
 	private $maxlag;
+	private $target;
 	private $debugMode = false;
 	private $failedLoginCounter = 0;
+	private $passwordVersion = "2.1.0"; // Should be the same as in Password.php, when you are changing the file.
 
 	/** initcurl
 	* initializes curl
@@ -136,9 +138,17 @@ class Core extends Password {
 	* @author Hgzh
 	* @return answer of the API
 	*/
-	protected function httpRequest($arguments, $job, $method = "POST", $target = "w/api.php") {
-		$baseURL = $this->protocol . "://" .
-				   $this->site . "/" .
+	protected function httpRequest($arguments, $job, $method = 'POST', $target = '') {
+		if($target == '') {
+			// Kept for legacy support
+			// ToDo: Remove in next major release
+			$target = $this->target;
+		} else {
+			echo ("\nThis way of setting the path has been deprecated. "
+				. "Please migrate it to Password.php. See release notes for details");
+		}
+		$baseURL = $this->protocol . '://' .
+				   $this->site . '/' .
 				   $target;
 		$method = strtoupper($method);
 		if ($arguments != "") {
@@ -242,23 +252,29 @@ class Core extends Password {
 		$this->httpRequest("action=logout", $this->job);
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setSite($site) {
 		$this->site = $site;
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setUsername($username) {
 		$this->username = $username;
 		$this->createCleanUsername();
 	}
 	/** DO NOT USE this function
-	* This is for unit-tests only
+	* in case you are not using initcurlArgs
 	*/
 	public function setPassword($password) {
 		$this->password = $password;
+	}
+	/** DO NOT USE this function
+	* in case you are not using initcurlArgs
+	*/
+	public function setTarget($target) {
+		$this->target = $target;
 	}
 	/** start
 	* Searches for the data from Password.php, does the login after that
@@ -268,17 +284,27 @@ class Core extends Password {
 	public function start($account) {
 		$Found = false;
 		$this->init();
+		if (method_exists($this, 'getPasswordVersion')) {
+			$passwordVersion = $this->getPasswordVersion();
+		} else {
+			throw new Exception("You are using an old version of Password.php. Please upgrade.");
+		}
+		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
+			throw new Exception("You are using an old version of Password.php. Please upgrade.");
+		}
 		$LoginName = unserialize($this->getLoginName());
 		$LoginHost = unserialize($this->getLoginHost());
 		$LoginAccount = unserialize($this->getLoginAccount());
 		$LoginPassword = unserialize($this->getLoginPassword());
 		$Mail = unserialize($this->getMail());
+		$Target = unserialize($this->getApiPath());
 		for ($a = 0; isset($LoginName[$a]); $a++) {
 			if ($LoginName[$a] === $account) {
 				$this->site = $LoginHost[$a];
 				$this->username = $LoginAccount[$a];
 				$this->password = $LoginPassword[$a];
 				$this->mail = $Mail[$a];
+				$this->target = $Target[$a];
 				$Found = true;
 			}
 		}
