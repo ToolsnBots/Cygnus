@@ -452,6 +452,20 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'getMissingLinks':
+				$required = array("page");
+				$Param = $this->getParams($required);
+				$this->echoNotice('Starting the function call of getMissingLinks...');
+				$starttime = microtime(true);
+				try {
+					$ret = $this->getMissingLinks($Param[0]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			case 'getAllPages':
 				$required = array("namespace");
 				$Param = $this->getParams($required);

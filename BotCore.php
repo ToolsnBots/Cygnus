@@ -1095,13 +1095,13 @@ class Core extends Password {
 	/** getMissingLinks
 	* Returns missing links "redlinks" on a page
 	* @author Freddy2001
-	* @param $Site - Page with links that will be checked
+	* @param $page - Page with links that will be checked
 	* @return Array with missing pages or false if there are no links
 	*/
-	public function getMissingLinks ($Site) {
-		$request = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($Site);
+	public function getMissingLinks ($page) {
+		$request = "action=query&format=json&prop=info&generator=links&utf8=1&formatversion=2&gpllimit=max&titles=" . urlencode($page);
 		try {
-			$result = $this->httpRequest($data, $this->job, 'GET');
+			$result = $this->httpRequest($request, $this->job, 'GET');
 			$result = json_decode($result, true);
 			$answer = $result['query']['pages'];
 			$result = array();
