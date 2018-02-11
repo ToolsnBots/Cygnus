@@ -11,6 +11,12 @@ class Debug extends Core {
 		$this->setSite($this->askRequired('Enter the domain to use:'));
 		$this->setUsername($this->askRequired('Enter the username to use:'));
 		$this->setPassword($this->askRequired('Enter the password to use:'));
+		$patchAnswer = $this->askRequired('Use a non default target? [y/N]');
+		if (strtolower($patchAnswer) !== 'n') {
+			$this->setTarget($this->askRequired('Enter the value for the target:'));
+		} else {
+			$this->setTarget("w/api.php");
+		}
 		$assert = $this->askRequired('Enter the value for assert:');
 		$debug = $this->askRequired('Use verbose debug mode? [y/N]');
 		if (strtolower($debug) !== 'n') {
