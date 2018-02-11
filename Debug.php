@@ -373,7 +373,7 @@ class Debug extends Core {
 				try {
 					$ret = $this->getUserGroups($Param[0]);
 					$endtime = microtime(true);
-					$this->processFunction($ret, $starttime, $endtime, true);
+					$this->processFunction($ret, $starttime, $endtime);
 				} catch (Exception $e) {
 					$endtime = microtime(true);
 					$this->processError($e, $endtime);
@@ -752,16 +752,16 @@ class Debug extends Core {
 	/** processFunction
 	* Internal, used for successful calls
 	*/
-	private function processFunction($ret, $starttime, $endtime, $array = false) {
+	private function processFunction($ret, $starttime, $endtime) {
 		$total = $endtime - $starttime;
 		$this->echoSuccessful('Function call succeeded');
 		$this->echoNotice('Performance: ' . $total . ' seconds');
 		$answer = $this->askRequired('Display the result now? [y/N]');
 		if (strtolower($answer) !== 'n') {
-			if (!$array) {
-				$this->echoOutput($ret);
-			} else {
+			if (is_array($ret)) {
 				var_dump($ret);
+			} else {
+				$this->echoOutput($ret);
 			}
 		}
 	}
