@@ -102,8 +102,6 @@ class Core extends Password {
 			echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
 			echo "\nUsed UserAgent: '" . $this->ua . "'\n";
 		}
-		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
-		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
 		if ($this->cleanUsername === $this->username) {
 			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning.";
 			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
