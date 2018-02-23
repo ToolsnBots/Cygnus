@@ -529,8 +529,10 @@ class Debug extends Core {
 				}
 				break;
 			case 'search':
-				$required = array("pattern", "ns", "prop", "limit", "offset", "what");
-				$Param = $this->getParams($required);
+				$required = array("pattern");
+				$optional = array("ns", "prop", "limit", "offset", "what");
+				$optvalues = array(0, "size|wordcount|timestamp|snippet", 50, 0, "text");
+				$Param = $this->getParams($required, $optional, $optvalues);
 				$this->echoNotice('Starting the function call of search...');
 				$starttime = microtime (true);
 				try {
