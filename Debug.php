@@ -533,7 +533,7 @@ class Debug extends Core {
 				$required = array("user", "reason", "expiry");
 				$optional = array("anononly", "nocreate", "autoblock", "noemail", "hidename", "allowusertalk", "reblock");
 				$optvalues = array(1, 1, 1, 0, 0, 1, 0);
-				$Param = $this->getParams($required);
+				$Param = $this->getParams($required, $optional, $optvalues);
 				$this->echoNotice('Starting the function call of blockUser...');
 				$starttime = microtime (true);
 				try {
