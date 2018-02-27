@@ -495,11 +495,15 @@ class Core extends Password {
 			$request = "action=edit&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&format=json&bot=&title=" . urlencode($title) .
 				"&text=" . urlencode($content) .
 				"&token=" . urlencode($token) .
-				"&summary=" . urlencode($summary) .
-				"&bot=" . urlencode($botflag) .
-				"&minor=" . urlencode($minorflag);
-			if ($noCreate === 1) {
-				$request .= "&minor=" . urlencode($minorflag);
+				"&summary=" . urlencode($summary);
+			if ($botflag) {
+				$request .= "&bot=";
+			}
+			if ($minorflag) {
+				$request .= "&minor=";
+			}
+			if ($noCreate) {
+				$request .= "&nocreate=";
 			}
 			if ($sectionnumber !== -1) {
 				$request .= "&section=" . urlencode($sectionnumber);
