@@ -1224,7 +1224,7 @@ class Core extends Password {
 	}
 	/** search
 	* uses API fulltext search
-	* @author KPFC
+	* @author KPFC / Luke081515
 	* @param pattern - pattern to search
 	* @param ns - [default: 0] numbers of the namespaces to search in; seperate with "|"
 	* @param prop - [default: size|wordcount|timestamp|snippet] properties to return; seperate with "|" (size, wordcount, timestamp, snippet, titlesnippet, redirecttitle, redirectsnippet, sectiontitle, sectionsnippet, isfilematch, categorysnippet, extensiondata)
@@ -1234,7 +1234,10 @@ class Core extends Password {
 	* @return result - array with the results
 	*/
 	public function search($pattern, $ns = 0, $prop = "size|wordcount|timestamp|snippet", $limit = 50, $offset = 0, $what = "text") {
-		$data = "action=query&format=json&assert=" . $this->assert . "&maxlag=" . $this->maxlag . "&list=search&srsearch=" . $pattern . "&srnamespace=" . $ns . "&srprop=" . $prop . "&srlimit=" . $limit . "&sroffset=" . $offset . "&srwhat=" . $what;
+		$data = "action=query&format=json&assert="
+			. $this->assert . "&maxlag=" . $this->maxlag . "&list=search&srsearch="
+			. urlencode($pattern) . "&srnamespace=" . $ns . "&srprop=" . $prop . "&srlimit="
+			. $limit . "&sroffset=" . $offset . "&srwhat=" . $what;
 		return json_decode($this->httpRequest($data, $this->job, "GET"), true);
 	}
 	/** getMaxlag
