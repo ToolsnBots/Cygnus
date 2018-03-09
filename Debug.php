@@ -528,6 +528,22 @@ class Debug extends Core {
 					$this->processError($e, $starttime, $endtime);
 				}
 				break;
+			case 'search':
+				$required = array("pattern");
+				$optional = array("ns", "prop", "limit", "offset", "what");
+				$optvalues = array(0, "size|wordcount|timestamp|snippet", 50, 0, "text");
+				$Param = $this->getParams($required, $optional, $optvalues);
+				$this->echoNotice('Starting the function call of search...');
+				$starttime = microtime (true);
+				try {
+					$ret = $this->search($Param[0], $Param[1], $Param[2], $Param[3], $Param[4], $Param[5]);
+					$endtime = microtime (true);
+					$this->processFunction($ret, $starttime, $endtime, true);
+				} catch (Exception $e) {
+					$endtime = microtime (true);
+					$this->processError($e, $starttime, $endtime);
+				}
+				break;
 			// Admin functions
 			case 'deletePage':
 				$required = array("title", "reason");

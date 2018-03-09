@@ -1222,6 +1222,24 @@ class Core extends Password {
 		$content = substr($content, 0, strpos($content, "="));
 		return ["title" => $content, "level" => $sectionlevel, ];
 	}
+	/** search
+	* uses API fulltext search
+	* @author KPFC / Luke081515
+	* @param pattern - pattern to search
+	* @param ns - [default: 0] numbers of the namespaces to search in; seperate with "|"
+	* @param prop - [default: size|wordcount|timestamp|snippet] properties to return; seperate with "|" (size, wordcount, timestamp, snippet, titlesnippet, redirecttitle, redirectsnippet, sectiontitle, sectionsnippet, isfilematch, categorysnippet, extensiondata)
+	* @param limit - [default: 50] number of results to return; max 500 or 5000 for bots
+	* @param offset - [default: 0] show only the results from position on
+	* @param what - [default: text] what to search (title/text/nearmatch)
+	* @return result - array with the results
+	*/
+	public function search($pattern, $ns = 0, $prop = "size|wordcount|timestamp|snippet", $limit = 50, $offset = 0, $what = "text") {
+		$data = "action=query&format=json&assert="
+			. $this->assert . "&maxlag=" . $this->maxlag . "&list=search&srsearch="
+			. urlencode($pattern) . "&srnamespace=" . $ns . "&srprop=" . $prop . "&srlimit="
+			. $limit . "&sroffset=" . $offset . "&srwhat=" . $what;
+		return json_decode($this->httpRequest($data, $this->job, "GET"), true);
+	}
 	/** getMaxlag
 	* @author Luke081515
 	* @return $this->maxlag
