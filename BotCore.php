@@ -1227,7 +1227,8 @@ class Core extends Password {
 	* @author KPFC / Luke081515
 	* @param pattern - pattern to search
 	* @param ns - [default: 0] numbers of the namespaces to search in; seperate with "|"
-	* @param prop - [default: size|wordcount|timestamp|snippet] properties to return; seperate with "|" (size, wordcount, timestamp, snippet, titlesnippet, redirecttitle, redirectsnippet, sectiontitle, sectionsnippet, isfilematch, categorysnippet, extensiondata)
+	* @param prop - [default: size|wordcount|timestamp|snippet] properties to return; seperate with "|"
+	* @param prop - available: (size, wordcount, timestamp, snippet, titlesnippet, redirecttitle, redirectsnippet, sectiontitle, sectionsnippet, isfilematch, categorysnippet, extensiondata)
 	* @param limit - [default: 50] number of results to return; max 500 or 5000 for bots
 	* @param offset - [default: 0] show only the results from position on
 	* @param what - [default: text] what to search (title/text/nearmatch)
