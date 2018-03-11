@@ -27,7 +27,7 @@ class DBCore extends DBPassword {
 		} else {
 			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
 		}
-		if ($this->passwordVersion !== $passwordVersion) { // Ensuring no old version is used
+		if ($this->dbPasswordVersion !== $passwordVersion) { // Ensuring no old version is used
 			throw new Exception("You are using an old version of DBPassword.php. Please upgrade.");
 		}
 		$loginName = unserialize($this->getLoginName ());
