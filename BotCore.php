@@ -60,12 +60,12 @@ class Core extends Password {
 		}
 		$this->login();
 		$this->createCleanUsername();
-		echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
+		$this->echoMsg("***** Starting up....\nVersion: " . $this->version . " *****", "notice");
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
-		echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+		$this->echoMsg("Used UserAgent: '" . $this->ua . "'\n", "notice");
 		if ($this->cleanUsername === $this->username) {
-			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ";
-			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+			$this->echoMsg("Warning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ", "warning");
+			$this->echoMsg("To continue login with \"action=login\", see [[Special:BotPasswords]].", "warning");
 		}
 	}
 	/** initcurlArgs
@@ -99,12 +99,12 @@ class Core extends Password {
 		$this->createCleanUsername();
 		$this->ua = "User:" . $this->cleanUsername . " - " . $this->job . " - " . $this->version;
 		if (!$supress) {
-			echo "\n***** Starting up....\nVersion: " . $this->version . " *****";
-			echo "\nUsed UserAgent: '" . $this->ua . "'\n";
+			$this->echoMsg("***** Starting up....\nVersion: " . $this->version . " *****", "notice");
+			$this->echoMsg("Used UserAgent: '" . $this->ua . "'\n", "notice");
 		}
 		if ($this->cleanUsername === $this->username) {
-			echo "\nWarning: Main-account login via \"action=login\" is deprecated and may stop working without warning.";
-			echo "To continue login with \"action=login\", see [[Special:BotPasswords]].";
+			$this->echoMsg("Warning: Main-account login via \"action=login\" is deprecated and may stop working without warning. ", "warning");
+			$this->echoMsg("To continue login with \"action=login\", see [[Special:BotPasswords]].", "warning");
 		}
 		// change if you need more, default is 5
 		$this->setMaxlag(5);
@@ -188,13 +188,13 @@ class Core extends Password {
 				$success = true;
 				break 1;
 			} else {
-				echo "\nCurl request with arguments \"" . $arguments . "\" to " . $this->site . " failed ($i/20): " . curl_error($this->curlHandle);
+				$this->echoMsg("Curl request with arguments \"" . $arguments . "\" to " . $this->site . " failed ($i/20): " . curl_error($this->curlHandle), "error");
 				sleep(10);
 			}
 		}
 		if ($success === true) {
 			if ($this->debugMode) {
-				echo "\nResult for " . $arguments . ":\n'" . $rqResult . "'";
+				$this->echoMsg("Result for '" . $arguments . "':\n'" . $rqResult . "'", "none");
 			}
 			return $rqResult;
 		} else {
@@ -324,7 +324,7 @@ class Core extends Password {
 	*/
 	private function checkResult($result) {
 		if ($result === 'maxlag' || $result === 'readonly' || $result === 'unknownerror-nocode' || $result === 'unknownerror' || $result === 'ratelimited') {
-			echo "\nAction failed. Reason: " . $result . ". Please try again";
+			$this->echoMsg("Action failed. Reason: " . $result . ". Please try again", "error");
 			return 'retry';
 		} else if ($result === 'blocked' || $result === 'confirmemail' || $result === 'autoblocked') {
 			throw new Exception("You will not be able to execute writing actions soon. Reason: " . $result);
@@ -336,12 +336,12 @@ class Core extends Password {
 			$this->login();
 			return "retry";
 		} else if ($result === "editconflict") {
-			echo "\nEditconflict detected";
+			$this->echoMsg("Editconflict detected", "error");
 			return "conflict";
 		} else if ($result === "nosuchsection") {
 			return "nosuchsection";
 		} else {
-			echo "\nAction failed. Error: " . $result;
+			$this->echoMsg("Action failed. Error: " . $result, "error");
 			return "fail";
 		}
 	}
@@ -1120,7 +1120,7 @@ class Core extends Password {
 				return $result;
 			}
 		} catch (Exception $e) {
-			echo "Error: " . $e->getMessage() . "\n";
+			$this->echoMsg("Error: " . $e->getMessage() . "\n", "critical");
 			return false;
 		}
 	}
@@ -1262,11 +1262,23 @@ class Core extends Password {
 	}
 	/** askOperator
 	* asks a question on the console
+	* DEPRECATED, replaced with "ask"
+	* To be removed in V2.2
 	* @author Luke081515
 	* @param $question - the question to display
 	* @return the response to the question
 	*/
 	public function askOperator($question) {
+		$this->echoMsg("This function is deprecated, please use \$this->ask instead. The function will get removed soon.", "warning");
+		return $this->askQuestion($question);
+	}
+	/** askQuestion
+	* asks a question on the console
+	* @author Luke081515
+	* @param $question - the question to display
+	* @return the response to the question
+	*/
+	private function askQuestion($question) {
 		echo $question;
 		$handle = fopen ("php://stdin","r");
 		$line = fgets($handle);
@@ -1711,6 +1723,68 @@ class Core extends Password {
 	*/
 	public function writeToFile ($filename, $text) {
 		file_put_contents($filename, "\n" . $text, FILE_APPEND);
+	}
+	/** echoMsg
+	* Writes out a message
+	* @param $msg - the message to echo
+	* @param $type - the style type of the output
+	** error - prints a red msg, used for errors
+	** success - prints a green msg, used for successfully executed things
+	** warning - prints a yellow msg, used for warnings
+	** notice - prints a blue msg, used for notices
+	** output - prints a purple msg, used for output. Highlights the values false, true and null
+	** none - prints a normal msg, used if none of the above matches
+	* A new line gets automatically added before $msg
+	*/
+	public function echoMsg($msg, $type = "none") {
+		switch($type) {
+			case 'error':
+				echo "\n\033[01;31m" . $msg . "\033[0m";
+				break;
+			case 'success':
+				echo "\n\033[01;32m" . $msg . "\033[0m";
+				break;
+			case 'warning':
+				echo "\n\033[01;33m" . $msg . "\033[0m";
+				break;
+			case 'notice':
+				echo "\n\033[01;34m" . $msg . "\033[0m";
+				break;
+			case 'output':
+				if ($msg === true) {
+					echo "\n\033[01;35mReturned value: true\033[0m";
+				} else if ($msg === false) {
+					echo "\n\033[01;35mReturned value: false\033[0m";
+				} else if ($msg === null) {
+					echo "\n\033[01;35mReturned value: NULL\033[0m";
+				} else {
+					echo "\n\033[01;35m" . $msg . "\033[0m";
+				}
+				break;
+			case 'none':
+			default:
+				echo "\n" . $msg;
+		}
+	}
+	/** echoMsg
+	* Asks for something
+	* @param $msg - the question to ask
+	* @param $type - the style type of the output
+	** required - prints a yellow question, used for questions where the answer is needed
+	** optional - prints a cyan question, used for question where the answer can be empty
+	** none - prints a normal question, used if none of the above matches
+	* A new line gets automatically added before $msg
+	*/
+	public function ask($msg, $type = "none") {
+		switch($type) {
+			case 'required':
+				return $this->askQuestion("\n\033[01;33m" . $msg . "\033[0m");
+			case 'optional':
+				return $this->askQuestion("\n\033[01;36m" . $msg . "\033[0m");
+			case 'none':
+			default:
+				return $this->askQuestion("\n" . $msg);
+		}
 	}
 }
 ?>
