@@ -1778,12 +1778,12 @@ class Core extends Password {
 	public function ask($msg, $type = "none") {
 		switch($type) {
 			case 'required':
-				return $this->askQuestion("\n\033[01;33m" . $msg . "\033[0m");
+				return $this->askQuestion("\n\033[01;33m" . $msg . "\033[0m ");
 			case 'optional':
-				return $this->askQuestion("\n\033[01;36m" . $msg . "\033[0m");
+				return $this->askQuestion("\n\033[01;36m" . $msg . "\033[0m ");
 			case 'none':
 			default:
-				return $this->askQuestion("\n" . $msg);
+				return $this->askQuestion("\n" . $msg . " ");
 		}
 	}
 }
