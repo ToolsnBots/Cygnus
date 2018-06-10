@@ -8,17 +8,17 @@ require_once __DIR__ . '/BotCore.php';
 */
 class Debug extends Core {
 	public function __construct() {
-		$this->setSite($this->askRequired('Enter the domain to use:'));
-		$this->setUsername($this->askRequired('Enter the username to use:'));
-		$this->setPassword($this->askRequired('Enter the password to use:'));
-		$patchAnswer = $this->askRequired('Use a non default target? [y/N]');
+		$this->setSite($this->ask('Enter the domain to use:', 'required'));
+		$this->setUsername($this->ask('Enter the username to use:', 'required'));
+		$this->setPassword($this->ask('Enter the password to use:', 'required'));
+		$patchAnswer = $this->ask('Use a non default target? [y/N]', 'required');
 		if (strtolower($patchAnswer) !== 'n') {
-			$this->setTarget($this->askRequired('Enter the value for the target:'));
+			$this->setTarget($this->ask('Enter the value for the target:', 'required'));
 		} else {
 			$this->setTarget("w/api.php");
 		}
-		$assert = $this->askRequired('Enter the value for assert:');
-		$debug = $this->askRequired('Use verbose debug mode? [y/N]');
+		$assert = $this->ask('Enter the value for assert:', 'required');
+		$debug = $this->ask('Use verbose debug mode? [y/N]', 'required');
 		if (strtolower($debug) !== 'n') {
 			$debug = true;
 		} else {
@@ -27,8 +27,8 @@ class Debug extends Core {
 		$this->initcurlArgs('Debug', true, $assert, false, $debug);
 		$this->login();
 		do {
-			$this->debug($this->askRequired("Name of the function you want to debug:"));
-			$answer = $this->askRequired("Do you want to debug another function? [y/N]");
+			$this->debug($this->ask("Name of the function you want to debug:", "required"));
+			$answer = $this->ask("Do you want to debug another function? [y/N]", "required");
 		} while (strtolower($answer) !== 'n');
 	}
 	/** debug
