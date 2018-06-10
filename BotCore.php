@@ -237,12 +237,17 @@ class Core extends Password {
 			"&lgpassword=" . urlencode($this->password) .
 			"&lgtoken=" . urlencode($lgToken), $this->job);
 		$result = json_decode($result, true);
-		$lgResult = $result["login"]["result"];
+		$lgResult = $result['login']['result'];
 		// manage result
 		if ($lgResult == "Success") {
 			return true;
 		} else {
-			throw new Exception("Login failed with message: " . $lgResult);
+			if(isset($result['login']['reason'])) {
+				$lgReason = $result['login']['reason'];
+			} else {
+				$lgReason = $lgResult;
+			}
+			throw new Exception("Login failed with message: " . $lgReason);
 		}
 	}
 	/** logout
